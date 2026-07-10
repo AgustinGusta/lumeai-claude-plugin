@@ -1,6 +1,6 @@
 ---
 name: setup-proyecto-lumeai
-description: Automatiza la Fase 0 de un proyecto nuevo de LumeAI en Azure DevOps. Úsala cuando el usuario pida crear, dar de alta, arrancar o setear un proyecto nuevo (para un cliente o producto): crea el proyecto en Azure DevOps, crea el repo copiando la plantilla de lumeai-base, reemplaza los placeholders, y siembra Areas, Iterations y el Epic raíz del MVP. Corre en Claude Code con el MCP de Azure DevOps conectado.
+description: Automatiza la Fase 0 de un proyecto nuevo de LumeAI en Azure DevOps. Úsala cuando el usuario pida crear, dar de alta, arrancar o setear un proyecto nuevo (para un cliente o producto): crea el proyecto en Azure DevOps, crea el repo copiando la plantilla de lumeai-base, reemplaza los placeholders, y siembra los ejes del board (Areas por disciplina e Iterations por versión\sprint). No crea Epics ni US. Corre en Claude Code con el MCP de Azure DevOps conectado.
 ---
 
 # Setup de proyecto nuevo LumeAI (Fase 0)
@@ -130,13 +130,24 @@ git checkout -b develop && git push -u origin develop
 Si el push cuelga o pide password, falta la credencial cacheada de `dev.azure.com` (ver los requisitos).
 
 ## Paso 6 — Sembrar el board (vía MCP)
-- **Areas**: `Backend`, `Frontend`, `Infra`, `QA` bajo el nodo del proyecto.
-- **Iterations**: `Sprint 0` (Setup y Fundación), `Sprint 1`, `Backlog`.
-- **Epic raíz del MVP**: crear un work item Epic con título `MVP <Producto>` (ej. `MVP TottemApp`),
-  en Area `Backend`, Iteration `Sprint 1`. Este es el contenedor del MVP.
+Solo la clasificación (los ejes del board). **No se crean work items en Fase 0.**
 
-**No cargues User Stories acá.** Las US reales las produce el analista en Fase 1 y se suben
-desde `docs/functional/backlog.yml` con el prompt de handoff (ver Paso 8).
+- **Areas = disciplina** (a nivel Task): `Infra`, `Dev`, `Diseño`, `QA` bajo el nodo del proyecto.
+- **Iterations = versión\sprint** (jerárquico): crear el nodo de versión **`MVP`** y sus sprints
+  adentro, más `Backlog` a nivel raíz:
+  ```
+  <Proyecto>
+   ├─ MVP
+   │   ├─ Sprint 0
+   │   ├─ Sprint 1
+   │   └─ Sprint 2
+   └─ Backlog
+  ```
+  (La `v1` y siguientes se agregan al abrir la versión, no acá.)
+
+**No crees Epics ni User Stories acá.** Los Epics son **capacidades** (Pedidos, Pagos…) y todavía
+no se conocen en Fase 0: los crea `backlog-a-ado` en Fase 1 a partir de `docs/functional/backlog.yml`.
+El seed deja solo los ejes (Areas + Iterations) listos para que las US aterricen encima.
 
 ## Paso 7 — Branch policies (recomendado)
 En `main` y `develop` del repo nuevo, configurá (vía MCP o indicando al usuario):
@@ -162,4 +173,4 @@ Mostrale al usuario:
 - **`409 GitRepositoryNameAlreadyExists` al crear el repo** → el proyecto ya tiene un repo default con
   su nombre. No crees uno nuevo: **renombrá el default** al nombre del Paso 0 (Paso 5).
 - **Quedaron placeholders** → volvé al Paso 3; no pushees con `__PROJECT__` sin reemplazar.
-- **Cargar US en Fase 0** → no. Solo el Epic raíz; las US van en Fase 1.
+- **Crear Epics o US en Fase 0** → no. El seed deja solo Areas + Iterations; los Epics=capacidad y las US los crea `backlog-a-ado` en Fase 1.

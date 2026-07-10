@@ -11,6 +11,7 @@ versionan por separado. Versionado con SemVer.
 | Skill | Qué hace |
 |---|---|
 | `setup-proyecto-lumeai` | Automatiza la Fase 0: crea el proyecto en Azure DevOps, el repo desde la plantilla (`lumeai-base/repo-template`), reemplaza placeholders, y siembra Areas, Iterations y el Epic raíz del MVP. |
+| `backlog-a-ado` | Fase 1: sube las User Stories del analista desde `docs/functional/backlog.yml` a Azure DevOps (jerarquía Epic → Feature → US, mapeo de campos, dry-run e idempotencia). |
 | `publicar-skill-lumeai` | Agrega/publica una skill nueva en este plugin: scaffold + validación + bump de versión + commit/push a Azure DevOps + refresco del plugin. |
 
 ## Requisitos
