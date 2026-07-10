@@ -1,0 +1,11 @@
+{
+  "name": "lumeai",
+  "owner": { "name": "LumeAI" },
+  "plugins": [
+    {
+      "name": "lumeai-claude-plugin",
+      "source": "./",
+      "description": "Skills reutilizables de LumeAI para Azure DevOps (incluye setup-proyecto-lumeai)."
+    }
+  ]
+}
