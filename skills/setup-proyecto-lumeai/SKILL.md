@@ -68,20 +68,56 @@ grep -rn "__PROJECT__\|{{PROJECT}}\|{{project}}\|{{AZURE_SERVICE_CONNECTION}}" <
 
 Dejá los `.gitkeep` por ahora (Infra los borra en Fase 3 al scaffoldear la solución .NET).
 
-## Paso 4 — Crear el proyecto en Azure DevOps (vía MCP)
-Con el MCP, creá el proyecto en la org `LumeAI`:
-- Multi-tenant → nombre del proyecto = nombre del producto (ej. `TottemApp`).
-- Dedicada → nombre del proyecto = cliente (ej. `Cliente-A`).
+## Paso 4 — Crear el proyecto en Azure DevOps (vía REST API)
+**El MCP de Azure DevOps NO expone crear-proyecto**; hacelo por REST API con el PAT (auth Basic; el
+PAT sale de la config del MCP `azure-devops`). Nombre del proyecto:
+- Multi-tenant → nombre del producto (ej. `TottemApp`).
+- Dedicada → cliente (ej. `Cliente-A`).
 
-Nota: crear un **proyecto** puede requerir permisos de administrador de la organización.
-Si el MCP no puede crearlo, pedile al usuario que lo cree una vez desde la web y seguí con el repo.
+El `templateTypeId` debe ser un **type id base** de `GET /_apis/work/processes` (Agile
+`adcc42ab-9882-485e-a3ed-7678f01f66bc`, Scrum `6b724908-…`, Basic `b8a3a935-…`). **No uses** el
+`CurrentProcessTemplateId` del proyecto base: no es un type id válido y da `VS402362 ProcessNotFound`.
+Para matchear el proceso del proyecto base, mirá su `System.ProcessTemplateType`
+(`GET /_apis/projects/{id}/properties`) y usá ese id (LumeAI-Base = Agile).
 
-## Paso 5 — Crear el repo en ADO y pushear
-Creá el repo Git vacío en el proyecto (vía MCP `repo_create`) con el nombre definido en el Paso 0.
+La creación es **asíncrona**: el POST devuelve `202` con un operation id; hacé poll a
+`/_apis/operations/{id}` hasta `succeeded`.
+
+```bash
+# PAT del MCP (base64 de user:PAT) -> header Basic
+AUTH=$(python -c "import json;print(json.load(open('<~/.claude.json>'))['mcpServers']['azure-devops']['env']['PERSONAL_ACCESS_TOKEN'])")
+curl -sS -X POST "https://dev.azure.com/LumeAI/_apis/projects?api-version=7.1" \
+  -H "Authorization: Basic $AUTH" -H "Content-Type: application/json" \
+  -d '{"name":"<PROYECTO>","description":"...","capabilities":{"versioncontrol":{"sourceControlType":"Git"},"processTemplate":{"templateTypeId":"adcc42ab-9882-485e-a3ed-7678f01f66bc"}}}'
+# luego poll /_apis/operations/{id} hasta status=succeeded
+```
+
+Nota: crear proyecto requiere permisos de admin en la org. Si el PAT no los tiene, pedile al usuario
+que lo cree una vez desde la web y seguí con el repo.
+
+## Paso 5 — Repo en ADO y pushear
+**Ojo:** al crear el proyecto con control Git (Paso 4), ADO **auto-genera un repo default** con el
+mismo nombre del proyecto (ej. `TottemApp`). Los nombres de repo son **case-insensitive**, así que
+crear uno nuevo `<nombre-repo>` (minúsculas) choca con `409 GitRepositoryNameAlreadyExists`.
+El MCP tampoco expone crear-repo. Entonces, **renombrá el repo default** al nombre del Paso 0 (vía REST):
+
+```bash
+# id del repo default del proyecto
+RID=$(curl -sS "https://dev.azure.com/LumeAI/<PROYECTO>/_apis/git/repositories?api-version=7.1" \
+      -H "Authorization: Basic $AUTH" | python -c "import sys,json;print(json.load(sys.stdin)['value'][0]['id'])")
+# renombrar a <nombre-repo> (minúsculas)
+curl -sS -X PATCH "https://dev.azure.com/LumeAI/<PROYECTO>/_apis/git/repositories/$RID?api-version=7.1" \
+  -H "Authorization: Basic $AUTH" -H "Content-Type: application/json" -d '{"name":"<nombre-repo>"}'
+```
+
+*(Si el proyecto ya existía y no hay repo default, ahí sí creá el repo por REST:
+`POST /_apis/git/repositories` con `{"name":"<nombre-repo>"}`.)*
+
 Después, desde la carpeta del repo local:
 
 ```bash
 cd <ruta-destino>/<nombre-repo>
+export GIT_TERMINAL_PROMPT=0   # que no cuelgue pidiendo credenciales
 git init
 git add .
 git commit -m "Initial commit: scaffold desde lumeai-base/repo-template"
@@ -90,6 +126,8 @@ git remote add origin https://dev.azure.com/LumeAI/<PROYECTO>/_git/<nombre-repo>
 git push -u origin main
 git checkout -b develop && git push -u origin develop
 ```
+
+Si el push cuelga o pide password, falta la credencial cacheada de `dev.azure.com` (ver los requisitos).
 
 ## Paso 6 — Sembrar el board (vía MCP)
 - **Areas**: `Backend`, `Frontend`, `Infra`, `QA` bajo el nodo del proyecto.
@@ -119,5 +157,9 @@ Mostrale al usuario:
 ## Errores comunes
 - **No hay MCP de ADO** → frená y avisá; no sigas.
 - **No podés crear el proyecto** (permisos) → que lo cree el usuario en la web; seguí con el repo.
+- **`VS402362 ProcessNotFound` al crear proyecto** → usaste un `templateTypeId` inválido (ej. el
+  `CurrentProcessTemplateId`). Usá un type id base de `/_apis/work/processes` (Paso 4).
+- **`409 GitRepositoryNameAlreadyExists` al crear el repo** → el proyecto ya tiene un repo default con
+  su nombre. No crees uno nuevo: **renombrá el default** al nombre del Paso 0 (Paso 5).
 - **Quedaron placeholders** → volvé al Paso 3; no pushees con `__PROJECT__` sin reemplazar.
 - **Cargar US en Fase 0** → no. Solo el Epic raíz; las US van en Fase 1.
