@@ -13,6 +13,8 @@ versionan por separado. Versionado con SemVer.
 | `setup-proyecto-lumeai` | Automatiza la Fase 0: crea el proyecto en Azure DevOps, el repo desde la plantilla (`lumeai-base/repo-template`), reemplaza placeholders, y siembra los ejes del board (Areas por disciplina e Iterations por versión\sprint). |
 | `generar-backlog` | Fase 1: genera o extiende `docs/functional/backlog.yml` desde el análisis (visión/glosario) — Epics=capacidad, US con Gherkin, prioridad, estimación y sprint. Preserva los `id`. |
 | `backlog-a-ado` | Fase 1: sincroniza el `backlog.yml` con Azure DevOps (jerarquía Epic=capacidad → Feature → US, validación exhaustiva, dry-run, idempotencia por ID con write-back, reporte de huérfanos). |
+| `definir-design-system` | Fase 2: completa los valores de marca del proyecto en `design/design-system/tokens.css` (esqueleto estándar de `lumeai-base`). Paso previo a las pantallas. |
+| `disenar-pantalla` | Fase 2: genera las pantallas HTML con el design system, registra el mapeo N:M en `screens-map.yml`, crea/mueve el Task de diseño (Area Diseño) y linkea cada pantalla a las US vía MCP. |
 | `publicar-skill-lumeai` | Agrega/publica una skill nueva en este plugin: scaffold + validación + bump de versión + commit/push a Azure DevOps + refresco del plugin. |
 
 ## Requisitos

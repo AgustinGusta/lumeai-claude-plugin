@@ -75,9 +75,10 @@ Respetá el orden **Epic → Features → Stories** para poder linkear padres.
 | `priority` | `Microsoft.VSTS.Common.Priority` |
 | `estimate` | `Microsoft.VSTS.Scheduling.StoryPoints` |
 | `version` + `sprint` | `System.IterationPath` (= `<Proyecto>\<version>\<sprint>`) |
-| `design_url` | link/hyperlink en la US (o al final de la descripción si no hay pantalla aún) |
 
 **Area NO se mapea:** la US no lleva `System.AreaPath` de disciplina (queda en el nodo raíz del proyecto). El Area se asigna a nivel Task, y las Tasks las crean otras skills/fases.
+
+**Diseño NO se mapea:** el `backlog.yml` es puro funcional (sin `design_url`). El vínculo US↔pantalla lo maneja la skill `disenar-pantalla` en Fase 2 (vía `design/screens/screens-map.yml` + MCP). No agregues links de diseño acá.
 
 ### Casa de estilo (para que todos los proyectos queden idénticos en forma)
 Aplicá siempre estas convenciones al escribir el work item, sin importar cómo venga redactado el yml:
@@ -106,8 +107,6 @@ Linkeá cada work item con su padre usando la relación **`System.LinkTypes.Hier
 - Los **reference names** de `AcceptanceCriteria` y `StoryPoints` son de proceso **Agile**; si el
   proyecto usa otro proceso, ajustá. Confirmá contra `GET .../wit/fields` si algo no toma.
 - `IterationPath` debe existir **exactamente** (`<Proyecto>\<version>\<sprint>`, sembrado en Fase 0). No se autocrea acá.
-- `design_url` es una ruta relativa del repo (ej. `design/screens/login.html`); dejala como
-  texto/relación, no intentes resolverla a URL absoluta salvo que el usuario lo pida.
 
 ## Paso 4 — Idempotencia (por ID) y huérfanos
 - **No duplicar:** el matcheo es por `id` (Paso 1). Ítem con `id` → se actualiza; sin `id` → se crea y se le escribe el `id` (Paso 3). Así el analista corrige el yml, incluso renombrando, y vuelve a correr sin ensuciar el board.

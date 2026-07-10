@@ -56,8 +56,9 @@ epics:
             priority: 1            # 1 = más alta
             estimate: 5            # story points
             sprint: "Sprint 1"     # + version → IterationPath = <Proyecto>\<version>\<sprint>
-            design_url: "design/screens/<pantalla>.html"   # opcional; lo completa Diseño en Fase 2
 ```
+El `backlog.yml` es **puro funcional**: sin `design_url` ni pantallas. El vínculo US↔pantalla es
+de Fase 2 (diseñador), en `design/screens/screens-map.yml`.
 
 ## Procedimiento
 1. **Leer insumos:** `vision.md`, `domain-glossary.md` y lo conversado. Si falta contexto clave, preguntá; no inventes capacidades ni US.
