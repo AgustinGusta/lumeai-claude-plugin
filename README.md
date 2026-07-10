@@ -18,11 +18,51 @@ versionan por separado. Versionado con SemVer.
 - MCP oficial de Azure DevOps (`@azure-devops/mcp`) conectado sobre la org `LumeAI`.
 - `git` y acceso a Azure Repos.
 
-## Instalación (Claude Code)
-1. Cloná este repo desde Azure DevOps.
-2. Agregalo como plugin / marketplace en Claude Code (Settings → Capabilities / plugins),
-   o referenciá su carpeta `skills/` según tu configuración de skills.
-3. Al pedir "creá un proyecto nuevo para el cliente X", Claude Code dispara la skill.
+## Instalación para el equipo (Claude Code)
+
+> **No hace falta clonar el repo para *usar* las skills.** `/plugin marketplace add` lo clona
+> solo dentro de `~/.claude/plugins/`. Clonar a mano es solo para **publicar/editar** skills (Rol B).
+
+### Rol A — Usar las skills (la mayoría)
+
+1. **Autenticar git contra Azure DevOps una sola vez** (el repo es privado; Claude Code necesita poder
+   clonarlo). En una terminal externa, con tu propia cuenta LumeAI/Microsoft (GCM abre el navegador):
+   ```bash
+   git clone https://dev.azure.com/LumeAI/LumeAI-Base/_git/lumeai-base
+   ```
+   Con eso queda la credencial cacheada (cifrada, Windows Credential Manager). No compartas PAT entre personas.
+2. **En Claude Code:**
+   ```
+   /plugin marketplace add https://dev.azure.com/LumeAI/LumeAI-Base/_git/lumeai-claude-plugin
+   /plugin install lumeai-claude-plugin@lumeai     # en el menú, elegí scope "User"
+   /reload-plugins
+   ```
+3. **Tener el MCP de Azure DevOps conectado** con tu PAT. Las skills operan sobre ADO; sin el MCP
+   aparecen pero no pueden crear proyecto/repo/work items.
+
+### Rol B — Publicar/editar skills (mantenedores)
+
+Necesitan **clonar** y tener **permiso de push** en ADO:
+```bash
+git clone https://dev.azure.com/LumeAI/LumeAI-Base/_git/lumeai-claude-plugin
+```
+Para agregar una skill nueva, usá la skill `publicar-skill-lumeai` (pedí *"publicá una skill nueva
+llamada X"*): hace scaffold + validación + bump de versión + commit/push + refresco del plugin.
+
+### Actualizar a skills nuevas
+
+Cuando se publica una versión nueva:
+```
+/plugin marketplace update lumeai
+/plugin update lumeai-claude-plugin@lumeai
+/reload-plugins
+```
+(O activá auto-update del marketplace desde el menú `/plugin`.)
+
+### Uso
+
+Una vez instalado, las skills se auto-disparan según su descripción (ej. "creá un proyecto nuevo para
+el cliente X" → `setup-proyecto-lumeai`), o las invocás explícitas como `/lumeai-claude-plugin:<skill>`.
 
 ## Convención de versiones
 Cada proyecto que use el plugin conviene que fije una versión (no auto-actualizar), para
