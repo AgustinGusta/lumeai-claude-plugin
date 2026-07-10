@@ -9,6 +9,13 @@ Esta skill toma el `docs/functional/backlog.yml` que dejó el analista y crea/ac
 work items en Azure DevOps vía MCP, respetando la jerarquía y sin duplicar. Es el handoff
 determinístico del análisis funcional al board.
 
+## Responsabilidad y fuente única
+Esta skill es dueña de **dos cosas**: la **validez estructural** del yml (Paso 0) y la **escritura
+consistente** en ADO (mapeo + casa de estilo). **No** es dueña de la calidad de autoría de las US
+—cómo se redactan, cuántos criterios— eso lo define `generar-backlog`. El **modelo canónico** vive
+en `lumeai-base/docs/proceso-y-estructura.md` §3; las validaciones de abajo son una **red de
+seguridad** (por si alguien editó el yml a mano), no la autoridad. Si el modelo cambia, manda el doc.
+
 ## Modelo (leer antes de tocar el board)
 - **Epic = capacidad** del producto (Pedidos, Pagos…), estable entre versiones. Es el nivel superior del `backlog.yml` (`epics:`), **no** una versión.
 - **Feature** = entregable dentro de la capacidad.
@@ -71,6 +78,17 @@ Respetá el orden **Epic → Features → Stories** para poder linkear padres.
 | `design_url` | link/hyperlink en la US (o al final de la descripción si no hay pantalla aún) |
 
 **Area NO se mapea:** la US no lleva `System.AreaPath` de disciplina (queda en el nodo raíz del proyecto). El Area se asigna a nivel Task, y las Tasks las crean otras skills/fases.
+
+### Casa de estilo (para que todos los proyectos queden idénticos en forma)
+Aplicá siempre estas convenciones al escribir el work item, sin importar cómo venga redactado el yml:
+- **Estado inicial:** al **crear**, `System.State = New`. No cambiar el estado al **actualizar** (respetá el que tenga en el board).
+- **Título:** el `title` del yml tal cual (sin prefijos ni `[Área]`).
+- **Descripción:** `System.Description` en HTML simple; el `description` del yml como uno o más `<p>`.
+- **Criterios de aceptación:** SIEMPRE como lista HTML `<ul><li>…</li></ul>`, un `<li>` por criterio del yml. Nunca texto plano concatenado.
+- **AreaPath:** el **nodo raíz del proyecto** (la US no lleva disciplina). Nunca `\Dev`, `\QA`, etc.
+- **IterationPath:** `<Proyecto>\<version>\<sprint>` exacto.
+- **Tags:** no inventar. Solo poner `System.Tags` si el yml los trae (transversales tipo `tech-debt`, `blocked`); la versión NO va como tag (va en la Iteration).
+- **Tipos:** `Epic` (capacidad), `Feature`, `User Story`.
 
 ### Write-back de IDs (clave para poder modificar después)
 Cada vez que **creás** un work item (Epic/Feature/Story), tomá el `System.Id` que devuelve ADO y

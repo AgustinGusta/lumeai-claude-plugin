@@ -1,6 +1,6 @@
 {
   "name": "lumeai-claude-plugin",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Skills reutilizables de LumeAI para trabajar sobre Azure DevOps de forma AI-native (Claude Code). Incluye la automatización de la Fase 0 de proyectos nuevos.",
   "author": { "name": "LumeAI" }
 }

@@ -9,6 +9,16 @@ Esta skill convierte el análisis funcional en un `docs/functional/backlog.yml` 
 completo**, con el schema exacto que espera `backlog-a-ado`. No inventa producto: estructura lo
 que el analista ya definió. No sube nada a Azure DevOps (eso lo hace `backlog-a-ado`).
 
+## Responsabilidad y fuente única
+Esta skill es la **dueña de la calidad de autoría** de las User Stories: cómo se redactan, cuántos
+criterios llevan, qué las hace estar "listas". La contraparte `backlog-a-ado` solo valida la
+estructura y escribe en ADO — no re-define cómo se escribe una buena US.
+
+El **modelo canónico** (Epic=capacidad, Iteration=versión\sprint, Area a nivel Task) vive en
+`lumeai-base/docs/proceso-y-estructura.md` §3, y la **Definition of Ready** en
+`docs/process/definition-of-ready-done.md` del repo. Esta skill **implementa** esas reglas; si el
+modelo cambia, la autoridad es el doc, no una copia local. Ante duda, consultá el doc.
+
 ## Requisitos
 - No necesita MCP (solo escribe un archivo). Corre en **Cowork** (herramienta del analista) o en Code.
 - Idealmente hay `docs/functional/vision.md` y `domain-glossary.md` como insumo. Si no, la skill los pide o trabaja de la conversación.
@@ -53,7 +63,7 @@ epics:
 1. **Leer insumos:** `vision.md`, `domain-glossary.md` y lo conversado. Si falta contexto clave, preguntá; no inventes capacidades ni US.
 2. **Identificar capacidades (Epics):** agrupá el producto en áreas funcionales estables (aplicá el test de la v3). Evitá el anti-patrón Epic=versión.
 3. **Derivar Features y US:** por cada capacidad, los entregables y sus US en formato "Como… quiero… para…".
-4. **Completar cada US:** criterios en Gherkin (al menos 1, idealmente 2-3, cubriendo happy path y un borde), `priority`, `estimate`, `sprint`. Si el analista no definió prioridad/estimación, proponé un valor y marcalo para que lo revise — no lo dejes vacío.
+4. **Completar cada US según la DoR** (`docs/process/definition-of-ready-done.md`): título "Como <rol> quiero <objetivo> para <valor>", descripción con el valor de usuario, criterios en Gherkin (al menos 1, idealmente 2-3, cubriendo happy path y un borde), `priority` y `estimate` cargados, sin dependencias sin resolver. Si el analista no definió prioridad/estimación, proponé un valor y marcalo para que lo revise — no lo dejes vacío. (La pantalla de diseño de la DoR se linkea en Fase 2, no acá.)
 5. **Modo extender:** si el `backlog.yml` ya existe, mergeá sin pisar lo previo y **conservando los `id`**. Agregá lo nuevo; para lo modificado, cambiá los campos dejando el `id` intacto.
 6. **Escribir el archivo** en `docs/functional/backlog.yml`.
 7. **Validar** antes de cerrar (o delegá en `backlog-a-ado`, que valida): que parsee, que ningún Epic sea una versión, que cada US tenga título en formato correcto, ≥1 criterio Gherkin, priority, estimate y sprint.
