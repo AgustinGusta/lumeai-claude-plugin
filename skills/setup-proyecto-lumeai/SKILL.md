@@ -1,6 +1,6 @@
 ---
 name: setup-proyecto-lumeai
-description: Automatiza la Fase 0 de un proyecto nuevo de LumeAI en Azure DevOps. Úsala cuando el usuario pida crear, dar de alta, arrancar o setear un proyecto nuevo (para un cliente o producto): crea el proyecto en Azure DevOps, crea el repo copiando la plantilla de lumeai-base, reemplaza los placeholders, y siembra los ejes del board (Areas por disciplina e Iterations por versión\sprint). No crea Epics ni US. Corre en Claude Code con el MCP de Azure DevOps conectado.
+description: Automatiza la Fase 0 de un proyecto nuevo de LumeAI en Azure DevOps. Úsala cuando el usuario pida crear, dar de alta, arrancar o setear un proyecto nuevo (para un cliente o producto): crea el proyecto en Azure DevOps, crea el repo copiando la plantilla de lumeai-base, reemplaza los placeholders, y siembra los ejes del board (Areas por disciplina e Iterations por versión, sin sprints). No crea Epics ni US. Corre en Claude Code con el MCP de Azure DevOps conectado.
 ---
 
 # Setup de proyecto nuevo LumeAI (Fase 0)
@@ -133,17 +133,15 @@ Si el push cuelga o pide password, falta la credencial cacheada de `dev.azure.co
 Solo la clasificación (los ejes del board). **No se crean work items en Fase 0.**
 
 - **Areas = disciplina** (a nivel Task): `Infra`, `Dev`, `Diseño`, `QA` bajo el nodo del proyecto.
-- **Iterations = versión\sprint** (jerárquico): crear el nodo de versión **`MVP`** y sus sprints
-  adentro, más `Backlog` a nivel raíz:
+- **Iterations = versión** (SIN sprints, flujo continuo/Kanban): crear el nodo de versión **`MVP`** a
+  nivel raíz, más `Backlog` para lo no planificado:
   ```
   <Proyecto>
    ├─ MVP
-   │   ├─ Sprint 0
-   │   ├─ Sprint 1
-   │   └─ Sprint 2
    └─ Backlog
   ```
-  (La `v1` y siguientes se agregan al abrir la versión, no acá.)
+  (La `v1` y siguientes se agregan al abrir cada versión, no acá.)
+  Nota: los nodos de versión son **planos**, así que el MCP (`work_create_iterations`) los crea sin problema — no hace falta REST para esto (a diferencia de crear el proyecto/repo).
 
 **No crees Epics ni User Stories acá.** Los Epics son **capacidades** (Pedidos, Pagos…) y todavía
 no se conocen en Fase 0: los crea `backlog-a-ado` en Fase 1 a partir de `docs/functional/backlog.yml`.

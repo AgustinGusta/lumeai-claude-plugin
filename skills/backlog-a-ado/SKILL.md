@@ -20,13 +20,13 @@ seguridad** (por si alguien editó el yml a mano), no la autoridad. Si el modelo
 - **Epic = capacidad** del producto (Pedidos, Pagos…), estable entre versiones. Es el nivel superior del `backlog.yml` (`epics:`), **no** una versión.
 - **Feature** = entregable dentro de la capacidad.
 - **User Story** = unidad del analista, con criterios. Lleva **Epic + Iteration**, y **NO lleva Area** (la US es multidisciplinar).
-- **Iteration = `version\sprint`**: se arma con el campo `version` del YAML + el `sprint` de cada story (ej. `MVP` + `Sprint 1` → `<Proyecto>\MVP\Sprint 1`).
+- **Iteration = `version`** (MVP, v1…): el campo `version` del YAML → `<Proyecto>\<version>`. **SIN sprints:** trabajo en flujo continuo (Kanban); se ordena por `priority`.
 - **Area = disciplina** (Dev/Diseño/Infra/QA): va **a nivel Task**, y las Tasks se crean río abajo (Fases 2/4/5). **Esta skill NO crea Tasks ni asigna Area.**
 
 ## Requisitos (verificar antes de empezar)
 - **MCP de Azure DevOps** (`@azure-devops/mcp`) conectado sobre la org `LumeAI`. Sin él, frená.
 - Existe el archivo **`docs/functional/backlog.yml`** en el repo (formato del `repo-template`).
-- El **proyecto ADO ya existe** y tiene sus **Iterations** (`setup-proyecto-lumeai` siembra `<version>\<sprint>` en Fase 0). Si una Iteration referenciada no existe, avisá antes de crear la US.
+- El **proyecto ADO ya existe** y tiene su **Iteration de versión** (`setup-proyecto-lumeai` siembra el nodo `<version>` en Fase 0). Si la versión referenciada no existe, avisá antes de crear la US.
 
 ## REGLA DE ORO: mostrá el plan y esperá OK antes de escribir nada
 Antes de crear o actualizar cualquier work item, mostrá el **plan completo** (qué se crea,
@@ -39,10 +39,10 @@ Leé `docs/functional/backlog.yml` y **validá todo esto**; si algo falla, mostr
 1. **Parseo:** es YAML bien formado.
 2. **Estructura:** existe `version` (string no vacío) y `epics` (lista no vacía). Cada Epic tiene `title` y `features`; cada Feature tiene `title` y `stories`; cada Story tiene `title`.
 3. **Epic ≠ versión:** ningún `title` de Epic es una versión (`MVP`, `v1`, `v1.0`, "Versión…"). Si lo es, es un error de modelado → reportalo.
-4. **US bien formada:** cada story tiene título "Como … quiero … para …", al menos 1 `acceptance_criteria`, `priority` (entero), `estimate` (número) y `sprint` (string).
+4. **US bien formada:** cada story tiene título "Como … quiero … para …", al menos 1 `acceptance_criteria`, `priority` (entero) y `estimate` (número).
 5. **Sin Area:** ninguna story trae campo `area` (el Area es de las Tasks). Si aparece, avisá que se ignora.
 6. **IDs coherentes:** los `id` presentes son enteros y **únicos** en el archivo (no repetidos).
-7. **Iterations existentes:** para cada story, `<Proyecto>\<version>\<sprint>` debe existir en el proyecto (consultá vía MCP). Reportá las que falten; **no las autocrees**.
+7. **Iteration de versión existente:** `<Proyecto>\<version>` debe existir en el proyecto (consultá vía MCP). Si falta, reportalo; **no la autocrees**.
 
 Confirmá también el **proyecto ADO destino**. Si no es evidente por el contexto, preguntá.
 
@@ -74,7 +74,7 @@ Respetá el orden **Epic → Features → Stories** para poder linkear padres.
 | `acceptance_criteria` (lista) | `Microsoft.VSTS.Common.AcceptanceCriteria` (unir en HTML/lista) |
 | `priority` | `Microsoft.VSTS.Common.Priority` |
 | `estimate` | `Microsoft.VSTS.Scheduling.StoryPoints` |
-| `version` + `sprint` | `System.IterationPath` (= `<Proyecto>\<version>\<sprint>`) |
+| `version` | `System.IterationPath` (= `<Proyecto>\<version>`) |
 
 **Area NO se mapea:** la US no lleva `System.AreaPath` de disciplina (queda en el nodo raíz del proyecto). El Area se asigna a nivel Task, y las Tasks las crean otras skills/fases.
 
@@ -87,7 +87,7 @@ Aplicá siempre estas convenciones al escribir el work item, sin importar cómo 
 - **Descripción:** `System.Description` en HTML simple; el `description` del yml como uno o más `<p>`.
 - **Criterios de aceptación:** SIEMPRE como lista HTML `<ul><li>…</li></ul>`, un `<li>` por criterio del yml. Nunca texto plano concatenado.
 - **AreaPath:** el **nodo raíz del proyecto** (la US no lleva disciplina). Nunca `\Dev`, `\QA`, etc.
-- **IterationPath:** `<Proyecto>\<version>\<sprint>` exacto.
+- **IterationPath:** `<Proyecto>\<version>` exacto (sin sprint).
 - **Tags:** no inventar. Solo poner `System.Tags` si el yml los trae (transversales tipo `tech-debt`, `blocked`); la versión NO va como tag (va en la Iteration).
 - **Tipos:** `Epic` (capacidad), `Feature`, `User Story`.
 
@@ -106,7 +106,7 @@ Linkeá cada work item con su padre usando la relación **`System.LinkTypes.Hier
 ### Notas a validar en el primer run (posibles gotchas)
 - Los **reference names** de `AcceptanceCriteria` y `StoryPoints` son de proceso **Agile**; si el
   proyecto usa otro proceso, ajustá. Confirmá contra `GET .../wit/fields` si algo no toma.
-- `IterationPath` debe existir **exactamente** (`<Proyecto>\<version>\<sprint>`, sembrado en Fase 0). No se autocrea acá.
+- `IterationPath` debe existir **exactamente** (`<Proyecto>\<version>`, sembrado en Fase 0). No se autocrea acá.
 
 ## Paso 4 — Idempotencia (por ID) y huérfanos
 - **No duplicar:** el matcheo es por `id` (Paso 1). Ítem con `id` → se actualiza; sin `id` → se crea y se le escribe el `id` (Paso 3). Así el analista corrige el yml, incluso renombrando, y vuelve a correr sin ensuciar el board.
@@ -124,7 +124,7 @@ Mostrá:
 ## Errores comunes
 - **No hay MCP de ADO** → frená y avisá.
 - **YAML inválido o incompleto** → mostrá los errores del Paso 0 y no toques el board.
-- **Iteration inexistente** (`<version>\<sprint>`) → reportala; no crees la US con path inválido.
+- **Iteration de versión inexistente** (`<version>`) → reportala; no crees la US con path inválido.
 - **Asignar Area a la US** → no. La US va sin Area de disciplina; el Area es de las Tasks.
 - **Crear un Epic por versión** → no. Los Epics son capacidades; la versión va en la Iteration.
 - **Matchear por título en vez de por ID** → no. El título puede cambiar; el matcheo es por `id` (Paso 1).

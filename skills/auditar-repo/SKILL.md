@@ -40,7 +40,7 @@ El estándar es **`lumeai-base`** (no un checklist hardcodeado, para no desactua
 
 ## Chequeos C — Board (vía MCP; si no hay MCP, saltear con aviso)
 - **Areas**: existen `Infra`, `Dev`, `Diseño`, `QA`. (faltantes → FAIL)
-- **Iterations**: jerárquicas `versión\sprint` (ej. `MVP\Sprint 1`). Planas o sin versión → WARNING.
+- **Iterations = versión** (MVP, v1…), sin sprints. Si hay sprints o falta el nodo de versión → WARNING.
 - **Epics = capacidad**: ningún Epic con título de versión (`MVP`, `v1`…) → si lo hay, **FAIL** (anti-patrón Epic=versión).
 - **US sin Area de disciplina**: las US no deben tener `AreaPath` de `Dev/Diseño/Infra/QA` (el Area es de las Tasks) → si la tienen, WARNING.
 - **Branch policies** en `develop` y `main`: PR requerido, build validation, link a work item. (faltantes → WARNING/FAIL según criticidad).

@@ -24,7 +24,7 @@ system), **trazabilidad** (mapeo N:M + link a la US) y **visibilidad** (Task de 
 Antes de crear Tasks, mover estados o linkear, mostrá el plan (qué Tasks, qué links) y esperá el OK.
 
 ## Modo A — Planificar (poblar la cola del diseñador)
-Para un conjunto de US (una feature, un sprint) que necesitan diseño:
+Para un conjunto de US (una feature, una versión, o las de mayor prioridad) que necesitan diseño:
 - Por cada US, creá (si no existe) un Task **`Diseñar pantalla: <título corto de la US>`**, con:
   - Padre = la US (`System.LinkTypes.Hierarchy-Reverse`).
   - `System.AreaPath` = `<Proyecto>\Diseño`.

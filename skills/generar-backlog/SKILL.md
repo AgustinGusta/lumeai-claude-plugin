@@ -1,6 +1,6 @@
 ---
 name: generar-backlog
-description: Genera o extiende el docs/functional/backlog.yml del analista a partir del análisis funcional (visión, glosario, conversación). Úsala cuando el usuario pida armar el backlog, generar las User Stories, redactar el yml de US, o pasar el análisis a formato estructurado (Fase 1 del flujo LumeAI, paso previo a backlog-a-ado). Produce Epics=capacidad → Features → US con criterios en Gherkin, prioridad, estimación y sprint, listo para subir con backlog-a-ado. Corre en Cowork (o Code); no necesita MCP.
+description: Genera o extiende el docs/functional/backlog.yml del analista a partir del análisis funcional (visión, glosario, conversación). Úsala cuando el usuario pida armar el backlog, generar las User Stories, redactar el yml de US, o pasar el análisis a formato estructurado (Fase 1 del flujo LumeAI, paso previo a backlog-a-ado). Produce Epics=capacidad → Features → US con criterios en Gherkin, prioridad y estimación, listo para subir con backlog-a-ado. Corre en Cowork (o Code); no necesita MCP.
 ---
 
 # Generar backlog.yml (Fase 1 — paso previo al handoff)
@@ -14,7 +14,7 @@ Esta skill es la **dueña de la calidad de autoría** de las User Stories: cómo
 criterios llevan, qué las hace estar "listas". La contraparte `backlog-a-ado` solo valida la
 estructura y escribe en ADO — no re-define cómo se escribe una buena US.
 
-El **modelo canónico** (Epic=capacidad, Iteration=versión\sprint, Area a nivel Task) vive en
+El **modelo canónico** (Epic=capacidad, Iteration=versión, Area a nivel Task) vive en
 `lumeai-base/docs/proceso-y-estructura.md` §3, y la **Definition of Ready** en
 `docs/process/definition-of-ready-done.md` del repo. Esta skill **implementa** esas reglas; si el
 modelo cambia, la autoridad es el doc, no una copia local. Ante duda, consultá el doc.
@@ -32,10 +32,10 @@ modelo cambia, la autoridad es el doc, no una copia local. Ante duda, consultá 
 ## El modelo (respetar al pie)
 - **Epic = CAPACIDAD** del producto (Pedidos, Pagos, Cocina…), estable entre versiones.
   Test antes de crear un Epic: "¿seguiría existiendo en la v3?". Si la respuesta es "no, es el MVP/una
-  versión" → **no es Epic**, es una versión (va en `version`/`sprint`, no en la jerarquía).
+  versión" → **no es Epic**, es una versión (va en `version`, no en la jerarquía).
 - **Feature** = entregable dentro de la capacidad.
 - **User Story** = "Como <rol> quiero <objetivo> para <valor>", con criterios en Gherkin.
-- **version** (raíz del yml) = la versión que se planifica (MVP, v1…). **sprint** por story.
+- **version** (raíz del yml) = la versión que se planifica (MVP, v1…). **SIN sprints:** el trabajo es en flujo continuo (Kanban); se ordena por `priority`. IterationPath = `<Proyecto>\<version>`.
 - **La US NO lleva Area** (el Area es de las Tasks, se asigna río abajo). No agregues `area`.
 
 ## Schema de salida (exacto)
@@ -53,10 +53,10 @@ epics:
               <contexto de la US>
             acceptance_criteria:
               - "Dado <contexto>, cuando <acción>, entonces <resultado>"
-            priority: 1            # 1 = más alta
+            priority: 1            # 1 = más alta (ordena el flujo; no hay sprints)
             estimate: 5            # story points
-            sprint: "Sprint 1"     # + version → IterationPath = <Proyecto>\<version>\<sprint>
 ```
+La US se ubica en la **versión** (campo `version` raíz). IterationPath = `<Proyecto>\<version>`.
 El `backlog.yml` es **puro funcional**: sin `design_url` ni pantallas. El vínculo US↔pantalla es
 de Fase 2 (diseñador), en `design/screens/screens-map.yml`.
 
@@ -67,7 +67,7 @@ de Fase 2 (diseñador), en `design/screens/screens-map.yml`.
 4. **Completar cada US según la DoR** (`docs/process/definition-of-ready-done.md`): título "Como <rol> quiero <objetivo> para <valor>", descripción con el valor de usuario, criterios en Gherkin (al menos 1, idealmente 2-3, cubriendo happy path y un borde), `priority` y `estimate` cargados, sin dependencias sin resolver. Si el analista no definió prioridad/estimación, proponé un valor y marcalo para que lo revise — no lo dejes vacío. (La pantalla de diseño de la DoR se linkea en Fase 2, no acá.)
 5. **Modo extender:** si el `backlog.yml` ya existe, mergeá sin pisar lo previo y **conservando los `id`**. Agregá lo nuevo; para lo modificado, cambiá los campos dejando el `id` intacto.
 6. **Escribir el archivo** en `docs/functional/backlog.yml`.
-7. **Validar** antes de cerrar (o delegá en `backlog-a-ado`, que valida): que parsee, que ningún Epic sea una versión, que cada US tenga título en formato correcto, ≥1 criterio Gherkin, priority, estimate y sprint.
+7. **Validar** antes de cerrar (o delegá en `backlog-a-ado`, que valida): que parsee, que ningún Epic sea una versión, que cada US tenga título en formato correcto, ≥1 criterio Gherkin, priority y estimate.
 
 ## Cierre
 - Mostrá un resumen: cuántos Epics/Features/US quedaron, cuáles son nuevos vs modificados.
@@ -75,8 +75,8 @@ de Fase 2 (diseñador), en `design/screens/screens-map.yml`.
   **`backlog-a-ado`** para crear/actualizar los work items en el board.
 
 ## Errores comunes
-- **Epic = versión** (ej. "MVP", "v1") → mal. Los Epics son capacidades; la versión va en `version`/`sprint`.
+- **Epic = versión** (ej. "MVP", "v1") → mal. Los Epics son capacidades; la versión va en `version`.
 - **Borrar o inventar `id`** en modo extender → rompe el matcheo de `backlog-a-ado` y duplica work items.
 - **Agregar `area` a la US** → no. El Area es de las Tasks.
-- **US sin criterios/priority/estimate/sprint** → incompleta; completala o proponé valores para revisión.
+- **US sin criterios/priority/estimate** → incompleta; completala o proponé valores para revisión.
 - **Inventar capacidades o US** que el analista no definió → no. Ante la duda, preguntá.

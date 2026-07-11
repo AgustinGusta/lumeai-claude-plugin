@@ -54,7 +54,7 @@ El deploy a prod queda esperando el **approval check** del environment `producti
 ## Paso 6 — Cierre
 - (Opcional) Cerrá las **Features** cuyas US estén todas Closed. **No cierres Epics.**
 - Resumen: versión publicada, link al tag y a las release notes, estado del deploy a prod.
-- Recordá que la próxima versión abre un nuevo nodo de Iteration (`\v1\Sprint N`, etc.).
+- Recordá que la próxima versión abre un nuevo nodo de Iteration (`\v1`, `\v2`…), sin sprints.
 
 ## Errores comunes
 - **Taggear sin que todas las US estén Closed** → frená; el release es de lo validado.

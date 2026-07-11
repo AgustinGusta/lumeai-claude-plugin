@@ -14,8 +14,8 @@ Al estar en GitHub, **los dos runtimes consumen la misma fuente** (una sola publ
 
 | Skill | Qué hace |
 |---|---|
-| `setup-proyecto-lumeai` | Automatiza la Fase 0: crea el proyecto en Azure DevOps, el repo desde la plantilla (`lumeai-base/repo-template`), reemplaza placeholders, y siembra los ejes del board (Areas por disciplina e Iterations por versión\sprint). |
-| `generar-backlog` | Fase 1: genera o extiende `docs/functional/backlog.yml` desde el análisis (visión/glosario) — Epics=capacidad, US con Gherkin, prioridad, estimación y sprint. Preserva los `id`. |
+| `setup-proyecto-lumeai` | Automatiza la Fase 0: crea el proyecto en Azure DevOps, el repo desde la plantilla (`lumeai-base/repo-template`), reemplaza placeholders, y siembra los ejes del board (Areas por disciplina e Iterations por versión, sin sprints). |
+| `generar-backlog` | Fase 1: genera o extiende `docs/functional/backlog.yml` desde el análisis (visión/glosario) — Epics=capacidad, US con Gherkin, prioridad y estimación. Preserva los `id`. |
 | `backlog-a-ado` | Fase 1: sincroniza el `backlog.yml` con Azure DevOps (jerarquía Epic=capacidad → Feature → US, validación exhaustiva, dry-run, idempotencia por ID con write-back, reporte de huérfanos). |
 | `definir-design-system` | Fase 2: completa los valores de marca del proyecto en `design/design-system/tokens.css` (esqueleto estándar de `lumeai-base`). Paso previo a las pantallas. |
 | `disenar-pantalla` | Fase 2: genera las pantallas HTML con el design system, registra el mapeo N:M en `screens-map.yml`, crea/mueve el Task de diseño (Area Diseño) y linkea cada pantalla a las US vía MCP. |
@@ -66,4 +66,8 @@ validación + bump de versión + **commit/push a GitHub**. Después, cada runtim
 Una vez instalado, las skills se auto-disparan según su descripción (ej. "creá un proyecto nuevo
 para el cliente X" → `setup-proyecto-lumeai`), o las invocás explícitas (`/lumeai-claude-plugin:<skill>`
 en Code). En Cowork, si el plugin no está instalado, también podés pedirle a Claude que **lea la
-`SKILL.md
+`SKILL.md`** del repo conectado y la siga (camino sin instalar).
+
+## Convención de versiones
+Cada proyecto que use el plugin conviene que fije una versión (no auto-actualizar), para
+que un cambio de skill no rompa proyectos en curso. Ver riesgo 7 en `lumeai-base/docs/proceso-y-estructura.md`.
