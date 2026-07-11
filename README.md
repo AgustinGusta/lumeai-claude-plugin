@@ -17,6 +17,7 @@ versionan por separado. Versionado con SemVer.
 | `disenar-pantalla` | Fase 2: genera las pantallas HTML con el design system, registra el mapeo N:M en `screens-map.yml`, crea/mueve el Task de diseño (Area Diseño) y linkea cada pantalla a las US vía MCP. |
 | `provisionar-infra` | Fase 3: genera el Terraform de Azure (staging) siguiendo la convención de recursos y muestra el plan/costo. **El `apply` lo dispara una persona** (recursos facturables). Cablea Key Vault + Variable Group. |
 | `scaffold-solucion` | Fase 3: genera la estructura de código — solución .NET 8 Clean Architecture (Api/Core/Infra/Jobs/Tests) + Next.js. Solo estructura; las entidades van en Fase 4. |
+| `desarrollar-us` | Fase 4: desarrolla UNA US de punta a punta — rama, backend/frontend (según la pantalla linkeada), tests desde criterios, DoD, y PR linkeado. Con checkpoints; para en el PR abierto (el merge lo confirma una persona). |
 | `publicar-skill-lumeai` | Agrega/publica una skill nueva en este plugin: scaffold + validación + bump de versión + commit/push a Azure DevOps + refresco del plugin. |
 
 ## Requisitos
