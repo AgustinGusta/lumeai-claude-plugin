@@ -20,6 +20,7 @@ versionan por separado. Versionado con SemVer.
 | `desarrollar-us` | Fase 4: desarrolla UNA US de punta a punta — rama, backend/frontend (según la pantalla linkeada), tests desde criterios, DoD, y PR linkeado. Con checkpoints; para en el PR abierto (el merge lo confirma una persona). |
 | `validar-us` | Fase 5: valida una US en staging contra sus criterios (tests de API/integración, suite de regresión). Con OK del tester mueve la US a Closed; si falla, carga bugs y la devuelve a Active. |
 | `cargar-bug` | Fase 5: crea un Bug bien formado desde el testing manual de UI — linkeado a la US, Area QA, repro steps, severidad, screenshot opcional. Reabre la US a Active si es bloqueante. |
+| `release-version` | Fase 6: corta un release — propone SemVer, PR develop→main, tag, release notes auto desde las US Closed, y deploy a prod (tag + approval). Dos gates humanos; no cierra Epics. |
 | `publicar-skill-lumeai` | Agrega/publica una skill nueva en este plugin: scaffold + validación + bump de versión + commit/push a Azure DevOps + refresco del plugin. |
 
 ## Requisitos
