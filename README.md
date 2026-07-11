@@ -21,6 +21,7 @@ versionan por separado. Versionado con SemVer.
 | `validar-us` | Fase 5: valida una US en staging contra sus criterios (tests de API/integración, suite de regresión). Con OK del tester mueve la US a Closed; si falla, carga bugs y la devuelve a Active. |
 | `cargar-bug` | Fase 5: crea un Bug bien formado desde el testing manual de UI — linkeado a la US, Area QA, repro steps, severidad, screenshot opcional. Reabre la US a Active si es bloqueante. |
 | `release-version` | Fase 6: corta un release — propone SemVer, PR develop→main, tag, release notes auto desde las US Closed, y deploy a prod (tag + approval). Dos gates humanos; no cierra Epics. |
+| `auditar-repo` | Gobernanza (transversal): audita que un proyecto siga el estándar (estructura, placeholders, pipelines, secretos, design system, board). Read-only; reporta pass/warning/fail contra `lumeai-base`. |
 | `publicar-skill-lumeai` | Agrega/publica una skill nueva en este plugin: scaffold + validación + bump de versión + commit/push a Azure DevOps + refresco del plugin. |
 
 ## Requisitos
