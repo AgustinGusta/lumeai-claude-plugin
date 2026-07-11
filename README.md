@@ -8,7 +8,10 @@ en la cuenta personal; se migrará a la org **LumeAI** en GitHub — al migrar, 
 re-agregar el marketplace en cada runtime). Está en GitHub —y no
 en Azure DevOps como el resto— porque el marketplace de **Cowork solo acepta github/gitlab/bitbucket**.
 Al estar en GitHub, **los dos runtimes consumen la misma fuente** (una sola publicación, sin espejos).
-`lumeai-base` y los repos de proyecto **siguen en Azure DevOps**. Versionado con SemVer.
+
+> **Fuente única = GitHub.** Este plugin vive **SOLO en GitHub**; su antiguo repo en Azure DevOps queda **archivado** (read-only, sin publicar). No hay espejo ni sincronización con ADO — cualquier cambio se hace y se pushea contra GitHub. `lumeai-base` y los repos de proyecto **siguen en Azure DevOps** con normalidad.
+
+Versionado con SemVer.
 
 ## Skills
 
