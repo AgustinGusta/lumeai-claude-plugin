@@ -61,8 +61,8 @@ Chequeá contra `docs/process/definition-of-ready-done.md`: código listo, tests
 
 ## Paso 7 — Cierre (parás acá)
 - Reportá: link del PR, US, Tasks, y estado de CI si ya corrió.
-- **No mergeás.** El merge lo confirma una persona (aunque sea el mismo dev). Recordá que al mergear a `develop` el pipeline despliega a **staging**.
-- **US → Resolved al mergear:** cuando el PR se mergea, mové la US a *Resolved* (puede ser una corrida corta: *"la US <id> ya mergeó, pasala a Resolved"*).
+- **No mergeás.** El merge lo confirma una persona (aunque sea el mismo dev). Al mergear a `develop`, el pipeline despliega a **staging** y **mueve la US/Bug a *Resolved* automáticamente** (stage `Resolve_WorkItems`) — no la muevas a mano.
+- *Fallback:* si un proyecto no tiene ese stage/permiso configurado, mové la US a *Resolved* con una corrida corta (*"la US <id> ya mergeó, pasala a Resolved"*).
 
 ## Errores comunes
 - **Desarrollar una US que no cumple la DoR** (sin pantalla, sin criterios) → frená y reportá.

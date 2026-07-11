@@ -155,6 +155,18 @@ En `main` y `develop` del repo nuevo, configurá (vía MCP o indicando al usuari
 - Build validation (cuando existan los pipelines).
 - Link a work item obligatorio.
 
+## Paso 7b — Permiso para que el pipeline resuelva work items
+El pipeline `backend-pipeline.yml` (de la plantilla) tiene un stage que, al mergear a `develop`,
+pasa las **US/Bug** asociadas a **Resolved** usando la identidad del build (`System.AccessToken`).
+Para que funcione, esa identidad necesita permiso de **edición de work items**:
+- Identidad: **`<Proyecto> Build Service (<Org>)`** (o `Project Collection Build Service`).
+- Permiso: **"Edit work items in this node"** en el/los Area Path del proyecto (namespace de seguridad de work items).
+- Cómo: por REST (security namespaces/ACLs) o, si resulta fiddly, **otorgarlo una vez desde la web**
+  (Project Settings → Permissions / Area Paths → Security). **Verificá esto en el primer run real** —
+  el nombre exacto de la build identity y el alcance del permiso se afinan la primera vez.
+
+Si el permiso no está, el stage falla al hacer el PATCH; el resto del pipeline no se ve afectado.
+
 ## Paso 8 — Cierre: resumen y próximos pasos
 Mostrale al usuario:
 - Links al proyecto, al repo y al Epic creados.
