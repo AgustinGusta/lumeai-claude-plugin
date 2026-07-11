@@ -18,6 +18,8 @@ versionan por separado. Versionado con SemVer.
 | `provisionar-infra` | Fase 3: genera el Terraform de Azure (staging) siguiendo la convención de recursos y muestra el plan/costo. **El `apply` lo dispara una persona** (recursos facturables). Cablea Key Vault + Variable Group. |
 | `scaffold-solucion` | Fase 3: genera la estructura de código — solución .NET 8 Clean Architecture (Api/Core/Infra/Jobs/Tests) + Next.js. Solo estructura; las entidades van en Fase 4. |
 | `desarrollar-us` | Fase 4: desarrolla UNA US de punta a punta — rama, backend/frontend (según la pantalla linkeada), tests desde criterios, DoD, y PR linkeado. Con checkpoints; para en el PR abierto (el merge lo confirma una persona). |
+| `validar-us` | Fase 5: valida una US en staging contra sus criterios (tests de API/integración, suite de regresión). Con OK del tester mueve la US a Closed; si falla, carga bugs y la devuelve a Active. |
+| `cargar-bug` | Fase 5: crea un Bug bien formado desde el testing manual de UI — linkeado a la US, Area QA, repro steps, severidad, screenshot opcional. Reabre la US a Active si es bloqueante. |
 | `publicar-skill-lumeai` | Agrega/publica una skill nueva en este plugin: scaffold + validación + bump de versión + commit/push a Azure DevOps + refresco del plugin. |
 
 ## Requisitos
