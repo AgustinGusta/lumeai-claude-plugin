@@ -60,11 +60,34 @@ La US se ubica en la **versión** (campo `version` raíz). IterationPath = `<Pro
 El `backlog.yml` es **puro funcional**: sin `design_url` ni pantallas. El vínculo US↔pantalla es
 de Fase 2 (diseñador), en `design/screens/screens-map.yml`.
 
+## Cómo escribir una US que el dev pueda ejecutar
+La consumidora de la US es `desarrollar-us` (Fase 4): mapea **cada criterio a un test**, infiere del
+texto **qué entidades toca** (entidad + migración) y aplica **multi-tenant por `venue_id`**. Redactá
+pensando en eso:
+
+- **Criterios = contrato de test.** Cada criterio se vuelve ≥1 test, así que:
+  - **Atómicos:** un `Dado/Cuando/Entonces` = un comportamiento. Nada de "y… y…" encadenando varios
+    resultados; si hay varios, son varios criterios.
+  - **Concretos, con datos de ejemplo reales.** "el total supera $0 y hay ≥1 item", no "el pedido es
+    válido". El test necesita aserciones concretas.
+  - **Incluí siempre un caso negativo/de error**, no solo el happy path (validación que falla, permiso
+    denegado, entrada inválida).
+  - **Verificables por API/servicio.** Lo puramente visual va contra la pantalla linkeada (Fase 2), no
+    como criterio.
+- **Reglas y validaciones explícitas:** campos requeridos, formatos, límites, estados y transiciones.
+  Si quedan implícitas, el dev las omite o las adivina.
+- **Nombrá el dominio que toca** usando el glosario (ej. "un Pedido tiene items, estado y total"). No
+  diseñes la tabla; alcanza con los sustantivos y campos clave.
+- **Autorización y alcance:** más allá del rol del título, las reglas tipo "solo el dueño del venue ve
+  sus pedidos" van como criterio. Si la US es **por-venue**, decilo explícito.
+- **Acotá:** una línea de "fuera de alcance" para que no sobre-construya, y mantené la US **chica y
+  vertical** (implementable en 1 rama / 1 PR). Si necesita varias pantallas o capacidades, partila.
+
 ## Procedimiento
 1. **Leer insumos:** `vision.md`, `domain-glossary.md` y lo conversado. Si falta contexto clave, preguntá; no inventes capacidades ni US.
 2. **Identificar capacidades (Epics):** agrupá el producto en áreas funcionales estables (aplicá el test de la v3). Evitá el anti-patrón Epic=versión.
 3. **Derivar Features y US:** por cada capacidad, los entregables y sus US en formato "Como… quiero… para…".
-4. **Completar cada US según la DoR** (`docs/process/definition-of-ready-done.md`): título "Como <rol> quiero <objetivo> para <valor>", descripción con el valor de usuario, criterios en Gherkin (al menos 1, idealmente 2-3, cubriendo happy path y un borde), `priority` y `estimate` cargados, sin dependencias sin resolver. Si el analista no definió prioridad/estimación, proponé un valor y marcalo para que lo revise — no lo dejes vacío. (La pantalla de diseño de la DoR se linkea en Fase 2, no acá.)
+4. **Completar cada US según la DoR** (`docs/process/definition-of-ready-done.md`): título "Como <rol> quiero <objetivo> para <valor>", descripción con el valor de usuario y los **sustantivos del dominio** que toca (entidades/campos del glosario). Criterios en Gherkin **atómicos y con datos de ejemplo** (uno = un comportamiento), cubriendo happy path, **al menos un caso negativo/de error** y los bordes relevantes; reglas/validaciones explícitas; autorización y, si aplica, alcance **por-venue**. `priority` y `estimate` cargados, sin dependencias sin resolver, y **fuera de alcance** en una línea si hace falta. Si el analista no definió prioridad/estimación, proponé un valor y marcalo para que lo revise — no lo dejes vacío. (La pantalla de diseño de la DoR se linkea en Fase 2, no acá.)
 5. **Modo extender:** si el `backlog.yml` ya existe, mergeá sin pisar lo previo y **conservando los `id`**. Agregá lo nuevo; para lo modificado, cambiá los campos dejando el `id` intacto.
 6. **Escribir el archivo** en `docs/functional/backlog.yml`.
 7. **Validar** antes de cerrar (o delegá en `backlog-a-ado`, que valida): que parsee, que ningún Epic sea una versión, que cada US tenga título en formato correcto, ≥1 criterio Gherkin, priority y estimate.
@@ -79,4 +102,9 @@ de Fase 2 (diseñador), en `design/screens/screens-map.yml`.
 - **Borrar o inventar `id`** en modo extender → rompe el matcheo de `backlog-a-ado` y duplica work items.
 - **Agregar `area` a la US** → no. El Area es de las Tasks.
 - **US sin criterios/priority/estimate** → incompleta; completala o proponé valores para revisión.
+- **Criterios compuestos** ("y… y…" en un solo Gherkin) → partilos: uno = un comportamiento.
+- **Criterios vagos** ("datos válidos") → poné datos de ejemplo concretos y testeables.
+- **Solo happy path** → agregá al menos un caso negativo/de error.
+- **Reglas de negocio implícitas** → explicitá validaciones, formatos, límites, estados.
+- **US gigante** (varias pantallas/capacidades) → partila; 1 US = 1 rama = 1 PR.
 - **Inventar capacidades o US** que el analista no definió → no. Ante la duda, preguntá.
