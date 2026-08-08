@@ -142,12 +142,23 @@ Si la idea tiene más de un concepto, es un carrusel, no un post.
   Si no las indicás, Claude Design elige y suele pintar media frase.
 - **Apoyo:** una idea, dentro del tope. Contá los caracteres y mostrá el número.
 - Ofrecé **dos versiones del título** cuando la frase se pueda cortar de más de una forma.
+- **Cita (post-testimonio):** no se redacta, se **transcribe**. Si la frase del cliente pasa los
+  90 caracteres, se puede recortar por los extremos manteniendo las palabras exactas y marcando
+  el corte con puntos suspensivos, pero **no se reescribe ni se "mejora"**. Si ni recortada entra
+  sin perder el sentido, la pieza va como post-feed variante Caso de éxito con el título escrito
+  por vos, no como testimonio. Avisale al usuario qué recortaste.
+- **Cifra (post-cifra):** corta y con su unidad ("24 h", "3×", "48 pedidos"). El número no lleva
+  adorno: lo que lo explica es la línea de abajo, que va dentro de los 75 caracteres. Si el
+  usuario no aporta un dato propio, no busques uno: proponé otro formato.
 
 ### Paso 3 — Entregar
 
 Devolvé tres cosas, en este orden:
 
-1. **El prompt para Claude Design**, en un bloque de código, con este molde:
+1. **El prompt para Claude Design**, en un bloque de código. El molde cambia según la
+   plantilla: cada una tiene sus campos y no se mezclan.
+
+   Para `post-feed`, `historia`, `historia-interactiva` y los carruseles:
 
 ```
 Usá la plantilla [nombre], variante [pilar]. Una sola pieza.
@@ -158,12 +169,36 @@ Apoyo: [...]
 Acentuá "[dos palabras]".
 ```
 
+   Para `post-testimonio` (no lleva título ni acento: el protagonista es la cita):
+
+```
+Usá la plantilla post-testimonio, variante Caso de éxito. Una sola pieza.
+
+Eyebrow: CASO DE ÉXITO
+Cita: [textual del cliente, hasta 90 caracteres]
+Atribución: [nombre] · [rubro]
+```
+
+   Para `post-cifra` (la variante se nombra por el pilar, nunca "clara" u "oscura"):
+
+```
+Usá la plantilla post-cifra, variante [pilar]. Una sola pieza.
+
+Eyebrow: [nombre del pilar en mayúsculas]
+Cifra: [número corto con su unidad]
+Línea: [qué significa, hasta 75 caracteres]
+```
+
+   En `historia-interactiva`, agregá una línea diciendo qué sticker va encima y que la franja
+   tiene que quedar libre.
+
 2. **El caption para Instagram.** Dos o tres frases que amplíen lo que la pieza no dice —
    no que lo repitan. Sin CTA salvo Novedades. Hashtags: entre tres y cinco, específicos
    (`#comerciosuruguay`, no `#business`), o ninguno.
 
-3. **La verificación**, en una línea: título de N palabras, apoyo de N caracteres sobre el
-   tope del formato.
+3. **La verificación**, en una línea, con los campos que correspondan a la plantilla:
+   título de N palabras y apoyo de N/72 caracteres en post; cita de N/90 en testimonio;
+   línea de N/75 en cifra; título de N/60 en historia interactiva.
 
 ## Cierre
 
@@ -186,6 +221,10 @@ Recordale al usuario:
   error de la marca: la cifra va sola y enorme, sin nada que la sostenga.
 - **Inventar o retocar la cita de un testimonio** → si el cliente no la dijo, no existe; sin cita
   textual la pieza va post-feed, no post-testimonio.
+- **Usar el molde equivocado** → post-testimonio lleva Cita y Atribución, post-cifra lleva Cifra
+  y Línea. Ninguna de las dos lleva Título ni Apoyo: si se los mandás, Claude Design improvisa.
+- **Nombrar la variante de post-cifra como "clara" u "oscura"** → se nombra por el pilar, que es
+  lo que define el fondo.
 - **Meter CTA en Educativo o Casos** → rompe la regla de tres de cada cuatro y la cuenta empieza
   a leerse como catálogo.
 - **Repetir en el caption lo que ya dice la pieza** → el caption amplía, no subtitula.
