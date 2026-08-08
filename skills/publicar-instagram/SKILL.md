@@ -59,15 +59,21 @@ palabras largas ocupa más que una con palabras cortas.
 
 ## Los cuatro pilares
 
-| Pilar | Cuándo | Plantilla |
-|---|---|---|
-| **Educativo** | Un tip, un error común, algo que enseña | post-feed o carrusel-instagram |
-| **Caso de éxito** | La historia de un cliente | post-feed o caso-carrusel |
-| **Detrás de escena** | Equipo, día a día, cómo se trabaja | post-feed o historia |
-| **Novedades** | Lanzamiento, función nueva | post-feed |
+| Pilar | Eyebrow | Cuándo | Plantilla |
+|---|---|---|---|
+| **Educativo** | `EDUCATIVO` | Un tip, un error común, algo que enseña | post-feed o carrusel-instagram |
+| **Caso de éxito** | `CASO DE ÉXITO` | La historia de un cliente | post-feed o caso-carrusel |
+| **Detrás de escena** | `DETRÁS DE ESCENA` | Equipo, día a día, cómo se trabaja | post-feed o historia |
+| **Novedades** | `NOVEDADES` | Lanzamiento, función nueva | post-feed |
 
 El color lo define el pilar, no el gusto del momento: cada uno tiene su fondo fijo y eso es lo
 que hace que la grilla del perfil se lea como un sistema.
+
+**El eyebrow no es un campo creativo.** Se escribe el nombre del pilar en mayúsculas y nada más
+—es lo que permite reconocer el tipo de contenido de un vistazo—. La única variación permitida es
+calificar el rubro en Casos con un punto medio: `CASO · COMERCIO`, `CASO · GASTRONOMÍA`. Ninguna
+otra etiqueta: nada de "Tip", "Consejo" ni inventos por pieza. Si cada publicación inventa su
+etiqueta, en veinte posts el feed tiene cuatro nombres para lo mismo y el eyebrow deja de servir.
 
 ## Tono
 
@@ -114,7 +120,7 @@ Devolvé tres cosas, en este orden:
 ```
 Usá la plantilla [nombre], variante [pilar]. Una sola pieza.
 
-Eyebrow: [...]
+Eyebrow: [nombre del pilar en mayúsculas]
 Título: [...]
 Apoyo: [...]
 Acentuá "[dos palabras]".
@@ -140,6 +146,8 @@ Recordale al usuario:
 
 ## Errores comunes
 
+- **Inventar un eyebrow** ("Tip", "Consejo", "Ojo con esto") en lugar de usar el nombre del pilar
+  → rompe el reconocimiento de un vistazo y el feed queda con varios nombres para lo mismo.
 - **Estimar los caracteres en vez de contarlos** → se va a tres líneas y hay que rehacer.
 - **Inventar una estadística** para que el título pegue más fuerte → prohibido, sin excepción.
 - **Meter CTA en Educativo o Casos** → rompe la regla de tres de cada cuatro y la cuenta empieza
