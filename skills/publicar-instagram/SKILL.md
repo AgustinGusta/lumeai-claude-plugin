@@ -35,6 +35,11 @@ el proyecto.
 - **Nunca inventes datos, cifras ni estadísticas.** Si una idea necesita un número para
   funcionar, o el usuario lo aporta, o se reescribe sin el número. Un "el 70% de los comercios…"
   inventado es un riesgo reputacional, no un recurso creativo.
+- **`post-cifra` es SOLO para datos propios y verificables** de Lume o de un cliente que autorizó
+  el dato. Prohibido usarla con estadísticas de terceros sin fuente y prohibido inventar el número.
+  Una cifra falsa en tipografía de 260px es el peor error que puede cometer esta marca. Si el
+  usuario pide una pieza de cifra y no aporta un dato propio, proponé otro formato en vez de salir
+  a conseguir un número.
 - **Nunca prometas resultados** ("duplicá tus ventas"). Lume vende software, no resultados.
 - **Tres de cada cuatro piezas no piden nada.** El CTA vive solo en el pilar Novedades y en el
   cierre de carrusel. Educativo, Casos y Detrás de escena no llevan "escribinos" ni link.
@@ -51,6 +56,9 @@ el proyecto.
 | Título | **8 palabras** |
 | Apoyo en post y carrusel | **72 caracteres** (caja de 644px) |
 | Apoyo en historia | **80 caracteres** (caja de 720px) |
+| Cita de testimonio (post-testimonio) | **90 caracteres** (4 líneas) |
+| Línea explicativa de la cifra (post-cifra) | **75 caracteres** (2 líneas) |
+| Título de historia interactiva | **60 caracteres** |
 | Acento de color en el título | **2 palabras**, las que cargan el sentido |
 
 **Contá los caracteres de verdad**, no los estimes: `len(texto)`. Un apoyo de 99 caracteres se va
@@ -62,7 +70,7 @@ palabras largas ocupa más que una con palabras cortas.
 | Pilar | Eyebrow | Cuándo | Plantilla |
 |---|---|---|---|
 | **Educativo** | `EDUCATIVO` | Un tip, un error común, algo que enseña | post-feed o carrusel-instagram |
-| **Caso de éxito** | `CASO DE ÉXITO` | La historia de un cliente | post-feed o caso-carrusel |
+| **Caso de éxito** | `CASO DE ÉXITO` | La historia de un cliente | post-feed, caso-carrusel o post-testimonio (si hay frase textual) |
 | **Detrás de escena** | `DETRÁS DE ESCENA` | Equipo, día a día, cómo se trabaja | post-feed o historia |
 | **Novedades** | `NOVEDADES` | Lanzamiento, función nueva | post-feed |
 
@@ -74,6 +82,27 @@ que hace que la grilla del perfil se lea como un sistema.
 calificar el rubro en Casos con un punto medio: `CASO · COMERCIO`, `CASO · GASTRONOMÍA`. Ninguna
 otra etiqueta: nada de "Tip", "Consejo" ni inventos por pieza. Si cada publicación inventa su
 etiqueta, en veinte posts el feed tiene cuatro nombres para lo mismo y el eyebrow deja de servir.
+
+## Plantillas por formato (transversales a los pilares)
+
+Además de las de cada pilar, hay dos plantillas que no dependen del pilar sino del formato del
+contenido. El eyebrow sigue siendo el del pilar de la pieza, no una etiqueta nueva:
+
+| Cuándo | Plantilla |
+|---|---|
+| Una historia con encuesta, pregunta o cuenta regresiva | `historia-interactiva` |
+| Un dato propio en grande (una cifra sola, protagonista) | `post-cifra` |
+
+`post-cifra` tiene guardrail propio (ver Guardrails): solo datos propios y verificables.
+
+**Qué fondo usar** (hoy se decide a dedo; no debería):
+
+- **`post-cifra`:** el fondo lo sigue definiendo el **pilar**, igual que en post-feed —no es una
+  elección libre entre clara y oscura. Educativo → crema, Caso de éxito → noche, Detrás de escena
+  → halo, Novedades → violeta profundo.
+- **`historia-interactiva`:** en historias no hay grilla, así que el fondo es **libre**. Elegí
+  clara u oscura por **contraste con la historia anterior** de la secuencia, y decilo
+  explícitamente en el prompt.
 
 ## Tono
 
@@ -94,6 +123,9 @@ Pedí lo mínimo que falte, agrupado en una sola tanda:
 - **De qué querés hablar** (si el usuario ya lo dijo, no lo repreguntes).
 - **Formato**, si no es obvio: post, historia o carrusel. Ante la duda, post.
 - **Datos concretos**, si la idea los pide: nombre del cliente, qué pasó, qué número real hay.
+- **Si es el caso de un cliente, preguntá si hay una frase textual del cliente.** Con cita →
+  `post-testimonio`; sin cita → post-feed variante Caso de éxito. La cita **no se inventa jamás**:
+  si el cliente no la dijo, no existe.
 
 Si el usuario da una idea que necesita un dato que no tiene, decilo y ofrecé la versión sin dato.
 
@@ -150,6 +182,10 @@ Recordale al usuario:
   → rompe el reconocimiento de un vistazo y el feed queda con varios nombres para lo mismo.
 - **Estimar los caracteres en vez de contarlos** → se va a tres líneas y hay que rehacer.
 - **Inventar una estadística** para que el título pegue más fuerte → prohibido, sin excepción.
+- **Usar `post-cifra` con un número que no es propio** (ajeno sin fuente o inventado) → el peor
+  error de la marca: la cifra va sola y enorme, sin nada que la sostenga.
+- **Inventar o retocar la cita de un testimonio** → si el cliente no la dijo, no existe; sin cita
+  textual la pieza va post-feed, no post-testimonio.
 - **Meter CTA en Educativo o Casos** → rompe la regla de tres de cada cuatro y la cuenta empieza
   a leerse como catálogo.
 - **Repetir en el caption lo que ya dice la pieza** → el caption amplía, no subtitula.
