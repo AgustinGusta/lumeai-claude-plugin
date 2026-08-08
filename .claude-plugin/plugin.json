@@ -1,6 +1,6 @@
 {
   "name": "lumeai-claude-plugin",
-  "version": "0.17.1",
+  "version": "0.17.2",
   "description": "Skills reutilizables de LumeAI para el ciclo de proyectos AI-native (análisis, diseño, infra, desarrollo, testing y release sobre Azure DevOps), más utilidades de marca y contenido. Corre en Claude Code y Cowork.",
   "author": { "name": "LumeAI" }
 }

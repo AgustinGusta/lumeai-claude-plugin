@@ -47,11 +47,26 @@ description: <cuándo se dispara y qué hace, con verbos-gatillo>
 Si la skill necesita archivos auxiliares, ponelos dentro de `skills/<nombre>/` y referencialos con rutas
 relativas.
 
-## Paso 2 — Bump de versión en plugin.json
+## Paso 2 — Bump de versión en plugin.json (OBLIGATORIO)
+
+**Regla dura: TODO push que cambie el contenido de una skill lleva bump de versión, aunque sea un
+cambio de una línea.** El criterio es mecánico: si el diff toca **cualquier archivo bajo `skills/`**,
+hay bump. Sin excepción por "es chico".
+
+Por qué no es negociable: el marketplace distribuye por número de versión. Si pusheás contenido
+nuevo bajo la **misma** versión, `plugin update` no detecta nada y quedan **dos contenidos distintos
+publicados bajo el mismo número** — unas máquinas con una cosa y otras con otra. Es exactamente lo
+que pasó con la 0.17.0 (salió, y un segundo push la "completó" sin bump: hubo que sacar la 0.17.1
+para que se distribuyera).
+
 Editá `.claude-plugin/plugin.json` y subí `version` con SemVer:
-- Skill nueva o cambios compatibles → **minor** (ej. `0.1.0` → `0.2.0`).
-- Fix menor de una skill → **patch**.
+- **Skill nueva o funcionalidad nueva** → **minor** (ej. `0.1.0` → `0.2.0`).
+- **Corrección o complemento** de una skill existente (incluye completar un push anterior) → **patch**
+  (ej. `0.2.0` → `0.2.1`).
 - Cambio que rompe uso previo → **major**.
+
+Si un push previo cambió una skill sin bump, el fix es sacar un **patch** que solo suba la versión,
+para que el contenido ya pusheado se distribuya.
 
 El bump es lo que hace que Claude Code detecte la actualización al hacer `plugin update`.
 
@@ -109,8 +124,9 @@ La skill queda disponible como `/lumeai-claude-plugin:<nombre>` o por auto-trigg
 ## Errores comunes (lecciones aprendidas)
 - **`author` como string en plugin.json** → el install falla en silencio ("(no content)"). Debe ser
   objeto `{"name": "LumeAI"}`. Lo cubre la validación del Paso 4.
-- **Olvidar el bump de versión** → `plugin update` no detecta cambios y la skill nueva no aparece.
-  Siempre bumpeá en el Paso 2.
+- **Olvidar el bump de versión** → `plugin update` no detecta cambios y quedan dos contenidos
+  distintos bajo la misma versión (le pasó a la 0.17.0). Si el diff toca `skills/`, hay bump, sí o
+  sí. Siempre bumpeá en el Paso 2.
 - **El push cuelga o pide password** → falta la credencial cacheada de `dev.azure.com`. Sembrala:
   helper `store` scopeado al host + `credential.https://dev.azure.com.useHttpPath false`, y una entrada
   `https://user:<PAT>@dev.azure.com` en `~/.git-credentials` (el PAT sale del MCP azure-devops).
