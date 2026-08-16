@@ -64,6 +64,9 @@ tipográfica de la plantilla, medido con la fuente real:
 post-feed y post-cifra son las plantillas más usadas: como referencia rápida, **40 caracteres**
 es el número a tener en la cabeza.
 
+Si aparece una escala tipográfica que no está en esta tabla, **no asumas un tope**: medila con la
+herramienta `Topes de texto - medición.html` del propio design system y usá el número que salga.
+
 | Elemento | Límite |
 |---|---|
 | Apoyo en post y carrusel | **72 caracteres** (caja de 644px) |
