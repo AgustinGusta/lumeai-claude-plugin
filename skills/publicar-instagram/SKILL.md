@@ -51,9 +51,21 @@ el proyecto.
 
 ## Límites duros del sistema
 
+**El título se cuenta en caracteres, no en palabras** — "8 palabras" fallaba en los dos sentidos
+(8 cortas entran holgadas, 8 largas se van a tres líneas). El tope depende de la escala
+tipográfica de la plantilla, medido con la fuente real:
+
+| Plantilla | Escala del título | 2 líneas | 3 líneas |
+|---|---|---|---|
+| post-feed, post-cifra | 92px | **40 caracteres** | 50 caracteres |
+| historia | 76px | 45 caracteres | 70 caracteres |
+| carrusel interior | 60px | 60 caracteres | 89 caracteres |
+
+post-feed y post-cifra son las plantillas más usadas: como referencia rápida, **40 caracteres**
+es el número a tener en la cabeza.
+
 | Elemento | Límite |
 |---|---|
-| Título | **8 palabras** |
 | Apoyo en post y carrusel | **72 caracteres** (caja de 644px) |
 | Apoyo en historia | **80 caracteres** (caja de 720px) |
 | Cita de testimonio (post-testimonio) | **90 caracteres** (4 líneas) |
@@ -136,8 +148,10 @@ Si la idea tiene más de un concepto, es un carrusel, no un post.
 
 ### Paso 2 — Redactar
 
-- **Título:** hasta 8 palabras. Que diga algo, no que anuncie el tema. "Fotos sueltas no son un
-  catálogo" funciona; "La importancia del catálogo digital" no.
+- **Título:** contá los caracteres contra la tabla de "Límites duros del sistema" según la
+  plantilla (40c en post-feed/post-cifra, 45c en historia, 60c en carrusel interior). Que diga
+  algo, no que anuncie el tema. "Fotos sueltas no son un catálogo" funciona; "La importancia del
+  catálogo digital" no.
 - **Acento:** elegí vos las dos palabras que van en color y decilas explícitamente en el prompt.
   Si no las indicás, Claude Design elige y suele pintar media frase.
 - **Apoyo:** una idea, dentro del tope. Contá los caracteres y mostrá el número.
@@ -197,8 +211,8 @@ Línea: [qué significa, hasta 75 caracteres]
    (`#comerciosuruguay`, no `#business`), o ninguno.
 
 3. **La verificación**, en una línea, con los campos que correspondan a la plantilla:
-   título de N palabras y apoyo de N/72 caracteres en post; cita de N/90 en testimonio;
-   línea de N/75 en cifra; título de N/60 en historia interactiva.
+   título de N/40 (o N/45, N/60 según plantilla) y apoyo de N/72 caracteres en post; cita de
+   N/90 en testimonio; línea de N/75 en cifra; título de N/60 en historia interactiva.
 
 ## Cierre
 
@@ -233,3 +247,6 @@ Recordale al usuario:
 - **Repetir colores y medidas en el prompt** → ya están en el design system; repetirlos genera
   deriva.
 - **Escribirle a desarrolladores** → el público son dueños de comercios.
+- **Usar el tope viejo de "8 palabras" para el título** → ese criterio quedó reemplazado por el
+  tope en caracteres de la tabla de arriba (2026-08-15): 8 palabras cortas entran holgadas, 8
+  largas se van a tres líneas.
