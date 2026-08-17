@@ -1,22 +1,22 @@
 ---
 name: publicar-skill-lumeai
-description: Agrega y publica una skill nueva (o actualiza una existente) dentro del plugin lumeai-claude-plugin. Úsala cuando el usuario pida crear, agregar, publicar, subir o actualizar una skill del plugin de LumeAI en Claude Code. Automatiza scaffold + validación + bump de versión + commit/push a Azure DevOps + refresco del plugin, evitando los tropiezos conocidos (author como objeto, credenciales, versión).
+description: Agrega y publica una skill nueva (o actualiza una existente) dentro del plugin lumeai-claude-plugin. Úsala cuando el usuario pida crear, agregar, publicar, subir o actualizar una skill del plugin de LumeAI en Claude Code. Automatiza scaffold + validación + bump de versión + commit/push a GitHub + refresco del plugin, evitando los tropiezos conocidos (author como objeto, credenciales, versión).
 ---
 
 # Publicar una skill en lumeai-claude-plugin
 
 Esta skill deja una skill nueva **instalada y disponible** en Claude Code, con el mínimo de pasos.
-Se apoya en que `lumeai-claude-plugin` **ya es un plugin/marketplace** publicado en Azure DevOps
-(org `LumeAI`, proyecto `LumeAI-Base`, repo `lumeai-claude-plugin`). Agregar una skill **no** es
+Se apoya en que `lumeai-claude-plugin` **ya es un plugin/marketplace** publicado en **GitHub**
+(`AgustinGusta/lumeai-claude-plugin`), que es de donde el marketplace `lumeai` instala. Agregar una skill **no** es
 una instalación nueva: es contenido nuevo dentro del mismo plugin.
 
 ## Requisitos (verificar antes de empezar)
 - Estás en **Claude Code** (no Cowork), con `git` disponible.
 - Tenés el repo `lumeai-claude-plugin` clonado localmente (contiene `.claude-plugin/plugin.json`,
   `.claude-plugin/marketplace.json` y `skills/`). Si no, cloná:
-  `git clone https://dev.azure.com/LumeAI/LumeAI-Base/_git/lumeai-claude-plugin`
-- La credencial de `dev.azure.com` está cacheada para push no-interactivo (helper `store` scopeado a
-  ese host + `useHttpPath=false`). Si el push pide password, ver **Errores comunes**.
+  `git clone https://github.com/AgustinGusta/lumeai-claude-plugin.git`
+- La credencial de **GitHub** está cacheada en Git Credential Manager, así que el push es
+  no-interactivo. Si el push pide password, ver **Errores comunes**.
 
 ## REGLA DE ORO: mostrá el plan y esperá OK antes de escribir/pushear
 Antes de crear archivos o pushear, mostrale al usuario **qué skill vas a crear** (nombre, descripción,
@@ -88,12 +88,11 @@ python -c "import re,sys,os;n='<nombre>';p=f'skills/{n}/SKILL.md';t=open(p,encod
 grep -rn "__PROJECT__\|{{PROJECT}}\|{{project}}\|<nombre-kebab-case>\|<Título legible>" skills/<nombre> && echo "REVISAR placeholders" || echo "sin placeholders"
 ```
 
-## Paso 5 — Commit y push a Azure DevOps
-El PAT ya está cacheado; el push es no-interactivo. Deshabilitá prompts para que no cuelgue:
+## Paso 5 — Commit y push a GitHub
+La credencial ya está cacheada en Git Credential Manager; el push es no-interactivo:
 
 ```bash
 cd <repo>
-export GIT_TERMINAL_PROMPT=0
 git add skills/<nombre>/ .claude-plugin/plugin.json README.md
 git commit -m "Add skill <nombre> (vX.Y.Z)"
 git push origin main
@@ -127,9 +126,13 @@ La skill queda disponible como `/lumeai-claude-plugin:<nombre>` o por auto-trigg
 - **Olvidar el bump de versión** → `plugin update` no detecta cambios y quedan dos contenidos
   distintos bajo la misma versión (le pasó a la 0.17.0). Si el diff toca `skills/`, hay bump, sí o
   sí. Siempre bumpeá en el Paso 2.
-- **El push cuelga o pide password** → falta la credencial cacheada de `dev.azure.com`. Sembrala:
-  helper `store` scopeado al host + `credential.https://dev.azure.com.useHttpPath false`, y una entrada
-  `https://user:<PAT>@dev.azure.com` en `~/.git-credentials` (el PAT sale del MCP azure-devops).
+- **El push cuelga o pide password** → Git Credential Manager no tiene credencial de GitHub, y en
+  Claude Code el prompt está deshabilitado (`GIT_TERMINAL_PROMPT=0`, `GCM_INTERACTIVE=never`), así que
+  falla con `could not read Password`. Reintentá habilitando el flow interactivo, que abre el navegador:
+  `$env:GIT_TERMINAL_PROMPT=1; $env:GCM_INTERACTIVE='auto'; git push origin main`.
+  Corré ese push **en background**, porque puede quedar esperando a que el usuario elija la cuenta.
+- **Confundir este repo con uno de Azure DevOps** → el plugin se publica en **GitHub**. Los repos de
+  proyecto y las wikis sí viven en ADO, pero este no.
 - **Usar el slash `/plugin` esperando flags** → `--scope` y demás flags solo existen en el CLI
   `claude plugin ...`. El slash `/plugin` es interactivo (menú).
 - **`name` del frontmatter != carpeta** → la skill no se descubre bien. Deben coincidir.
