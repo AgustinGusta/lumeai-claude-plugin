@@ -1,6 +1,6 @@
 ---
 name: crear-pagina-wiki
-description: Crea o edita páginas de la wiki de Azure DevOps respetando las convenciones del repo. Úsala cuando el usuario pida agregar una página a la wiki, documentar algo en la wiki, crear una sección nueva, mover o renombrar páginas, o actualizar una página existente. Cubre el naming de archivos (%2D, .order), el formato que hace que la página sea recuperable por search_wiki, el flujo de git contra ADO y la verificación posterior. Corre en Claude Code con el repo de wiki clonado y el MCP de ADO.
+description: Crea o edita páginas de la wiki de Azure DevOps respetando las convenciones del repo. Úsala cuando el usuario pida agregar una página a la wiki, documentar algo en la wiki, crear una sección nueva, mover o renombrar páginas, o actualizar una página existente. Cubre el naming de archivos (%2D, .order), los links por título, el flujo de git contra ADO y la verificación posterior. Corre en Claude Code con el repo de wiki clonado y el MCP de ADO.
 ---
 
 # Crear o editar una página de wiki
@@ -17,7 +17,7 @@ Esta skill cubre las convenciones ya verificadas contra el render real de ADO.
 ## Guardrails (fijos)
 - **Nunca pises contenido existente.** Antes de reescribir una página, leela entera. Si tiene contenido que no vas a conservar, avisá y preguntá — no lo borres en silencio.
 - **No inventes.** Si documentás una herramienta, comando o URL, verificalo antes. Un comando de instalación inventado es peor que no tener la página.
-- **Verificá con `get_page_content`, nunca con `search_wiki`.** El índice de búsqueda de ADO **tarda** en actualizarse tras un push; buscar una página recién creada devuelve contenido viejo o nada.
+- **Verificá leyendo la página con `get_page_content`.** No confirmes por búsqueda: el índice de ADO tarda en actualizarse tras un push y devuelve contenido viejo.
 - **El contenido va en español**, siguiendo el tono del resto de la wiki (rioplatense, directo).
 
 ## Paso 0 — Elegir el mecanismo
@@ -56,10 +56,9 @@ Una página con subpáginas necesita **archivo + carpeta del mismo nombre**: `He
 - Si es larga, arrancá con `[[_TOC_]]`.
 - **Links internos:** usan el **título real** con `%20` por espacio, **no** el nombre de archivo:
   `[Cómo agregar una herramienta](/Herramientas/Cómo%20agregar%20una%20herramienta)`
-- **Escribí para que sea recuperable.** `search_wiki` es **léxico** (matchea palabras, no significado) y devuelve **fragmentos sueltos**, no la página entera. Entonces:
-  - Cada línea tiene que entenderse sola. Nada de "esta herramienta hace X" refiriéndose a un título de más arriba: si ese fragmento sale solo en un resultado, no dice nada.
-  - Sembrá el vocabulario que la persona usaría de verdad al describir la tarea, con sinónimos y forma coloquial.
-- **Si la página habla *sobre* la wiki** (convenciones, índices, meta) **no incluyas frases de búsqueda reales**, ni entre comillas como ejemplo: el match exacto la hace ganar y tapa a la página que corresponde. Describí el patrón en abstracto.
+- **Escribí para que se lea.** La wiki la leen personas navegando, no un agente buscando: prioridad a que se entienda de un vistazo, no a repetir palabras clave.
+- **Toda página nueva tiene que quedar enlazada** desde su índice padre. Si no, solo se llega por el sidebar y en la práctica no existe.
+- **Empezá por el problema que resuelve**, no por la descripción formal. Y si hay un límite o una alternativa mejor, decilo.
 
 > Si la página que estás creando es una **herramienta del catálogo**, el formato específico
 > (plantilla, valores del campo Estado, cómo redactar "Cuándo usarla") vive en la wiki, en
@@ -77,6 +76,8 @@ template.net
 ```
 
 Si la página no está en `.order` igual existe, pero queda al final y desordenada.
+
+> Esto **incluye a `Home`**. ADO no le da tratamiento especial: si no la ponés en el `.order` de la raíz, la página de entrada de la wiki aparece última en el sidebar.
 
 Si la sección tiene una página índice (tipo `Herramientas.md`), **agregá también la fila ahí**. Una página nueva que nadie linkea solo se encuentra por búsqueda.
 
@@ -105,19 +106,24 @@ wiki → get_page, path=/LaSección, recursionLevel=OneLevel
 
 Revisá que cada `path` sea el título esperado (no uno con guiones donde iban espacios) y que el orden coincida con `.order`. Para el contenido, `get_page_content`.
 
-## Paso 6 — Probar que se encuentra
+## Paso 6 — Chequear los links
 
-Una página que nadie recupera es una página que no existe, y **nadie se entera**: el equipo consulta la wiki por búsqueda, no navegando, así que un fallo de indexación es invisible.
+Los links rotos no dan error: llevan a una página vacía. Y como van por **título** y no por nombre de archivo, es el error más fácil de cometer.
 
-Probá con `search_wiki` **una consulta en lenguaje natural**, como la escribiría un compañero — no el título de la página. La página nueva debería salir primera. Si no sale, le falta vocabulario: volvé al Paso 2.
+Listá los links internos de la wiki y confirmá que cada destino existe:
 
-Por el retraso del índice, esta prueba **puede requerir esperar** después del push. Si devuelve contenido viejo (comparable por `contentId`), todavía no indexó: no es un fallo de la página.
+```bash
+grep -rhoE "\]\(/[^)]*\)" --include="*.md" . | sort -u
+```
+
+Compará contra los `path` que devuelve `get_page` con `recursionLevel=Full`. Cualquier link que use guiones donde el título tiene espacios está roto.
 
 ## Errores comunes
 - **Reescribir una página y perder lo que ya tenía** → leela entera antes de tocarla.
+- **Mover una carpeta sin reescribir los links que apuntaban ahí** → después de cualquier `git mv`, corré el chequeo del Paso 6 sobre toda la wiki, no solo sobre lo que moviste.
 - **Guion literal sin `%2D`** → el título sale con espacio en vez de guion.
 - **Olvidar el `.order`** → la página queda suelta al final del sidebar.
 - **Linkear con el nombre de archivo** (`/Herramientas/frontend%2Ddesign`) → el link va con el **título** (`/Herramientas/frontend-design`).
-- **Crear la subpágina sin agregarla al índice padre** → solo se llega por búsqueda.
+- **Crear la subpágina sin agregarla al índice padre** → queda huérfana; en la práctica nadie la encuentra.
 - **Dar por fallido un push por el `fatal:` de GCM** → mirá la línea del rango de commits.
-- **Verificar con `search_wiki` recién pusheado** → el índice va atrasado; usá `get_page_content`.
+- **Confirmar por búsqueda una página recién pusheada** → el índice de ADO va atrasado; leé la página con `get_page_content`.
