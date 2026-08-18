@@ -1,6 +1,6 @@
 ---
 name: crear-pagina-wiki
-description: Crea o edita páginas de la wiki de Azure DevOps respetando las convenciones del repo. Úsala cuando el usuario pida agregar una página a la wiki, documentar algo en la wiki, crear una sección nueva, mover o renombrar páginas, o actualizar una página existente. Cubre el naming de archivos (%2D, .order), los links por título, el flujo de git contra ADO y la verificación posterior. Corre en Claude Code con el repo de wiki clonado y el MCP de ADO.
+description: Crea o edita páginas de la wiki de Azure DevOps respetando las convenciones del repo. Úsala cuando el usuario pida agregar una página a la wiki, documentar algo en la wiki, crear una sección nueva, mover o renombrar páginas, o actualizar una página existente. Cubre el naming de archivos (%2D, .order), los links por título, el flujo de git contra ADO y la verificación posterior. EXCEPCIÓN: si lo que se agrega es una herramienta al catálogo de Herramientas (un plugin, una skill, un MCP server), usá agregar-herramienta-wiki en vez de esta. Corre en Claude Code con el repo de wiki clonado y el MCP de ADO.
 ---
 
 # Crear o editar una página de wiki
@@ -60,10 +60,9 @@ Una página con subpáginas necesita **archivo + carpeta del mismo nombre**: `He
 - **Toda página nueva tiene que quedar enlazada** desde su índice padre. Si no, solo se llega por el sidebar y en la práctica no existe.
 - **Empezá por el problema que resuelve**, no por la descripción formal. Y si hay un límite o una alternativa mejor, decilo.
 
-> Si la página que estás creando es una **herramienta del catálogo**, el formato específico
-> (plantilla, valores del campo Estado, cómo redactar "Cuándo usarla") vive en la wiki, en
-> `/Herramientas/Cómo agregar una herramienta`. Leela antes de escribir: acá está la mecánica
-> del wiki, allá está la política del catálogo.
+> Si lo que estás agregando es una **herramienta del catálogo** (un plugin, una skill, un MCP
+> server), **esta no es la skill**: usá `agregar-herramienta-wiki`, que además de la mecánica
+> trae la plantilla, la regla para elegir el tipo y los cuatro índices que hay que actualizar.
 
 ## Paso 3 — Actualizar `.order` y el índice padre
 

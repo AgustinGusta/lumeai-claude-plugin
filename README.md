@@ -30,6 +30,7 @@ Versionado con SemVer.
 | `release-version` | Fase 6: corta un release — propone SemVer, PR develop→main, tag, release notes auto desde las US Closed, y deploy a prod (tag + approval). Dos gates humanos; no cierra Epics. |
 | `auditar-repo` | Gobernanza (transversal): audita que un proyecto siga el estándar (estructura, placeholders, pipelines, secretos, design system, board). Read-only; reporta pass/warning/fail contra `lumeai-base`. |
 | `publicar-skill-lumeai` | Agrega/publica una skill nueva en este plugin: scaffold + validación + bump de versión + commit/push a **GitHub** + refresco del plugin. |
+| `agregar-herramienta-wiki` | Transversal: agrega una herramienta al catálogo de la wiki — la ubica en el dominio y tipo correctos, usa la plantilla del catálogo y actualiza los cuatro índices que la hacen visible. |
 | `crear-pagina-wiki` | Transversal: crea o edita páginas de la wiki de ADO respetando las convenciones del repo (naming `%2D`, `.order`, links por título), el formato que las hace recuperables por `search_wiki`, el push a `wikiMaster` y la verificación posterior. |
 | `publicar-instagram` | Convierte una idea en una publicación lista para el Instagram de Lume: elige el pilar, redacta el texto dentro de los límites del design system (título, apoyo, caption) y entrega el prompt para Claude Design + el caption. Corre en Cowork; no necesita MCP. |
 
