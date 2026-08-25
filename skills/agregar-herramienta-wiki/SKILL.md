@@ -22,12 +22,27 @@ El catálogo lo lee **gente navegando la wiki**, no un agente buscando. La vara 
 
 Antes de escribir, confirmá contra una fuente real:
 
-- **Si es del marketplace oficial**, el catálogo local tiene el nombre, la descripción, el autor y el homepage:
+- **Marketplace de plugins**: el catálogo local tiene nombre, descripción, autor y homepage.
   `~/.claude/plugins/marketplaces/claude-plugins-official/.claude-plugin/marketplace.json`
-- **Si es una skill ya instalada**, leé su `SKILL.md` en `~/.claude/skills/<nombre>/` o dentro del plugin.
-- **Si es externa**, entrá al sitio.
+- **Registro abierto de skills**: `npx skills find <término>` devuelve owner, repo y cantidad de instalaciones.
+- **Skill ya instalada**: leé su `SKILL.md` en `~/.claude/skills/<nombre>/` o dentro del plugin.
+- **Herramienta externa**: entrá al sitio.
 
-Si no aparece en el marketplace oficial, **el comando `/plugin install` no va a funcionar**: averiguá cómo se instala de verdad antes de documentarlo.
+## Paso 0.5 — Elegir el comando de instalación correcto
+
+Hay **dos registros distintos** y cada uno tiene su comando. Confundirlos produce un comando que falla:
+
+| Origen | Comando |
+|---|---|
+| Marketplace de plugins | `/plugin install <nombre>@claude-plugins-official` |
+| Registro abierto de skills | `npx skills add <owner>/<repo>@<skill> -g -y` |
+| Herramienta web | ninguno; se usa desde el navegador |
+
+**Una skill instalada localmente no implica que el equipo la tenga.** Las que viven sueltas en `~/.claude/skills/` sin origen conocido no las puede instalar nadie más. Antes de marcarla como no distribuible, buscala en el registro abierto con `npx skills find`: suele estar ahí.
+
+Si la buscaste y aparece con un nombre parecido, **verificá que sea la misma** y no una homónima: compará la descripción del registro contra la del `SKILL.md` local. Si difieren, documentá la del registro y dejalo anotado en Notas.
+
+Recién si no está en ningún registro corresponde `⚠️ pendiente de distribuir al equipo`.
 
 ## Paso 1 — Elegir dominio y tipo
 
@@ -107,7 +122,8 @@ wiki → get_page, path=/Herramientas/<Dominio>/<Tipo>, recursionLevel=OneLevel
 Chequeá que el `path` de la página nueva sea el título esperado (no uno con guiones donde iban espacios).
 
 ## Errores comunes
-- **Inventar el comando de instalación** → verificalo contra el marketplace; si no está ahí, ese comando falla.
+- **Inventar el comando de instalación** → verificalo contra el registro que corresponda; `/plugin install` solo sirve para el marketplace de plugins.
+- **Marcar como no distribuible sin buscar** → que esté suelta en tu máquina no significa que no exista en el registro abierto.
 - **Guion literal sin `%2D`** → el título sale con espacio en vez de guion.
 - **Actualizar solo un índice** → son cuatro; si falta alguno la herramienta queda medio invisible.
 - **Linkear con el nombre de archivo** → los links van por título.
