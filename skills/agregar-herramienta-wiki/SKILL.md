@@ -53,6 +53,7 @@ Hay **dos registros distintos** y cada uno tiene su comando. Confundirlos produc
 |---|---|
 | Marketplace de plugins | `/plugin install <nombre>@claude-plugins-official` |
 | Registro abierto de skills | `npx skills add <owner>/<repo>@<skill> -g -y` |
+| Recurso (repo de archivos) | ninguno; se descarga el archivo y se deja en el proyecto |
 | Herramienta web | ninguno; se usa desde el navegador |
 
 **Una skill instalada localmente no implica que el equipo la tenga.** Las que viven sueltas en `~/.claude/skills/` sin origen conocido no las puede instalar nadie más. Antes de marcarla como no distribuible, buscala en el registro abierto con `npx skills find`: suele estar ahí.
@@ -98,9 +99,12 @@ Para el tipo, **el mecanismo de instalación no sirve para clasificar** (casi to
 | **Skills** | Una skill: incluida en Claude Code o instalada suelta |
 | **Plugins** | Skills, comandos o hooks empaquetados |
 | **MCP servers** | Herramientas nuevas para Claude vía MCP |
+| **Recursos** | Archivos que se copian al proyecto o se suben al runtime; el agente los consume como contexto. **No se instalan ni se ejecutan** |
 | **Herramientas web** | No se integra con Claude; se usa desde el navegador |
 
 Un plugin que **trae un MCP server adentro** va en **MCP servers**: se instala como plugin, pero lo que aporta son herramientas MCP.
+
+**Si no se instala ni se ejecuta, es un Recurso.** Colecciones de `DESIGN.md`, bibliotecas de prompts, guías de referencia: cosas que el agente lee. Si al escribir la línea de instalación te sale "no se instala, se descarga y se deja en el repo", el tipo es Recursos.
 
 Si el dominio o el tipo no existen, creá la carpeta con su página índice y sumala al `.order` del nivel de arriba.
 
@@ -113,7 +117,7 @@ En `Herramientas/<Dominio>/<Tipo>/`, con el nombre de archivo en la convención 
 # nombre-de-la-herramienta
 
 **Tipo:** plugin oficial de Anthropic / MCP server / skill / herramienta web externa · **Estado:** disponible
-**Instalación:** `/plugin install nombre@claude-plugins-official`
+**Instalación:** `/plugin install nombre@claude-plugins-official` — o cómo se obtiene, si es un Recurso
 **Sitio:** https://...
 
 **Cuándo usarla:** los casos concretos en que conviene.
