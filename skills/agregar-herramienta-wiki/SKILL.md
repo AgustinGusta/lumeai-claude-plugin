@@ -20,13 +20,30 @@ El catálogo lo lee **gente navegando la wiki**, no un agente buscando. La vara 
 
 ## Paso 0 — Verificar qué es
 
-Antes de escribir, confirmá contra una fuente real:
+Son **dos verificaciones distintas** y hay que hacer las dos. Saltearse la segunda es el error más caro de esta skill.
+
+### 0.a — Que existe y cómo se instala
 
 - **Marketplace de plugins**: el catálogo local tiene nombre, descripción, autor y homepage.
   `~/.claude/plugins/marketplaces/claude-plugins-official/.claude-plugin/marketplace.json`
 - **Registro abierto de skills**: `npx skills find <término>` devuelve owner, repo y cantidad de instalaciones.
-- **Skill ya instalada**: leé su `SKILL.md` en `~/.claude/skills/<nombre>/` o dentro del plugin.
 - **Herramienta externa**: entrá al sitio.
+
+### 0.b — Qué hace de verdad: abrila
+
+Lo anterior te da **metadatos**. No te dice qué hace la herramienta. Para eso hay que abrirla:
+
+- **Skills**: instalala y leé su `SKILL.md` completo (`~/.claude/skills/` o `~/.agents/skills/`).
+- **Plugins y MCP servers**: leé el README del repo o la documentación del homepage.
+
+Y respondé dos preguntas antes de escribir una línea:
+
+1. **¿Qué produce?** ¿Código, un análisis, un archivo, una imagen?
+2. **¿Qué necesita el runtime para que funcione?** Si produce imágenes, hace falta un runtime que las genere — y **Claude Code no genera imágenes**. Si depende de algo que el equipo no tiene, eso va en "Cuándo NO usarla", no enterrado en Notas.
+
+> **El nombre miente.** `image-to-code` de la colección `taste-skill` suena a que partís de un screenshot propio y te devuelve código. En realidad **genera** las imágenes de referencia primero y después las codea, así que necesita generación de imágenes. Se documentó al revés por confiar en el nombre.
+
+**Con colecciones, no alcanza con leer la lista.** `taste-skill` son 14 skills; se documentaron sin abrir ninguna, y tres de las cuatro que se recomendaron como usables no funcionaban en Claude Code. Si no vas a abrirlas todas, abrí las que vayas a recomendar y decí explícitamente cuáles no revisaste.
 
 ## Paso 0.5 — Elegir el comando de instalación correcto
 
@@ -149,6 +166,8 @@ Chequeá que el `path` de la página nueva sea el título esperado (no uno con g
 
 ## Errores comunes
 - **Inventar el comando de instalación** → verificalo contra el registro que corresponda; `/plugin install` solo sirve para el marketplace de plugins.
+- **Documentar desde la descripción del registro sin abrir la herramienta** → los nombres y los blurbs mienten; abrila y fijate qué produce y qué necesita para correr.
+- **No chequear si el runtime del equipo la soporta** → una herramienta que necesita generar imágenes no sirve en Claude Code, por más bien documentada que esté.
 - **Marcar como no distribuible sin buscar** → que esté suelta en tu máquina no significa que no exista en el registro abierto.
 - **Guion literal sin `%2D`** → el título sale con espacio en vez de guion.
 - **Actualizar solo un índice** → son cuatro; si falta alguno la herramienta queda medio invisible.
