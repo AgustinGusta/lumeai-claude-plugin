@@ -54,6 +54,7 @@ Hay **dos registros distintos** y cada uno tiene su comando. Confundirlos produc
 | Marketplace de plugins | `/plugin install <nombre>@claude-plugins-official` |
 | Registro abierto de skills | `npx skills add <owner>/<repo>@<skill> -g -y` |
 | Recurso (repo de archivos) | ninguno; se descarga el archivo y se deja en el proyecto |
+| Librería de componentes | según el paquete: `npm install`, `npx shadcn add ...`, o descarga manual |
 | Herramienta web | ninguno; se usa desde el navegador |
 
 **Una skill instalada localmente no implica que el equipo la tenga.** Las que viven sueltas en `~/.claude/skills/` sin origen conocido no las puede instalar nadie más. Antes de marcarla como no distribuible, buscala en el registro abierto con `npx skills find`: suele estar ahí.
@@ -100,11 +101,16 @@ Para el tipo, **el mecanismo de instalación no sirve para clasificar** (casi to
 | **Plugins** | Skills, comandos o hooks empaquetados |
 | **MCP servers** | Herramientas nuevas para Claude vía MCP |
 | **Recursos** | Archivos que se copian al proyecto o se suben al runtime; el agente los consume como contexto. **No se instalan ni se ejecutan** |
+| **Librerías** | Paquetes de componentes que se instalan en el proyecto. **Terminan en el producto del cliente**, no son herramientas del agente |
 | **Herramientas web** | No se integra con Claude; se usa desde el navegador |
 
 Un plugin que **trae un MCP server adentro** va en **MCP servers**: se instala como plugin, pero lo que aporta son herramientas MCP.
 
 **Si no se instala ni se ejecuta, es un Recurso.** Colecciones de `DESIGN.md`, bibliotecas de prompts, guías de referencia: cosas que el agente lee. Si al escribir la línea de instalación te sale "no se instala, se descarga y se deja en el repo", el tipo es Recursos.
+
+**Si el código termina en el producto del cliente, es una Librería.** Componentes de UI, paquetes de npm, packs de animaciones. La diferencia con Recursos: un recurso lo lee el agente y no viaja al bundle; una librería sí.
+
+> ⚠️ **En Librerías, verificá la licencia comercial.** Es el único tipo cuyo código se entrega dentro del sitio de un cliente que paga. "Open source" no es una licencia: buscá el archivo `LICENSE` y decilo en la página. Si no está declarada, escribilo en "Cuándo NO usarla" — no lo escondas en Notas. Mirá también **cómo se distribuye**: un registro de paquetes da versionado e integridad; una carpeta de Drive no.
 
 Si el dominio o el tipo no existen, creá la carpeta con su página índice y sumala al `.order` del nivel de arriba.
 
@@ -172,6 +178,7 @@ Chequeá que el `path` de la página nueva sea el título esperado (no uno con g
 - **Inventar el comando de instalación** → verificalo contra el registro que corresponda; `/plugin install` solo sirve para el marketplace de plugins.
 - **Documentar desde la descripción del registro sin abrir la herramienta** → los nombres y los blurbs mienten; abrila y fijate qué produce y qué necesita para correr.
 - **No chequear si el runtime del equipo la soporta** → una herramienta que necesita generar imágenes no sirve en Claude Code, por más bien documentada que esté.
+- **Documentar una Librería sin mirar la licencia** → es el único tipo que termina en el producto del cliente; los términos comerciales pesan tanto como las features.
 - **Marcar como no distribuible sin buscar** → que esté suelta en tu máquina no significa que no exista en el registro abierto.
 - **Guion literal sin `%2D`** → el título sale con espacio en vez de guion.
 - **Actualizar solo un índice** → son cuatro; si falta alguno la herramienta queda medio invisible.
