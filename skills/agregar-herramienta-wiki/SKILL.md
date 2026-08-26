@@ -46,7 +46,33 @@ Recién si no está en ningún registro corresponde `⚠️ pendiente de distrib
 
 ## Paso 1 — Elegir dominio y tipo
 
-El árbol es **dominio → tipo → herramienta**. Dominios actuales: `Diseño y UI`, `Desarrollo`, `Seguridad`, `SEO y calidad web`, `Documentos`.
+El árbol es **dominio → tipo → herramienta**.
+
+### Elegir el dominio: por el momento de uso, no por lo que mide
+
+Esta es la parte que más se erra, y el error no se nota hasta que alguien no encuentra la herramienta.
+
+**La regla: clasificá por lo que la persona está haciendo cuando la necesita, no por la dimensión que la herramienta evalúa.**
+
+Completá esta frase con la herramienta en la mano:
+
+> *"Estoy ______ y necesito esto."*
+
+Lo que va en el hueco es el dominio. Si la respuesta natural es "estoy por entregar un front y quiero revisarlo", el dominio es **Diseño y UI** — aunque la herramienta mida accesibilidad, que suena a calidad web.
+
+**Ya pasó:** `web-design-guidelines` se archivó en `SEO y calidad web` porque mide accesibilidad y cumplimiento de WCAG. Pero nadie la busca pensando "accesibilidad": la busca cuando está por entregar una interfaz. Hubo que moverla a `Diseño y UI`. La señal de que estaba mal fue que alguien que había participado de documentarla igual no la encontró.
+
+| Dominio | La persona está... |
+|---|---|
+| `Diseño y UI` | diseñando, maquetando o revisando una interfaz |
+| `Desarrollo` | escribiendo, revisando o depurando código |
+| `Seguridad` | buscando o previniendo vulnerabilidades |
+| `SEO y calidad web` | midiendo un sitio **ya publicado** |
+| `Documentos` | armando material comercial o presentaciones |
+
+**Si encaja en dos dominios**, elegí aquel donde alguien la buscaría **primero**, y usá el campo "Cuándo NO usarla" para linkear al otro. No la dupliques.
+
+### Elegir el tipo
 
 Para el tipo, **el mecanismo de instalación no sirve para clasificar** (casi todas usan `/plugin install`). La regla es qué aporta:
 
@@ -128,4 +154,5 @@ Chequeá que el `path` de la página nueva sea el título esperado (no uno con g
 - **Actualizar solo un índice** → son cuatro; si falta alguno la herramienta queda medio invisible.
 - **Linkear con el nombre de archivo** → los links van por título.
 - **Clasificar por cómo se instala** → casi todas se instalan igual; clasificá por lo que aportan.
+- **Elegir el dominio por lo que la herramienta mide** → clasificá por lo que la persona está haciendo cuando la busca. Una herramienta de accesibilidad que se usa al terminar un front va en Diseño y UI, no en calidad web.
 - **Saltear "Cuándo NO usarla"** → es el campo que evita que alguien pierda una tarde.
