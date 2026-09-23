@@ -1,0 +1,28 @@
+# Herramientas del proceso de demos web (todas gratis)
+
+## Necesarias
+
+| Herramienta | Para qué | Setup (una vez) |
+|---|---|---|
+| Node 24 | Scripts y build | ya instalado |
+| Playwright MCP / Chrome DevTools MCP | Capturas, extracción de textos/colores, Lighthouse | plugins de Claude Code |
+| Cloudflare Pages + `wrangler` | Hosting de las demos (gratis, uso comercial permitido) | crear cuenta en dash.cloudflare.com y correr `! npx wrangler login` |
+| Skills `frontend-design`, `ui-ux-pro-max` | Dirección visual | ya instaladas |
+
+## Recomendadas
+
+| Herramienta | Para qué | Setup |
+|---|---|---|
+| PageSpeed Insights API | Puntajes de Google (antes/después) para el mail y para priorizar prospectos | Crear API key gratis en console.cloud.google.com → "PageSpeed Insights API" → Credenciales. Guardarla como variable de entorno de usuario `PSI_API_KEY` (Windows: `setx PSI_API_KEY "..."` y reiniciar Claude Code). Sin key, la API devuelve 429. |
+| Umami de Lume (analytics.lumeai.uy) | Saber si el prospecto abrió la demo | Variables de entorno `LUME_UMAMI_USER` y `LUME_UMAMI_PASSWORD` (idealmente un usuario de Umami solo para demos). |
+| Context7 MCP | Docs actualizadas de Next.js/Tailwind mientras se programa la demo | `claude mcp add --scope user context7 -- npx -y @upstash/context7-mcp` |
+
+## Opcionales
+
+| Herramienta | Para qué |
+|---|---|
+| Firecrawl MCP (tier gratis con API key) | Bajar sitios grandes a markdown de una. Para sitios chicos, Playwright alcanza. |
+| Hunter.io (25 búsquedas/mes gratis) | Encontrar el mail cuando el sitio no lo muestra. |
+| Wappalyzer (extensión) | Ver la tecnología de un sitio a mano. `evaluar-sitio.mjs` ya detecta las comunes. |
+| Skills `brag` / `product-launch-video` | Video corto de la demo para mandar por WhatsApp o Instagram. |
+| Unsplash / Pexels | Fotos de ambientación cuando las del cliente no sirven. |

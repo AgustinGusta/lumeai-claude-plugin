@@ -33,6 +33,9 @@ Versionado con SemVer.
 | `agregar-herramienta-wiki` | Transversal: agrega una herramienta al catálogo de la wiki — la ubica en el dominio y tipo correctos, usa la plantilla del catálogo y actualiza los cuatro índices que la hacen visible. |
 | `crear-pagina-wiki` | Transversal: crea o edita páginas de la wiki de ADO respetando las convenciones del repo (naming `%2D`, `.order`, links por título), el formato que las hace recuperables por `search_wiki`, el push a `wikiMaster` y la verificación posterior. |
 | `publicar-instagram` | Convierte una idea en una publicación lista para el Instagram de Lume: elige el pilar, redacta el texto dentro de los límites del design system (título, apoyo, caption) y entrega el prompt para Claude Design + el caption. Corre en Cowork; no necesita MCP. |
+| `buscar-prospectos-web` | Comercial: busca empresas de un rubro/zona con webs flojas, las puntúa (señales automáticas + revisión visual), encuentra el contacto y las carga en el pipeline de prospectos web. |
+| `demo-web` | Comercial: a partir de la URL de un prospecto, captura y audita su sitio, lo rediseña sobre `webb-institucional` conservando marca y contenido, lo publica como demo privada (noindex, marcada como propuesta de Lume) en Cloudflare Pages y deja el mail + antes/después listos. |
+| `seguimiento-prospectos-web` | Comercial: registra envíos y respuestas, dice a quién hacerle seguimiento hoy (con el texto listo), muestra quién abrió la demo (Umami) y limpia demos vencidas. |
 
 ## Requisitos
 - **MCP oficial de Azure DevOps** (`@azure-devops/mcp`) conectado sobre la org `LumeAI` (en Code y/o Cowork).
