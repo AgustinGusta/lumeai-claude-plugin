@@ -7,6 +7,15 @@ description: Gestiona el pipeline de prospectos a los que Lume les mandó (o les
 
 Mantiene el pipeline al día para que ningún prospecto quede colgado y nadie reciba mails de más.
 
+## Antes de empezar: ¿dónde está abierta la sesión?
+
+Si el directorio de trabajo de esta sesión **no** es la carpeta de prospectos web
+(`<Lume>/01-Comercial/Prospectos/Webs`, en la máquina de Agustín `C:\Agustin\Lume-Comercial\Prospectos\Webs`)
+ni una subcarpeta, **avisale al usuario antes de hacer nada**, corto y claro: las herramientas de
+ese repo (Impeccable, la skill `redesign-existing-projects` y las reglas de hookify) solo se activan
+si Claude Code se abre en esa carpeta; recomendale cerrar y abrir ahí. Si decide seguir igual,
+continuá y recordá que esos controles no están corriendo.
+
 ## Rutas
 
 - `pipeline.csv` y `_config.md` en `<Lume>/01-Comercial/Prospectos/Webs/` (ver `demo-web`).

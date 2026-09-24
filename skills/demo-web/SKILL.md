@@ -12,6 +12,15 @@ le pide confirmación solo en los puntos que publican algo o salen hacia afuera.
 
 Entrada: la URL del sitio actual (y, si lo hay, el `slug` del prospecto en el pipeline).
 
+## Antes de empezar: ¿dónde está abierta la sesión?
+
+Si el directorio de trabajo de esta sesión **no** es la carpeta de prospectos web
+(`<Lume>/01-Comercial/Prospectos/Webs`, en la máquina de Agustín `C:\Agustin\Lume-Comercial\Prospectos\Webs`)
+ni una subcarpeta, **avisale al usuario antes de hacer nada**, corto y claro: las herramientas de
+ese repo (Impeccable, la skill `redesign-existing-projects` y las reglas de hookify) solo se activan
+si Claude Code se abre en esa carpeta; recomendale cerrar y abrir ahí. Si decide seguir igual,
+continuá y recordá que esos controles no están corriendo.
+
 ## Rutas
 
 - **Carpeta de prospectos web:** `<Lume>/01-Comercial/Prospectos/Webs/` (en la máquina de Agustín,
@@ -75,7 +84,8 @@ productos, nosotros, contacto; máximo ~6):
 Auditoría del antes → `02-Sitio-actual/auditoria/`:
 
 - `node scripts/evaluar-sitio.mjs <url> --psi --json 02-Sitio-actual/auditoria/evaluacion.json`
-  (`--psi` solo si hay `PSI_API_KEY`; si no, corré `lighthouse_audit` del Chrome DevTools MCP en
+  (`--psi` solo si hay `PSI_API_KEY`; si no, corré `lighthouse_audit` del Chrome DevTools MCP —que
+  **no mide velocidad**: para eso `performance_start_trace`— en
   mobile y guardá los puntajes).
 - Anotá en `auditoria/resumen.md` los **3 a 5 problemas que un dueño de negocio entiende**
   (no se ve bien en el celular, tarda 8 s en cargar, dice © 2016, no aparece en Google con una
@@ -186,7 +196,7 @@ Guardá en el pipeline: `demo_url=<url> umami_id=<id> estado=demo-lista`. Uní l
 
 ## Paso 7 — Medir el después y armar el material del mail
 
-- Corré la misma medición sobre la demo publicada (PSI o `lighthouse_audit`) →
+- Corré la misma medición sobre la demo publicada (PSI; sin PSI, `lighthouse_audit` + `performance_start_trace`, porque `lighthouse_audit` no incluye velocidad) →
   `06-Entrega/despues.json`.
 - **Imagen antes/después** → `01-Comercial/antes-despues.png`: una sola imagen horizontal con la
   home mobile de antes y la de después lado a lado, con los rótulos "Hoy" y "Propuesta". Armala con
