@@ -15,7 +15,7 @@ buscar (default 10). Si no los da, usá los de `_config.md`.
 ## Antes de empezar: ¿dónde está abierta la sesión?
 
 Si el directorio de trabajo de esta sesión **no** es la carpeta de prospectos web
-(`<Lume>/01-Comercial/Prospectos/Webs`, en la máquina de Agustín `C:\Agustin\Lume-Comercial\Prospectos\Webs`)
+(`<Lume>/01-Comercial/Prospectos/Webs`, en la máquina de Agustín `C:\Agustin\Lume\01-Comercial\Prospectos\Webs`)
 ni una subcarpeta, **avisale al usuario antes de hacer nada**, corto y claro: las herramientas de
 ese repo (Impeccable, la skill `redesign-existing-projects` y las reglas de hookify) solo se activan
 si Claude Code se abre en esa carpeta; recomendale cerrar y abrir ahí. Si decide seguir igual,
