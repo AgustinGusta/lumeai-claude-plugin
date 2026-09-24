@@ -90,6 +90,10 @@ Auditoría del antes → `02-Sitio-actual/auditoria/`:
 - Anotá en `auditoria/resumen.md` los **3 a 5 problemas que un dueño de negocio entiende**
   (no se ve bien en el celular, tarda 8 s en cargar, dice © 2016, no aparece en Google con una
   descripción, el botón de WhatsApp no existe…). Esto alimenta el mail; nada de jerga técnica.
+- **Diagnóstico de diseño:** recorré el sitio viejo con la skill `redesign-existing-projects` (checklist de
+  tipografía, color, layout, estados) y anotá en `auditoria/resumen.md`, sección "Diagnóstico de diseño",
+  lo que la demo tiene que resolver. Sus sugerencias de relleno (picsum, cambiar la tipografía "por Inter")
+  no aplican: mandan las reglas de contenido real y de marca.
 
 ## Paso 3 — Diseño dibujado (el usuario elige mirando)
 
@@ -103,6 +107,26 @@ Una decisión tomada sobre algo descrito es provisional hasta verlo dibujado.
   contenido real del cliente, una de ellas **conservadora** (pegada a su marca actual pero
   ordenada), como HTML locales, y mostralas como capturas a 1440 y 390×844. El usuario elige
   viéndolas.
+
+**Moodboard (antes de dibujar):** buscá 3-4 referencias del rubro (SiteInspire, Land-book y webs de
+competidores bien hechas), capturá su portada a 1440 con Playwright y guardalas en
+`04-Diseño/referencias/<clave>/`. Ponelas en el `.pen` en un marco "Referencias" al lado de las
+direcciones: el usuario las ve, no decide sobre ellas. Al cerrar el diseño, ese marco se borra (el PNG ya
+está en `referencias/`).
+
+**Fotos de ambientación:** solo si las del cliente no alcanzan, con
+`node scripts/buscar-fotos.mjs "<consulta>" --dir <slug>/03-Material-cliente/fotos/stock --n 6`
+(requiere `PEXELS_API_KEY`). Revisalas una por una (la búsqueda trae resultados que no corresponden),
+nunca personas presentadas como su equipo ni productos que no venden, y anotalas en `04-Diseño/notas.md`.
+
+**Roles de las skills de diseño** (para que no se pisen):
+
+| Skill | Rol | Cuándo |
+|---|---|---|
+| `redesign-existing-projects` | Diagnóstico del sitio viejo | Paso 2 |
+| `frontend-design`, `ui-ux-pro-max` | Generar direcciones (paleta, tipografía, layout) | Paso 3 |
+| Impeccable | Revisar las direcciones contra sus anti-patrones antes de mostrarlas; criticar (`critique`) y pulir (`polish`) lo construido | Pasos 3 y 5 |
+| `improve-ui` | Planes de mejora sobre interfaces grandes | Proyectos de clientes, no demos |
 
 Usá `frontend-design` y `ui-ux-pro-max` para generar las direcciones. Reglas que valen siempre:
 
@@ -152,13 +176,20 @@ No se construye nada sin la dirección elegida y, si hay README, sin el spec apr
 
 ## Paso 5 — Verificar
 
-1. `node scripts/verificar-demo.mjs out "<Empresa>" <dominio-actual>` → tiene que dar OK.
+1. **Impeccable** sobre lo construido: `critique` y después `polish`; guardá la crítica en
+   `04-Diseño/critica.md` (qué se corrigió y qué no, y por qué).
+2. `npm run qa -- --diseno <slug>/04-Diseño/pantallas/<clave> --informe <slug>/06-Entrega/qa`
+   (una vez por máquina: `npx playwright install chromium`). Los **errores** (accesibilidad grave, links
+   internos rotos, vista previa al compartir incompleta) no se negocian; la comparación con el diseño
+   solo informa: mirá `diff-*.png` y explicá las diferencias grandes. Si el boilerplate de la demo no
+   tiene `npm run qa`, avisá al usuario y seguí solo con `verificar-demo.mjs`.
+3. `node scripts/verificar-demo.mjs out "<Empresa>" <dominio-actual>` → tiene que dar OK.
    Los ERROR no se negocian; los AVISO se revisan.
-2. Levantá `out/` local (`npx serve out`) y recorrela con Playwright en 390 px y 1440 px: sin
+4. Levantá `out/` local (`npx serve out`) y recorrela con Playwright en 390 px y 1440 px: sin
    scroll horizontal, sin texto cortado, menú mobile funcionando, imágenes cargando.
-3. Mirá las capturas vos mismo con ojo crítico: ¿se nota claramente mejor que el antes? ¿Se
+5. Mirá las capturas vos mismo con ojo crítico: ¿se nota claramente mejor que el antes? ¿Se
    reconoce como la misma empresa? Si la respuesta a cualquiera es "más o menos", iterá.
-4. Compará capturas de lo construido a 1440 y 390 contra `04-Diseño/pantallas/<clave>/` (o las
+6. Compará capturas de lo construido a 1440 y 390 contra `04-Diseño/pantallas/<clave>/` (o las
    capturas de la dirección elegida) y corregí las diferencias antes de pedir OK para publicar.
 
 ## Paso 6 — Publicar (pedir OK antes)
