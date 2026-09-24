@@ -31,8 +31,10 @@ Entrada: la URL del sitio actual (y, si lo hay, el `slug` del prospecto en el pi
 
 1. `node scripts/pipeline.mjs <pipeline.csv> existe <url>`: si ya existe y está en `enviado` o más
    adelante, avisá y no hagas otra demo salvo que el usuario insista.
-2. `npx wrangler whoami`: si no hay sesión de Cloudflare, pedile al usuario que corra
-   `! npx wrangler login` (abre el navegador; se hace una sola vez).
+2. `npx wrangler whoami` (desde una carpeta vacía, ver Paso 6): si no hay sesión de Cloudflare,
+   pedile al usuario que corra `! npx wrangler login` (abre el navegador). La sesión puede vencer
+   o invalidarse: si un comando dice "Not logged in", repetir el login. La cuenta tiene que tener
+   el **mail verificado** (si no, Cloudflare rechaza con el código 8000077).
 3. ¿La empresa es un buen candidato? Descartá y avisá si: la web ya es moderna y está bien (no hay
    pitch creíble), es una cadena grande o una marca con agencia, o el sitio es una tienda con
    carrito (eso es `webb-ecommerce`, fuera del alcance de una demo rápida: proponé hacer solo la
@@ -107,7 +109,10 @@ No se construye nada sin la dirección elegida y, si hay README, sin el spec apr
 
 0. Creá la rama `demo/<clave>` (después de commitear el diseño en `main`) y construí desde el
    spec aprobado.
-1. `node scripts/preparar-demo.mjs <boilerplate> <slug>/05-Código/demo` y `npm install` ahí.
+1. `node scripts/preparar-demo.mjs <boilerplate> <slug>/05-Código/demo`, después `npm install` y
+   `npx next typegen` ahí. Sin `typegen`, en una copia nueva `npm run check` falla en el
+   typecheck (`Cannot find name 'LayoutProps'`) antes de llegar a compilar: esos tipos los
+   genera Next y la copia no trae `.next/`.
 2. Leé el `AGENTS.md` del boilerplate y la guía de Next que indique **antes** de escribir código
    (la versión de Next tiene cambios que no están en tu entrenamiento).
 3. Contenido e identidad en `src/content/site.ts` (única fuente de verdad), tokens de marca en
@@ -131,9 +136,8 @@ No se construye nada sin la dirección elegida y, si hay README, sin el spec apr
    - **Formulario desactivado:** el `<form>` de contacto lleva `data-lume-demo-form`, no envía
      nada y al enviar muestra "Esto es una demo: en tu web real, este mensaje te llega por mail".
      Botones de WhatsApp / teléfono pueden quedar con sus datos reales.
-   - **Analytics:** si hay credenciales de Umami (ver `references/herramientas.md`), dá de alta el
-     sitio con `node scripts/umami.mjs alta "Demo <Empresa>" lume-<slug>.pages.dev` y usá ese id
-     en `NEXT_PUBLIC_UMAMI_WEBSITE_ID` al buildear. Así sabemos si abrieron el link.
+   - **Analytics:** se da de alta en el Paso 6, después de crear el proyecto de Cloudflare, con el
+     dominio definitivo (ver ahí).
 6. `npm run check` (lint + typecheck + build) hasta que pase limpio.
 
 ## Paso 5 — Verificar
@@ -149,16 +153,36 @@ No se construye nada sin la dirección elegida y, si hay README, sin el spec apr
 
 ## Paso 6 — Publicar (pedir OK antes)
 
-Mostrale al usuario las capturas del después y pedí OK para publicar. Con OK:
+Mostrale al usuario las capturas del después y pedí OK para publicar. Cada recurso externo
+(proyecto de Cloudflare, sitio en Umami) se nombra en el pedido de OK.
 
-```
-npx wrangler pages project create lume-<slug> --production-branch main
-npx wrangler pages deploy out --project-name lume-<slug> --branch main --commit-dirty=true
-```
+**Correr `wrangler` SIEMPRE desde una carpeta vacía** (por ejemplo una en el scratchpad), nunca
+desde la carpeta de la demo. Las versiones actuales de `wrangler` detectan Next.js y "delegan"
+Pages a Workers: reescriben `package.json`, `package-lock.json`, `next.config.ts`, `.gitignore` y
+`_headers`, instalan `@opennextjs/cloudflare`, crean `wrangler.jsonc`/`open-next.config.ts` y
+fallan en el build. Si pasa: `git checkout` de esos archivos, borrar lo creado y `npm ci`.
 
-Si el nombre está tomado, Cloudflare asigna otro subdominio: usá el que devuelva el comando.
-Si `site.url` quedó distinto de la URL real, corregilo, rebuildeá y redeployá.
-Guardá en el pipeline: `demo_url=<url> umami_id=<id> estado=demo-lista`.
+1. Crear el proyecto (única vez que va `--force`: fuerza Pages clásico en vez de Workers):
+   ```
+   cd <carpeta-vacía>
+   npx wrangler pages project create lume-<slug> --production-branch main --force
+   ```
+   Si el nombre está tomado, Cloudflare asigna otro subdominio: usá el que devuelva el comando.
+2. **Umami** (si hay credenciales, ver `references/herramientas.md`), con el dominio real:
+   `node scripts/umami.mjs alta "Demo <Empresa>" <subdominio>.pages.dev`. Guardá el id en
+   `<demo>/.env.production.local` como `NEXT_PUBLIC_UMAMI_WEBSITE_ID=<id>` (git lo ignora).
+3. Si `site.url` es distinto de la URL real, corregilo. Rebuild (`npm run build`) y
+   `verificar-demo.mjs` otra vez; confirmá que el id de Umami está en `out/index.html`.
+4. Publicar solo `out/`, con ruta absoluta y desde la carpeta vacía (sin `--force`):
+   ```
+   npx wrangler pages deploy "<ruta-absoluta>/out" --project-name lume-<slug> --branch main --commit-dirty=true
+   ```
+5. Revisá que todas las páginas respondan 200 (`curl`). Un **522** en los primeros minutos es
+   propagación de Cloudflare: reintentá a los 20-30 s antes de tocar nada. Chequeá también
+   `X-Robots-Tag: noindex` en los headers y la franja `data-lume-demo`.
+
+Guardá en el pipeline: `demo_url=<url> umami_id=<id> estado=demo-lista`. Uní la rama
+`demo/<clave>` a `main` y marcá la clave como `publicada` en el índice del README de diseño.
 
 ## Paso 7 — Medir el después y armar el material del mail
 

@@ -102,7 +102,8 @@ function signals(page) {
     flash: /\.swf\b|shockwave-flash/i.test(h),
     tablasLayout: (h.match(/<table\b/gi) || []).length,
     imagenes: imgs.length,
-    imagenesSinAlt: imgs.filter((i) => !/\balt=["'][^"']+/i.test(i)).length,
+    // alt="" es válido (imagen decorativa): solo cuenta la falta del atributo.
+    imagenesSinAlt: imgs.filter((i) => !/\balt\s*=/i.test(i)).length,
     emails,
     whatsapp: links(/https?:\/\/(?:wa\.me|api\.whatsapp\.com)\/[^"'\s<]+/gi).slice(0, 3),
     instagram: links(/https?:\/\/(?:www\.)?instagram\.com\/[A-Za-z0-9_.]+/gi).slice(0, 3),

@@ -26,4 +26,4 @@ cpSync(src, dest, {
   recursive: true,
   filter: (p) => !SKIP.has(basename(p)) && !/^\.env(\..+)?$/.test(basename(p)) || basename(p) === ".env.example",
 });
-console.log(`Boilerplate copiado a ${dest}. Siguiente: npm install`);
+console.log(`Boilerplate copiado a ${dest}. Siguiente: npm install && npx next typegen`);
