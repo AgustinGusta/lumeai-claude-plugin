@@ -43,6 +43,7 @@ for (const f of htmls) {
   if (!/<meta[^>]+name="robots"[^>]+noindex/i.test(h)) errores.push(`${rel}: sin <meta name="robots" content="noindex">`);
   if (!/data-lume-demo/.test(h)) errores.push(`${rel}: falta el aviso de demo (elemento con data-lume-demo)`);
   for (const re of PLACEHOLDERS) if (re.test(h)) errores.push(`${rel}: quedó un placeholder del boilerplate (${re.source})`);
+  if (/data-lume-placeholder/.test(h)) errores.push(`${rel}: quedó un <Placeholder> del boilerplate (data-lume-placeholder)`);
   if (/<form\b/i.test(h) && !/data-lume-demo-form/.test(h)) errores.push(`${rel}: hay un <form> sin desactivar (falta data-lume-demo-form)`);
 
   for (const m of h.matchAll(/<img[^>]+src="([^"]+)"/gi)) {

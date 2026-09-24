@@ -48,6 +48,10 @@ Registrá o actualizá el prospecto en el pipeline:
 node scripts/pipeline.mjs <csv> upsert <slug> empresa="..." url=... rubro="..." zona="..."
 ```
 
+La carpeta de prospectos (`<Lume>/01-Comercial/Prospectos/Webs/`) es un repo git local: commiteá
+en `main` el relevamiento. Definí la **clave** de la demo, `AAAA-MM-DD-<slug>` (fecha del día en
+que arranca el diseño), y anotala en `FICHA.md`: todo lo que produce el diseño la lleva.
+
 ## Paso 2 — Relevar el sitio actual (el "antes")
 
 Usá el **Playwright MCP** (o Chrome DevTools MCP). Por cada página importante (home, servicios /
@@ -75,27 +79,34 @@ Auditoría del antes → `02-Sitio-actual/auditoria/`:
   (no se ve bien en el celular, tarda 8 s en cargar, dice © 2016, no aparece en Google con una
   descripción, el botón de WhatsApp no existe…). Esto alimenta el mail; nada de jerga técnica.
 
-## Paso 3 — Dirección de diseño (mostrar y esperar OK)
+## Paso 3 — Diseño dibujado (el usuario elige mirando)
 
-Invocá las skills `frontend-design` y `ui-ux-pro-max` para decidir la dirección visual. Reglas:
+**Nunca describas la dirección visual solo en texto ni con dibujos ASCII**: se decide mirando.
+Una decisión tomada sobre algo descrito es provisional hasta verlo dibujado.
 
-- **Reconocible:** mismo logo, misma paleta base (podés ajustar tonos para que cumplan contraste
-  AA), mismo tono de voz. Si su paleta es muy mala, mantené el color principal y rediseñá el resto.
-- **Mismo contenido, mejor contado:** mismas secciones y servicios, textos editados para ser más
-  claros y escaneables. **No inventes datos**: nada de testimonios, cifras, años de trayectoria,
-  premios, clientes o precios que no estén en su sitio. Si una sección necesita algo que no
-  existe, dejala afuera.
-- **Lo que un negocio chico valora:** que se vea bien en el celular, que el WhatsApp / teléfono
-  estén a un toque, horarios y ubicación claros, velocidad.
-- Fotos: usá las suyas. Si son de muy baja calidad, podés usar fotos de Unsplash/Pexels **solo
-  como ambientación** (nunca personas presentadas como su equipo, ni productos que no venden).
-  Anotá en `04-Diseño/notas.md` qué fotos son de stock.
+- **Si existe `docs/diseno/README.md` en el repo de prospectos, seguilo**: es el procedimiento con
+  pencil (clave, 2-4 direcciones, conservadora, home completa de la elegida, PNG, spec aprobado,
+  y las trampas conocidas del MCP de pencil).
+- **Si no existe** (otra máquina, sin pencil): igual dibujá 2-4 direcciones del hero con el
+  contenido real del cliente, una de ellas **conservadora** (pegada a su marca actual pero
+  ordenada), como HTML locales, y mostralas como capturas a 1440 y 390×844. El usuario elige
+  viéndolas.
 
-Mostrale al usuario en 5-8 líneas: paleta, tipografías, estructura de páginas, y 2-3 mejoras
-principales. Esperá OK antes de programar.
+Usá `frontend-design` y `ui-ux-pro-max` para generar las direcciones. Reglas que valen siempre:
+
+- **Reconocible:** mismo logo, misma paleta base (ajustable para contraste AA), mismo tono.
+- **Mismo contenido, mejor contado.** **No inventes datos**: nada de testimonios, cifras, años de
+  trayectoria, premios, clientes o precios que no estén en su sitio.
+- **Lo que un negocio chico valora:** celular, WhatsApp/teléfono a un toque, horarios y ubicación
+  claros, velocidad.
+- Fotos: las suyas; stock (Unsplash/Pexels) solo como ambientación, anotado en `04-Diseño/notas.md`.
+
+No se construye nada sin la dirección elegida y, si hay README, sin el spec aprobado.
 
 ## Paso 4 — Construir la demo
 
+0. Creá la rama `demo/<clave>` (después de commitear el diseño en `main`) y construí desde el
+   spec aprobado.
 1. `node scripts/preparar-demo.mjs <boilerplate> <slug>/05-Código/demo` y `npm install` ahí.
 2. Leé el `AGENTS.md` del boilerplate y la guía de Next que indique **antes** de escribir código
    (la versión de Next tiene cambios que no están en tu entrenamiento).
@@ -133,6 +144,8 @@ principales. Esperá OK antes de programar.
    scroll horizontal, sin texto cortado, menú mobile funcionando, imágenes cargando.
 3. Mirá las capturas vos mismo con ojo crítico: ¿se nota claramente mejor que el antes? ¿Se
    reconoce como la misma empresa? Si la respuesta a cualquiera es "más o menos", iterá.
+4. Compará capturas de lo construido a 1440 y 390 contra `04-Diseño/pantallas/<clave>/` (o las
+   capturas de la dirección elegida) y corregí las diferencias antes de pedir OK para publicar.
 
 ## Paso 6 — Publicar (pedir OK antes)
 
