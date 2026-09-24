@@ -167,17 +167,21 @@ async function pagespeed(url) {
   }
 }
 
-const results = [];
-for (const url of urls) {
+// De a 4 en paralelo: PSI tarda 20-60 s por sitio y en serie se hace eterno.
+async function evaluar(url) {
   const page = await fetchHome(url);
-  if (!page.ok || page.status >= 400) {
-    results.push({ url, caida: true, error: page.error ?? `HTTP ${page.status}`, oportunidad: null, motivos: ["el sitio no responde o da error"] });
-    continue;
-  }
+  if (!page.ok || page.status >= 400)
+    return { url, caida: true, error: page.error ?? `HTTP ${page.status}`, oportunidad: null, motivos: ["el sitio no responde o da error"] };
   const s = signals(page);
   const psi = flag("--psi") ? await pagespeed(page.finalUrl) : undefined;
-  results.push({ url, finalUrl: page.finalUrl, ...s, psi, ...score(s, psi) });
+  return { url, finalUrl: page.finalUrl, ...s, psi, ...score(s, psi) };
 }
+
+const results = [];
+const cola = [...urls];
+await Promise.all(Array.from({ length: 4 }, async () => {
+  while (cola.length) results.push(await evaluar(cola.shift()));
+}));
 
 results.sort((a, b) => (b.oportunidad ?? -1) - (a.oportunidad ?? -1));
 

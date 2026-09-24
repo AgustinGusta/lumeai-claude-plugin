@@ -70,7 +70,8 @@ const domain = (u) => {
   try { return new URL(/^https?:/i.test(u) ? u : `http://${u}`).hostname.replace(/^www\./, "").toLowerCase(); }
   catch { return u.toLowerCase(); }
 };
-const today = () => new Date().toISOString().slice(0, 10);
+// Fecha local (no UTC): en Uruguay, después de las 21 h toISOString ya da mañana.
+const today = () => new Date().toLocaleDateString("sv-SE");
 
 const items = load();
 

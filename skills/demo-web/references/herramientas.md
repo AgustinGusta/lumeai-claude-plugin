@@ -14,6 +14,7 @@
 | Herramienta | Para qué | Setup |
 |---|---|---|
 | PageSpeed Insights API | Puntajes de Google (antes/después) para el mail y para priorizar prospectos | Crear API key gratis en console.cloud.google.com → "PageSpeed Insights API" → Credenciales. Guardarla como variable de entorno de usuario `PSI_API_KEY` (Windows: `setx PSI_API_KEY "..."` y reiniciar Claude Code). Sin key, la API devuelve 429. |
+| Google Places API (New) | Fuente principal de prospectos: comercios de Google Maps con su web, teléfono y dirección (`buscar-places.mjs`) | En el proyecto de Google Cloud de Lume: habilitar "Places API (New)" (requiere facturación), crear una clave restringida a esa API y guardarla como `GOOGLE_PLACES_API_KEY`. **Poner una cuota diaria de ~30 consultas de Text Search** en "Cuotas y límites del sistema" y un presupuesto de USD 1 con alerta: pedir la web factura como Text Search Enterprise (1.000 gratis/mes). El script además corta en 900/mes (contador en `~/.lume/places-uso.json`). |
 | Umami de Lume (analytics.lumeai.uy) | Saber si el prospecto abrió la demo | Variables de entorno `LUME_UMAMI_USER` y `LUME_UMAMI_PASSWORD` (idealmente un usuario de Umami solo para demos). |
 | Context7 MCP | Docs actualizadas de Next.js/Tailwind mientras se programa la demo | `claude mcp add --scope user context7 -- npx -y @upstash/context7-mcp` |
 

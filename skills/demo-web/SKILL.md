@@ -53,7 +53,9 @@ node scripts/pipeline.mjs <csv> upsert <slug> empresa="..." url=... rubro="..." 
 Usá el **Playwright MCP** (o Chrome DevTools MCP). Por cada página importante (home, servicios /
 productos, nosotros, contacto; máximo ~6):
 
-- Captura **full-page** en desktop (1440 px) y mobile (390 px) →
+- Captura **full-page** en desktop (1440 px) y mobile → la mobile con emulación de iPhone real
+  (`isMobile`, `hasTouch` y user agent de iPhone, ver `buscar-prospectos-web` Paso 3), no una
+  ventana angosta: Wix y otros sirven otra versión según el dispositivo →
   `02-Sitio-actual/capturas/<pagina>-desktop.png` / `-mobile.png`.
 - Texto completo de la página → `03-Material-cliente/textos/<pagina>.md`. Copiá los textos tal
   cual; después los mejorás, pero partís de lo que ellos dicen.

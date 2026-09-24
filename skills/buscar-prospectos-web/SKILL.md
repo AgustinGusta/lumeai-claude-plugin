@@ -20,13 +20,27 @@ buscar (default 10). Si no los da, usá los de `_config.md`.
 
 ## Paso 1 — Buscar candidatos
 
-Usá **WebSearch** con varias formulaciones, como buscaría un cliente de ese negocio:
-`<rubro> <zona>`, `<rubro> en <barrio>`, `mejor <rubro> <zona>`, `<rubro> <zona> teléfono`.
-También directorios locales (Páginas Amarillas Uruguay, guías del rubro, cámaras empresariales) y
-los links a web que aparecen en fichas de Google / Instagram de negocios del rubro.
+**Fuente principal: Google Maps** (Places API). Casi todo comercio tiene ficha y la ficha trae
+su web; los buscadores, en cambio, muestran primero a los que ya tienen buena web (justo los
+que no nos sirven). En la prueba con papelerías de Montevideo, Maps dio 60 comercios y 26 webs
+contra 14 webs de buscadores + directorios.
 
-Juntá unas 3 veces la cantidad pedida de **dominios propios** en `urls.txt` (en el scratchpad).
-Filtrá desde ya:
+```
+node ../demo-web/scripts/buscar-places.mjs "<rubro> en <zona>" --paginas 3 --json places.json --urls urls.txt
+```
+
+- Requiere `GOOGLE_PLACES_API_KEY`. Cada página (20 comercios) es 1 consulta; hay 1.000 gratis
+  por mes y el script corta solo en 900. Si no hay key o se alcanzó el tope, seguí con WebSearch.
+- Para zonas grandes, repetí por barrio o ciudad (`papelería en Pocitos`, `… en Cordón`) en
+  vez de subir `--paginas`: Maps devuelve como mucho ~60 resultados por consulta.
+- El JSON trae también los comercios **sin web** o **solo con redes**: listalos en el resumen
+  como pitch de "web nueva" (no demo de rediseño).
+
+**Complemento: WebSearch** con 3-4 formulaciones (`<rubro> <zona>`, `<rubro> en <barrio>`,
+`<rubro> mayorista <zona>`) y directorios locales (1122.com.uy, opina.com.uy, todo.com.uy)
+para sumar lo que Maps no tenga. Los directorios casi nunca muestran la web: buscá el nombre.
+
+Juntá los **dominios propios** en `urls.txt` (en el scratchpad). Filtrá desde ya:
 - Directorios, marketplaces, redes sociales, Mercado Libre, perfiles de Google (no son "su web").
 - Cadenas, franquicias, empresas grandes, organismos públicos.
 - Dominios que ya están en el pipeline: `node ../demo-web/scripts/pipeline.mjs <csv> existe <url>`.
@@ -40,15 +54,28 @@ pitch (web nueva), no demo de rediseño.
 node ../demo-web/scripts/evaluar-sitio.mjs --file urls.txt --json evaluacion.json [--psi]
 ```
 
-`--psi` solo si existe `PSI_API_KEY` (hace todo más lento pero suma la velocidad real en celular).
+`--psi` solo si existe `PSI_API_KEY` (suma la velocidad real en celular; evalúa de a 4 sitios en
+paralelo, ~3 min cada 15 sitios). Si ya evaluaste parte de la lista, sacá esas URLs antes.
 "oportunidad" alto = web más floja. Los sitios **caídos** son un caso aparte: mencionalos, pero no
 son candidatos a demo (no hay de dónde sacar contenido).
 
 ## Paso 3 — Revisión visual de los mejores
 
-Las señales automáticas no ven el diseño. Para los ~15 mejores, sacá una captura mobile (390 px)
-y una desktop de la home con Playwright y mirala. Calificá **diseño 1-5** (1 = muy viejo o
-roto, 5 = moderno y prolijo) y anotá en una frase qué se ve mal.
+Las señales automáticas no ven el diseño. Para los ~15 mejores, sacá una captura mobile y una
+desktop de la home con Playwright (`browser_run_code_unsafe`) y miralas. Calificá **diseño 1-5**
+(1 = muy viejo o roto, 5 = moderno y prolijo) y anotá en una frase qué se ve mal.
+
+- **Mobile = emulación de iPhone real**, no solo ventana angosta: Wix y otros constructores
+  sirven otra versión según el user agent, y con una ventana angosta de escritorio una web que
+  en el celular se ve bien parece rota. Usá un contexto nuevo:
+  `browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true,
+  userAgent: "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1" })`
+  y medí `document.documentElement.scrollWidth` (> 390 = scroll horizontal = rota en celular).
+- Para no leer 30 imágenes sueltas, armá **una hoja de contactos**: un HTML local con las
+  capturas en grilla (en base64) y una sola captura de esa página.
+- Un "Sitio en construcción" o una web caída que figura en Google Maps es un **muy buen
+  candidato** (sus clientes llegan a una página vacía), aunque el contenido de la demo salga de
+  su Instagram y su ficha de Maps.
 
 Descartá si: diseño ≥ 4 (no hay mejora obvia que mostrar), es una tienda online grande, o el
 contenido es tan escaso que la demo quedaría vacía.
