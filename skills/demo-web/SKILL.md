@@ -178,8 +178,10 @@ No se construye nada sin la dirección elegida y, si hay README, sin el spec apr
 
 1. **Impeccable** sobre lo construido: `critique` y después `polish`; guardá la crítica en
    `04-Diseño/critica.md` (qué se corrigió y qué no, y por qué).
-2. `npm run qa -- --diseno <slug>/04-Diseño/pantallas/<clave> --informe <slug>/06-Entrega/qa`
-   (una vez por máquina: `npx playwright install chromium`). Los **errores** (accesibilidad grave, links
+2. Desde `<slug>/05-Código/demo` (después de `npm run build`):
+   `npm run qa -- --diseno ../../04-Diseño/pantallas/<clave> --informe ../../06-Entrega/qa`
+   (`--diseno` espera `home-desktop.png` y `home-celular.png` exportados a escala 1; una vez por
+   máquina: `npx playwright install chromium`). Los **errores** (accesibilidad grave, links
    internos rotos, vista previa al compartir incompleta) no se negocian; la comparación con el diseño
    solo informa: mirá `diff-*.png` y explicá las diferencias grandes. Si el boilerplate de la demo no
    tiene `npm run qa`, avisá al usuario y seguí solo con `verificar-demo.mjs`.
