@@ -40,7 +40,7 @@ continuá y recordá que esos controles no están corriendo.
 
 1. `node scripts/pipeline.mjs <pipeline.csv> existe <url>`: si ya existe y está en `enviado` o más
    adelante, avisá y no hagas otra demo salvo que el usuario insista.
-2. `npx wrangler whoami` (desde una carpeta vacía, ver Paso 6): si no hay sesión de Cloudflare,
+2. `npx wrangler whoami` (desde una carpeta vacía, ver Paso 7): si no hay sesión de Cloudflare,
    pedile al usuario que corra `! npx wrangler login` (abre el navegador). La sesión puede vencer
    o invalidarse: si un comando dice "Not logged in", repetir el login. La cuenta tiene que tener
    el **mail verificado** (si no, Cloudflare rechaza con el código 8000077).
@@ -152,7 +152,7 @@ No se construye nada sin la dirección elegida y, si hay README, sin el spec apr
 3. Contenido e identidad en `src/content/site.ts` (única fuente de verdad), tokens de marca en
    `src/app/globals.css`, fuentes en `src/app/layout.tsx`, logo e imágenes optimizadas (WebP,
    ~1200 px, < 200 KB) en `public/images/`. `site.url` = la URL de la demo en Cloudflare (la
-   sabés recién al crear el proyecto en el Paso 6; mientras, usá `https://lume-<slug>.pages.dev`).
+   sabés recién al crear el proyecto en el Paso 7; mientras, usá `https://lume-<slug>.pages.dev`).
 4. Páginas: adaptá las del boilerplate (inicio, servicios, nosotros, contacto) a lo que tenga la
    empresa. Borrá las que no apliquen y agregá las que su sitio tenga y valgan la pena.
 5. **Modo demo (obligatorio, lo chequea el Paso 5):**
@@ -170,7 +170,7 @@ No se construye nada sin la dirección elegida y, si hay README, sin el spec apr
    - **Formulario desactivado:** el `<form>` de contacto lleva `data-lume-demo-form`, no envía
      nada y al enviar muestra "Esto es una demo: en tu web real, este mensaje te llega por mail".
      Botones de WhatsApp / teléfono pueden quedar con sus datos reales.
-   - **Analytics:** se da de alta en el Paso 6, después de crear el proyecto de Cloudflare, con el
+   - **Analytics:** se da de alta en el Paso 7, después de crear el proyecto de Cloudflare, con el
      dominio definitivo (ver ahí).
 6. `npm run check` (lint + typecheck + build) hasta que pase limpio.
 
@@ -192,11 +192,38 @@ No se construye nada sin la dirección elegida y, si hay README, sin el spec apr
 5. Mirá las capturas vos mismo con ojo crítico: ¿se nota claramente mejor que el antes? ¿Se
    reconoce como la misma empresa? Si la respuesta a cualquiera es "más o menos", iterá.
 6. Compará capturas de lo construido a 1440 y 390 contra `04-Diseño/pantallas/<clave>/` (o las
-   capturas de la dirección elegida) y corregí las diferencias antes de pedir OK para publicar.
+   capturas de la dirección elegida) y corregí las diferencias antes de pasar a la revisión del
+   usuario.
 
-## Paso 6 — Publicar (pedir OK antes)
+## Paso 6 — Revisión del usuario (devoluciones, análisis y corrección)
 
-Mostrale al usuario las capturas del después y pedí OK para publicar. Cada recurso externo
+La demo pasa por los ojos del usuario **entera**, no solo la home dibujada: las páginas internas se
+construyeron sin dibujo previo y es acá donde se revisan como diseño. No se publica hasta que el
+usuario diga que está lista.
+
+1. **Vista previa.** Levantá `out/` local en background (`npx serve out`) y pasale al usuario la
+   URL local para la computadora y la de red (misma wifi) para mirarla en su celular; si el celular
+   no llega, que use el modo dispositivo de Chrome (`F12` → ícono de celular, 390 px). Sumá la
+   lista de páginas y qué se decidió en cada una sin dibujo (el spec lo dice). Decile que anote
+   todo lo que no le cierre, grande o chico, con la página y lo que ve.
+2. **Registro.** Cada devolución va a `04-Diseño/devoluciones.md`, una fila por punto:
+   `| # | Ronda | Página | Qué ve el usuario | Análisis | Decisión | Estado |`. Anotalo con sus
+   palabras; no lo resumas en otra cosa.
+3. **Análisis en conjunto.** Antes de tocar código, repasá los puntos con el usuario: qué lo causa,
+   opciones de arreglo (si es visual, mostrala con captura o dibujo, no descripta) y una
+   recomendación. Él decide cada uno: **corregir**, **no corregir** (con el motivo) o **cambiar el
+   spec** (se actualiza `<clave>-spec.md` en el mismo commit). Lo que pida inventar contenido
+   (testimonios, cifras, fotos de su equipo) se explica y se descarta.
+4. **Corrección.** Corregí lo decidido, corré otra vez el Paso 5 (`npm run check`, `npm run qa`,
+   `verificar-demo.mjs`) y mostrale el antes/después de lo que cambió (capturas a 1440 o 390 de esas
+   partes). Marcá cada punto como hecho en `devoluciones.md` y commiteá la ronda en la rama.
+5. **Otra ronda** hasta que el usuario diga que está lista. Ese "está lista" es el OK de diseño;
+   el OK para publicar se pide aparte en el Paso 7.
+6. Cortá el servidor local al terminar.
+
+## Paso 7 — Publicar (pedir OK antes)
+
+Con la revisión del Paso 6 cerrada, pedí OK para publicar. Cada recurso externo
 (proyecto de Cloudflare, sitio en Umami) se nombra en el pedido de OK.
 
 **Correr `wrangler` SIEMPRE desde una carpeta vacía** (por ejemplo una en el scratchpad), nunca
@@ -227,7 +254,7 @@ fallan en el build. Si pasa: `git checkout` de esos archivos, borrar lo creado y
 Guardá en el pipeline: `demo_url=<url> umami_id=<id> estado=demo-lista`. Uní la rama
 `demo/<clave>` a `main` y marcá la clave como `publicada` en el índice del README de diseño.
 
-## Paso 7 — Medir el después y armar el material del mail
+## Paso 8 — Medir el después y armar el material del mail
 
 - Corré la misma medición sobre la demo publicada (PSI; sin PSI, `lighthouse_audit` + `performance_start_trace`, porque `lighthouse_audit` no incluye velocidad) →
   `06-Entrega/despues.json`.
@@ -238,7 +265,7 @@ Guardá en el pipeline: `demo_url=<url> umami_id=<id> estado=demo-lista`. Uní l
 - Opcional, si el usuario lo pide: video corto de la demo con la skill `brag` o
   `product-launch-video`.
 
-## Paso 8 — Mail y seguimientos
+## Paso 9 — Mail y seguimientos
 
 Escribí `01-Comercial/mail.md` siguiendo `references/mail.md` (asunto, cuerpo, seguimiento 1 y 2),
 con la firma y casilla de `_config.md`. El mail sale desde la casilla @lumeai.uy del usuario:
@@ -260,3 +287,6 @@ imagen, y el recordatorio: "cuando lo mandes, avisame y lo marco como enviado" (
   banda. Descargar y optimizar.
 - **Publicar sin OK** o **mandar el mail por el usuario** → no; publicar y contactar son decisiones
   del usuario.
+- **Saltear la revisión del usuario** porque los controles dan OK → `npm run qa` y Impeccable no
+  ven si la demo convence al dueño; las páginas internas, además, nunca se dibujaron. Sin el
+  "está lista" del Paso 6 no se publica.

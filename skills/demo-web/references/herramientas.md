@@ -6,7 +6,7 @@
 |---|---|---|
 | Node 24 | Scripts y build | ya instalado |
 | Playwright MCP / Chrome DevTools MCP | Capturas, extracción de textos/colores, Lighthouse | plugins de Claude Code |
-| Cloudflare Pages + `wrangler` | Hosting de las demos (gratis, uso comercial permitido) | crear cuenta en dash.cloudflare.com, **verificar el mail de la cuenta** (sin eso la API rechaza crear proyectos) y correr `! npx wrangler login`. Correr `wrangler` siempre desde una carpeta vacía (ver `demo-web` Paso 6). |
+| Cloudflare Pages + `wrangler` | Hosting de las demos (gratis, uso comercial permitido) | crear cuenta en dash.cloudflare.com, **verificar el mail de la cuenta** (sin eso la API rechaza crear proyectos) y correr `! npx wrangler login`. Correr `wrangler` siempre desde una carpeta vacía (ver `demo-web` Paso 7). |
 | Skills `frontend-design`, `ui-ux-pro-max` | Dirección visual | ya instaladas |
 
 ## Recomendadas

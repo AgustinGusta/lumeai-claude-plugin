@@ -59,7 +59,7 @@ Proponé borrar (y esperá OK explícito, porque borrar un proyecto no se puede 
 prospectos en `perdido`, `baja` o `descartado`, o con más días online que los de `_config.md`:
 
 ```
-npx wrangler pages project delete <proyecto> --yes   # desde una carpeta vacía (ver demo-web Paso 6)
+npx wrangler pages project delete <proyecto> --yes   # desde una carpeta vacía (ver demo-web Paso 7)
 node ../demo-web/scripts/umami.mjs baja <umami_id>
 ```
 
