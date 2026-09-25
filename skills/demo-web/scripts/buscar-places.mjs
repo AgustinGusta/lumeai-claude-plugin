@@ -4,6 +4,7 @@
 //
 // Uso:
 //   node buscar-places.mjs "papelería en Montevideo" [--paginas 3] [--json salida.json] [--urls urls.txt]
+//                          [--sin-web sin-web.json] [--nota-min 4.3] [--resenas-min 30]
 //
 // Requiere GOOGLE_PLACES_API_KEY (variable de entorno de usuario).
 //
@@ -15,10 +16,14 @@
 //
 // --urls escribe solo los comercios con web propia (sin redes ni
 // directorios), listo para evaluar-sitio.mjs --file.
+//
+// --sin-web escribe los comercios sin web propia (sin web o solo redes) que
+// pasan los umbrales de nota y reseñas y tienen celular (WhatsApp), con su
+// puntajeBase y su link canónico de Maps (mapsId). Sale de la misma búsqueda:
+// no gasta consultas extra.
 
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { homedir } from "node:os";
-import { join } from "node:path";
+import { writeFileSync } from "node:fs";
+import { aFila, contador, filtrarSinWeb } from "./prospectos-comun.mjs";
 
 const args = process.argv.slice(2);
 const opt = (n) => { const i = args.indexOf(n); return i >= 0 ? args[i + 1] : undefined; };
@@ -26,18 +31,11 @@ const consulta = args.find((a, i) => !a.startsWith("--") && !args[i - 1]?.starts
 const paginas = Math.min(Number(opt("--paginas") ?? 3), 10);
 const key = process.env.GOOGLE_PLACES_API_KEY;
 
-if (!consulta) { console.error('Uso: node buscar-places.mjs "<rubro> en <zona>" [--paginas 3] [--json f] [--urls f]'); process.exit(2); }
+if (!consulta) { console.error('Uso: node buscar-places.mjs "<rubro> en <zona>" [--paginas 3] [--json f] [--urls f] [--sin-web f]'); process.exit(2); }
 if (!key) { console.error("Falta GOOGLE_PLACES_API_KEY en el entorno."); process.exit(3); }
 
-// ── Contador mensual ────────────────────────────────────────────────────────
-const LIMITE = Number(process.env.LUME_PLACES_LIMITE_MES ?? 900);
-const dir = join(homedir(), ".lume");
-const usoPath = join(dir, "places-uso.json");
-const hoy = new Date();
-const mes = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, "0")}`;
-let uso = existsSync(usoPath) ? JSON.parse(readFileSync(usoPath, "utf8")) : { mes, consultas: 0 };
-if (uso.mes !== mes) uso = { mes, consultas: 0 };
-const registrar = () => { uso.consultas++; mkdirSync(dir, { recursive: true }); writeFileSync(usoPath, JSON.stringify(uso)); };
+// ── Contador mensual (compartido, ver prospectos-comun.mjs) ────────────────
+const uso = contador();
 
 // ── Búsqueda ───────────────────────────────────────────────────────────────
 const FIELDS = [
@@ -49,8 +47,8 @@ const FIELDS = [
 const places = [];
 let pageToken;
 for (let p = 0; p < paginas; p++) {
-  if (uso.consultas >= LIMITE) {
-    console.error(`Tope mensual propio alcanzado (${uso.consultas}/${LIMITE} consultas en ${mes}). Corto para no salir del cupo gratis.`);
+  if (uso.agotado()) {
+    console.error(`Tope mensual propio alcanzado (${uso.consultas}/${uso.limite} consultas en ${uso.mes}). Corto para no salir del cupo gratis.`);
     break;
   }
   const res = await fetch("https://places.googleapis.com/v1/places:searchText", {
@@ -58,7 +56,7 @@ for (let p = 0; p < paginas; p++) {
     headers: { "content-type": "application/json", "X-Goog-Api-Key": key, "X-Goog-FieldMask": FIELDS },
     body: JSON.stringify({ textQuery: consulta, languageCode: "es", regionCode: "UY", pageSize: 20, ...(pageToken ? { pageToken } : {}) }),
   });
-  registrar();
+  uso.registrar();
   const j = await res.json();
   if (!res.ok) {
     const msg = j.error?.message ?? JSON.stringify(j).slice(0, 300);
@@ -71,23 +69,13 @@ for (let p = 0; p < paginas; p++) {
   if (!pageToken) break;
 }
 
-const NO_PROPIA = /(instagram|facebook|linktr\.ee|wa\.me|whatsapp|mercadolibre|google\.|tiktok|twitter|x\.com|youtube|pedidosya|rappi)/i;
 const rows = places
   .filter((p) => p.businessStatus !== "CLOSED_PERMANENTLY")
-  .map((p) => ({
-    nombre: p.displayName?.text ?? "",
-    web: p.websiteUri ?? "",
-    webPropia: !!p.websiteUri && !NO_PROPIA.test(p.websiteUri),
-    telefono: p.nationalPhoneNumber ?? "",
-    direccion: p.formattedAddress ?? "",
-    rating: p.rating ?? null,
-    resenas: p.userRatingCount ?? 0,
-    maps: p.googleMapsUri ?? "",
-  }));
+  .map(aFila);
 
 const conWeb = rows.filter((r) => r.webPropia);
 console.error(`"${consulta}": ${rows.length} comercios · ${conWeb.length} con web propia · ${rows.filter((r) => r.web && !r.webPropia).length} solo redes · ${rows.filter((r) => !r.web).length} sin web`);
-console.error(`Consultas usadas este mes: ${uso.consultas}/${LIMITE}`);
+console.error(`Consultas usadas este mes: ${uso.consultas}/${uso.limite}`);
 
 const jsonOut = opt("--json");
 if (jsonOut) writeFileSync(jsonOut, JSON.stringify(rows, null, 2));
@@ -102,4 +90,14 @@ if (urlsOut) {
   });
   writeFileSync(urlsOut, urls.join("\n") + "\n");
   console.error(`${urls.length} URLs únicas → ${urlsOut}`);
+}
+
+const sinWebOut = opt("--sin-web");
+if (sinWebOut) {
+  const sinWeb = filtrarSinWeb(rows, {
+    notaMin: Number(opt("--nota-min") ?? 4.3),
+    resenasMin: Number(opt("--resenas-min") ?? 30),
+  });
+  writeFileSync(sinWebOut, JSON.stringify(sinWeb, null, 2));
+  console.error(`${sinWeb.length} sin web con buena ficha y celular → ${sinWebOut}`);
 }
