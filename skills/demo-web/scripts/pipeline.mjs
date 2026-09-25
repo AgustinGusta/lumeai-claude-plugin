@@ -16,7 +16,7 @@
 // fecha_estado, se completa con la fecha de hoy.
 
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
-import { placeIdDe } from "./prospectos-comun.mjs";
+import { esLinkMaps, placeIdDe } from "./prospectos-comun.mjs";
 
 const COLS = [
   "slug", "empresa", "url", "rubro", "zona", "email", "telefono", "instagram",
@@ -62,14 +62,20 @@ function parse(text) {
 
 const esc = (v) => (/[",\r\n]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v);
 
+// Columnas del archivo que este script no conoce (de una versión más nueva):
+// se conservan al guardar, para no borrar datos en silencio.
+let extras = [];
+
 function load() {
   if (!existsSync(csvPath)) return [];
   const [header, ...rows] = parse(readFileSync(csvPath, "utf8").replace(/^﻿/, ""));
+  extras = header.filter((h) => h && !COLS.includes(h));
   return rows.map((r) => Object.fromEntries(header.map((h, i) => [h, r[i] ?? ""])));
 }
 
 function save(items) {
-  const lines = [COLS.join(","), ...items.map((it) => COLS.map((c) => esc(String(it[c] ?? ""))).join(","))];
+  const cols = [...COLS, ...extras];
+  const lines = [cols.join(","), ...items.map((it) => cols.map((c) => esc(String(it[c] ?? ""))).join(","))];
   // BOM para que Excel abra bien los acentos.
   writeFileSync(csvPath, "﻿" + lines.join("\r\n") + "\r\n");
 }
@@ -102,6 +108,10 @@ switch (cmd) {
   case "existe": {
     const q = rest[0] ?? "";
     const pid = placeIdDe(q);
+    if (!pid && esLinkMaps(q)) {
+      console.error("Ese link de Maps no tiene place_id: buscá el comercio con buscar-places.mjs y usá su mapsId.");
+      process.exit(2);
+    }
     const it = pid
       ? items.find((x) => placeIdDe(x.url) === pid)
       : items.find((x) => x.url && !placeIdDe(x.url) && domain(x.url) === domain(q));
@@ -130,6 +140,12 @@ switch (cmd) {
     if (!it) {
       it = { slug, estado: "candidato", fecha_estado: today() };
       items.push(it);
+    }
+    const tipoFinal = patch.tipo ?? it.tipo;
+    const urlFinal = patch.url ?? it.url ?? "";
+    if (tipoFinal === "nueva" && urlFinal && !placeIdDe(urlFinal)) {
+      console.error("Un prospecto tipo=nueva lleva en url su link de Maps con place_id (el mapsId de buscar-places.mjs).");
+      process.exit(2);
     }
     if (patch.estado && patch.estado !== it.estado && !patch.fecha_estado) patch.fecha_estado = today();
     Object.assign(it, patch);

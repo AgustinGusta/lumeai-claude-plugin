@@ -32,12 +32,36 @@ export function contador({
 }
 
 // ── Web, Maps y teléfono ───────────────────────────────────────────────────
-export const NO_PROPIA = /(instagram|facebook|linktr\.ee|wa\.me|whatsapp|mercadolibre|google\.|tiktok|twitter|x\.com|youtube|pedidosya|rappi)/i;
+// Redes, marketplaces y plataformas: tener solo esto no es "tener web". Se
+// compara el dominio, no cualquier parte de la URL ("relax.com.uy" es web propia).
+const NO_PROPIAS = [
+  "instagram.com", "facebook.com", "fb.com", "linktr.ee", "wa.me", "whatsapp.com", "tiktok.com",
+  "twitter.com", "x.com", "youtube.com", "mercadolibre.com", "mercadolibre.com.uy",
+  "pedidosya.com", "pedidosya.com.uy", "rappi.com", "rappi.com.uy", "goo.gl",
+];
+const GOOGLE = /(^|\.)google\.[a-z.]+$/;
+const aUrl = (u) => { try { return new URL(/^https?:/i.test(u) ? u : `http://${u}`); } catch { return null; } };
+const host = (u) => aUrl(u ?? "")?.hostname.toLowerCase() ?? "";
+const enDominio = (h, d) => h === d || h.endsWith("." + d);
+
+export function webPropia(url) {
+  const h = host(url);
+  return !!h && !GOOGLE.test(h) && !NO_PROPIAS.some((d) => enDominio(h, d));
+}
 
 // Link canónico de un comercio en Maps. Es la `url` de los prospectos sin web
 // en el pipeline: el googleMapsUri de todos comparte dominio y no sirve de clave.
 export const mapsUrl = (id) => `https://www.google.com/maps/place/?q=place_id:${id}`;
-export const placeIdDe = (url) => /place_id:([A-Za-z0-9_-]+)/.exec(url ?? "")?.[1] ?? null;
+export const placeIdDe = (url) => /place_id[:=]([A-Za-z0-9_-]+)/.exec(url ?? "")?.[1] ?? null;
+
+// Link de Google Maps, con o sin place_id (maps.google.*, google.*/maps, maps.app.goo.gl).
+export function esLinkMaps(url) {
+  const u = aUrl(url ?? "");
+  if (!u) return false;
+  const h = u.hostname.toLowerCase();
+  return /^maps\.google\./.test(h) || h === "maps.app.goo.gl"
+    || ((GOOGLE.test(h) || h === "goo.gl") && u.pathname.startsWith("/maps"));
+}
 
 // Celular uruguayo (09X XXX XXX), con o sin +598. Los fijos no tienen WhatsApp.
 export function celularUy(tel) {
@@ -60,8 +84,8 @@ export function aFila(p) {
     id: p.id ?? "",
     nombre: p.displayName?.text ?? "",
     web,
-    webPropia: !!web && !NO_PROPIA.test(web),
-    instagram: /instagram\.com/i.test(web) ? web : "",
+    webPropia: webPropia(web),
+    instagram: enDominio(host(web), "instagram.com") ? web : "",
     telefono: p.nationalPhoneNumber ?? "",
     direccion: p.formattedAddress ?? "",
     rating: p.rating ?? null,

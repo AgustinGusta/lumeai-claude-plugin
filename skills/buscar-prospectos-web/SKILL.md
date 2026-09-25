@@ -120,7 +120,10 @@ escribe por WhatsApp.
 1. **Punto de partida:** `sin-web.json` del Paso 1 (ya filtrado por nota, reseñas y celular, y
    ordenado por `puntajeBase`). Sacá cadenas y franquicias, y los que ya están en el pipeline:
    `pipeline.mjs <csv> existe <mapsId>`.
-2. **Instagram:** si `instagram` vino vacío, buscalo (WebSearch `"<nombre>" <zona> instagram`).
+2. **¿De verdad no tiene web?** Maps muchas veces no trae la web aunque exista. Antes de seguir,
+   WebSearch `"<nombre>" <zona>`: si aparece un sitio propio, va a la rama de rediseño (o se
+   descarta si está bien), nunca al pitch "no tienen web".
+   **Instagram:** si `instagram` vino vacío, buscalo (WebSearch `"<nombre>" <zona> instagram`).
    Mirá solo la vista pública, **sin iniciar sesión** (seguidores, bio, publicaciones, fecha de la
    última si se ve). Si Instagram pide login, anotalo como "Instagram a revisar por el usuario".
    Sin Instagram o con la última publicación de hace más de 3 meses → descartado.

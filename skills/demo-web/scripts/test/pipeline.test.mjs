@@ -56,3 +56,29 @@ test("list sin --json muestra el tipo", () => {
   run(csv, "upsert", "ferre-sol", "tipo=nueva");
   assert.match(run(csv, "list").stdout, /ferre-sol \| nueva \|/);
 });
+
+test("existe con un link de Maps sin place_id avisa (exit 2) en vez de comparar por dominio", () => {
+  const csv = nuevoCsv();
+  run(csv, "upsert", "ferre-sol", `url=${mapsUrl("AAA111")}`, "tipo=nueva");
+  const r = run(csv, "existe", "https://maps.google.com/?cid=2");
+  assert.equal(r.status, 2);
+  assert.match(r.stderr, /place_id/);
+});
+
+test("upsert rechaza tipo=nueva con una url sin place_id", () => {
+  const csv = nuevoCsv();
+  const r = run(csv, "upsert", "ferre-sol", "tipo=nueva", "url=https://maps.google.com/?cid=1");
+  assert.equal(r.status, 2);
+  assert.match(r.stderr, /place_id/);
+  assert.equal(run(csv, "upsert", "ferre-sol", "tipo=nueva", `url=${mapsUrl("AAA111")}`).status, 0);
+  assert.equal(run(csv, "upsert", "ferre-sol", "url=https://ferresol.com.uy").status, 2);
+});
+
+test("save conserva columnas que el script no conoce (un pipeline más nuevo)", () => {
+  const csv = nuevoCsv();
+  writeFileSync(csv, "\uFEFFslug,empresa,estado,futura\r\nfoo,Foo,candidato,valor\r\n");
+  assert.equal(run(csv, "upsert", "foo", "notas=x").status, 0);
+  const [header, fila] = readFileSync(csv, "utf8").replace(/^\uFEFF/, "").split("\r\n");
+  assert.ok(header.split(",").includes("futura"), header);
+  assert.ok(fila.includes("valor"), fila);
+});

@@ -5,7 +5,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import {
   contador, mapsUrl, placeIdDe, celularUy, waNumero, aFila, puntajeBase,
-  filtrarSinWeb, notaTexto, aFicha, waLink,
+  filtrarSinWeb, notaTexto, aFicha, waLink, esLinkMaps,
 } from "../prospectos-comun.mjs";
 
 test("celularUy acepta formatos reales y rechaza fijos", () => {
@@ -116,4 +116,33 @@ test("contador: cuenta, persiste, corta en el límite y reinicia al cambiar de m
   assert.equal(c.agotado(), true);
   assert.equal(contador({ limite: 2, dir, fecha: sept }).consultas, 2);
   assert.equal(contador({ limite: 2, dir, fecha: new Date(2026, 9, 1) }).consultas, 0);
+});
+
+test("webPropia mira el dominio, no cualquier parte de la URL", () => {
+  const f = (web) => aFila({ id: "X", websiteUri: web }).webPropia;
+  assert.equal(f("https://relax.com.uy/"), true);
+  assert.equal(f("https://maxx.com.uy"), true);
+  assert.equal(f("https://www.linex.com.uy/contacto"), true);
+  assert.equal(f("https://ferreteria-google.com.uy"), true);
+  assert.equal(f("https://www.instagram.com/ferresol/"), false);
+  assert.equal(f("https://m.facebook.com/ferresol"), false);
+  assert.equal(f("https://x.com/ferresol"), false);
+  assert.equal(f("https://sites.google.com/view/ferresol"), false);
+  assert.equal(f("https://linktr.ee/ferresol"), false);
+  assert.equal(f("https://articulo.mercadolibre.com.uy/MLU-1"), false);
+  assert.equal(aFila({ id: "X", websiteUri: "https://notinstagram.com.uy" }).instagram, "");
+});
+
+test("placeIdDe acepta query_place_id y rechaza links de Maps sin place_id", () => {
+  assert.equal(placeIdDe("https://www.google.com/maps/search/?api=1&query=Ferre&query_place_id=ChIJabc_1-2"), "ChIJabc_1-2");
+  assert.equal(placeIdDe("https://maps.google.com/?cid=123"), null);
+  assert.equal(placeIdDe("https://maps.app.goo.gl/AbCd"), null);
+});
+
+test("esLinkMaps reconoce links de Maps con y sin place_id", () => {
+  assert.equal(esLinkMaps("https://maps.google.com/?cid=123"), true);
+  assert.equal(esLinkMaps("https://maps.app.goo.gl/AbCd"), true);
+  assert.equal(esLinkMaps("https://www.google.com/maps/place/?q=place_id:X"), true);
+  assert.equal(esLinkMaps("https://papeleriamontevideo.com.uy/"), false);
+  assert.equal(esLinkMaps("papeleriamontevideo.com.uy"), false);
 });

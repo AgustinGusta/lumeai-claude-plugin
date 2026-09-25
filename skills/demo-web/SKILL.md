@@ -19,7 +19,9 @@ Entrada: la URL del sitio actual (y, si lo hay, el `slug` del prospecto en el pi
   link de Maps con place_id). Cambian los Pasos 0, 2, 8 y 9 y detalles de 1, 3 y 4, marcados
   **Si `tipo=nueva`**. Contacto por WhatsApp (`canal=whatsapp`), no por mail.
 
-Leé el tipo al empezar: `node scripts/pipeline.mjs <csv> get <slug>`.
+Leé el tipo al empezar: `node scripts/pipeline.mjs <csv> get <slug>`. Si el usuario pasa un link
+de Maps sin place_id (por ejemplo `maps.app.goo.gl/…`), `pipeline.mjs` lo rechaza: buscá el comercio
+con `node scripts/buscar-places.mjs "<nombre> <zona>" --paginas 1` (1 consulta) y usá su `mapsId`.
 
 ## Antes de empezar: ¿dónde está abierta la sesión?
 
