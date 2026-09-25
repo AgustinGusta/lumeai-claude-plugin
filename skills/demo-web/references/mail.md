@@ -48,7 +48,7 @@ explicar Lume entera.
 > fotos: <link a la demo>
 >
 > Es un boceto para que veas la idea, no la web terminada: no está pulido al detalle. Si avanzamos,
-> la hacemos a medida, tal cual la quieran. (Es privada, no aparece en Google y no tiene ningún
+> la hacemos a medida, tal cual la quieras. (Es privada, no aparece en Google y no tiene ningún
 > compromiso.)
 >
 > Si te gusta, lo vemos 15 minutos cuando te quede cómodo y te cuento cómo sería pasarla a su
