@@ -269,7 +269,18 @@ Guardá en el pipeline: `demo_url=<url> umami_id=<id> estado=demo-lista`. Uní l
 
 Escribí `01-Comercial/mail.md` siguiendo `references/mail.md` (asunto, cuerpo, seguimiento 1 y 2),
 con la firma y casilla de `_config.md`. El mail sale desde la casilla @lumeai.uy del usuario:
-**esta skill no envía nada**, deja el texto listo para copiar y pegar.
+**esta skill no envía nada**.
+
+**Borrador en la casilla** (si `LUME_IMAP_PASS` está en el entorno): guardá el primer mail como
+borrador, listo para que el usuario le agregue su firma y lo envíe. Pasá el cuerpo del primer
+mail (sin el `> ` de las citas) a un `.txt` en el scratchpad y corré:
+```
+node scripts/crear-borrador.mjs --para <mail del prospecto> --asunto "<asunto elegido>" \
+  --cuerpo <cuerpo.txt> --imagen <slug>/01-Comercial/antes-despues.jpg --desde <casilla de _config.md>
+```
+La imagen queda pegada debajo del link de la demo. Antes, revisalo con `--eml <archivo>` (no se
+conecta). Los seguimientos no se cargan como borrador: van en el mismo hilo, cuando toque.
+Sin `LUME_IMAP_PASS`, el mail queda en `mail.md` para copiar y pegar.
 
 Cerrá con un resumen corto: link de la demo, puntajes antes → después, dónde está el mail y la
 imagen, y el recordatorio: "cuando lo mandes, avisame y lo marco como enviado" (eso lo registra
