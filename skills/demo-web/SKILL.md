@@ -1,6 +1,6 @@
 ---
 name: demo-web
-description: Arma una demo de rediseño de la web de una empresa (prospecto) a partir de su sitio actual, la publica en un link privado de Cloudflare Pages y deja listo el mail de contacto con el antes/después. Úsala cuando el usuario pase la URL de una empresa y pida "armar la demo", "rehacer/renovar/mejorar su web para mandársela", "prepararle una propuesta de web", "hacer la demo-web de X", o cuando un prospecto de 01-Comercial/Prospectos/Webs pase a la etapa de demo. Captura y audita el sitio actual, rediseña sobre el boilerplate webb-institucional conservando su marca y contenido, verifica que la demo sea no indexable y esté marcada como propuesta de Lume, la publica, mide el antes/después y redacta el mail y los seguimientos.
+description: Arma una demo de rediseño de la web de una empresa (prospecto) a partir de su sitio actual, la publica en un link privado de Cloudflare Pages y deja listo el mail de contacto con el antes/después. Úsala cuando el usuario pase la URL de una empresa y pida "armar la demo", "rehacer/renovar/mejorar su web para mandársela", "prepararle una propuesta de web", "hacer la demo-web de X", o cuando un prospecto de 01-Comercial/Prospectos/Webs pase a la etapa de demo. Captura y audita el sitio actual, rediseña sobre el boilerplate webb-institucional conservando su marca y contenido, verifica que la demo sea no indexable y esté marcada como propuesta de Lume, la publica, mide el antes/después y redacta el mail y los seguimientos. También arma la demo de una web nueva para un comercio sin web (prospecto tipo=nueva) con su ficha de Google Maps y su Instagram, y deja listo el WhatsApp de contacto.
 ---
 
 # Demo de rediseño web para un prospecto
@@ -11,6 +11,15 @@ la vista. Eso vende más que cualquier portfolio. El usuario no toca código: es
 le pide confirmación solo en los puntos que publican algo o salen hacia afuera.
 
 Entrada: la URL del sitio actual (y, si lo hay, el `slug` del prospecto en el pipeline).
+
+**Dos tipos de prospecto** (columna `tipo` del pipeline; vacío = `rediseno`):
+
+- `rediseno`: tiene web. Todo este documento, tal cual.
+- `nueva`: no tiene web; tiene buena ficha de Maps e Instagram activo. Entrada: el `slug` (o el
+  link de Maps con place_id). Cambian los Pasos 0, 2, 8 y 9 y detalles de 1, 3 y 4, marcados
+  **Si `tipo=nueva`**. Contacto por WhatsApp (`canal=whatsapp`), no por mail.
+
+Leé el tipo al empezar: `node scripts/pipeline.mjs <csv> get <slug>`.
 
 ## Antes de empezar: ¿dónde está abierta la sesión?
 
@@ -49,6 +58,13 @@ continuá y recordá que esos controles no están corriendo.
    carrito (eso es `webb-ecommerce`, fuera del alcance de una demo rápida: proponé hacer solo la
    home institucional).
 
+**Si `tipo=nueva`:** el punto 3 se reemplaza por "¿hay material?". Hacen falta en
+`<slug>/03-Material-cliente/`: ≥ 8 fotos usables en `fotos/` y un logo o la foto de perfil en
+`logos/`, bajados de su Instagram **por el usuario** (Claude no navega Instagram con una cuenta).
+Si falta, pedíselo en lenguaje llano: "abrí su Instagram (<link>), guardá 8 a 15 fotos que muestren
+el local y lo que venden, la foto de perfil y una captura del perfil, y ponelas en <ruta>". No
+sigas hasta tenerlo. El punto 1 se corre con el link de Maps: `existe <url del pipeline>`.
+
 ## Paso 1 — Carpeta del prospecto
 
 Copiá `_Plantilla-web` a `<Prospectos/Webs>/<slug>/` (slug = kebab-case del nombre comercial, sin
@@ -62,6 +78,9 @@ node scripts/pipeline.mjs <csv> upsert <slug> empresa="..." url=... rubro="..." 
 La carpeta de prospectos (`<Lume>/01-Comercial/Prospectos/Webs/`) es un repo git local: commiteá
 en `main` el relevamiento. Definí la **clave** de la demo, `AAAA-MM-DD-<slug>` (fecha del día en
 que arranca el diseño), y anotala en `FICHA.md`: todo lo que produce el diseño la lleva.
+
+**Si `tipo=nueva`:** en `FICHA.md`, en lugar de URL y plataforma, anotá el link de Maps y el
+Instagram. En el `upsert`, `tipo=nueva canal=whatsapp`.
 
 ## Paso 2 — Relevar el sitio actual (el "antes")
 
@@ -94,6 +113,25 @@ Auditoría del antes → `02-Sitio-actual/auditoria/`:
   tipografía, color, layout, estados) y anotá en `auditoria/resumen.md`, sección "Diagnóstico de diseño",
   lo que la demo tiene que resolver. Sus sugerencias de relleno (picsum, cambiar la tipografía "por Inter")
   no aplican: mandan las reglas de contenido real y de marca.
+
+**Si `tipo=nueva` (no hay sitio): relevar la ficha y el Instagram.**
+
+- Datos de la ficha:
+  `node scripts/ficha-places.mjs "<empresa> <zona>" --place-id <url del pipeline> --json <slug>/03-Material-cliente/ficha.json`
+  (1 consulta del cupo mensual). Si dice que no encontró el comercio, probá con el nombre exacto
+  de la ficha. No trae fotos ni reseñas, a propósito.
+- **El "antes"** = cómo los encuentran hoy, en celular (emulación de iPhone real, ver
+  `buscar-prospectos-web` Paso 3): la ficha abierta desde `maps` de `ficha.json` →
+  `02-Sitio-actual/capturas/maps-mobile.png` (cerrá el aviso de cookies antes de capturar; si Maps
+  no carga bien, pedile al usuario una captura desde su celular) y el perfil de Instagram →
+  `instagram-mobile.png` (la captura que pasó el usuario).
+- Textos: bio de Instagram, rubro, horarios y dirección de `ficha.json` →
+  `03-Material-cliente/textos/datos.md`. Nada que no esté ahí o en su Instagram.
+- Colores y tono: del logo o la foto de perfil y del feed.
+- `auditoria/resumen.md`: 3-5 **cosas que les faltan**, como las diría un dueño ("quien los busca
+  en Google llega a una ficha, no a una web", "para ver lo que venden hay que tener Instagram",
+  "los horarios solo están en Maps"). Se saltean `evaluar-sitio.mjs`, la velocidad, el inventario
+  de URLs y el diagnóstico con `redesign-existing-projects`.
 
 ## Paso 3 — Diseño dibujado (el usuario elige mirando)
 
@@ -139,6 +177,12 @@ Usá `frontend-design` y `ui-ux-pro-max` para generar las direcciones. Reglas qu
 
 No se construye nada sin la dirección elegida y, si hay README, sin el spec aprobado.
 
+**Si `tipo=nueva`:** la dirección **conservadora** es la pegada a la estética de su Instagram. Las
+páginas se deciden en el spec según el material: como mínimo inicio y contacto (mapa, horarios,
+botón de WhatsApp); productos o servicios si los destacados de Instagram alcanzan. La nota de Google
+va solo como `notaTexto` de `ficha.json` ("4,7 en Google · 120 reseñas") con link a la ficha: nunca
+citar reseñas ni usar fotos de Google.
+
 ## Paso 4 — Construir la demo
 
 0. Creá la rama `demo/<clave>` (después de commitear el diseño en `main`) y construí desde el
@@ -167,6 +211,8 @@ No se construye nada sin la dirección elegida y, si hay README, sin el spec apr
      "Propuesta de rediseño preparada por Lume para <Empresa> · No es el sitio oficial" y un link
      a lumeai.uy. Discreta pero visible en todas las páginas. Esto es lo que hace que la demo sea
      una propuesta honesta y no una copia que alguien pueda confundir con el sitio real.
+     Si `tipo=nueva`: "Propuesta de web preparada por Lume para <Empresa> · No es un sitio
+     oficial". `verificar-demo.mjs` se corre sin dominio actual.
    - **Formulario desactivado:** el `<form>` de contacto lleva `data-lume-demo-form`, no envía
      nada y al enviar muestra "Esto es una demo: en tu web real, este mensaje te llega por mail".
      Botones de WhatsApp / teléfono pueden quedar con sus datos reales.
@@ -265,6 +311,10 @@ Guardá en el pipeline: `demo_url=<url> umami_id=<id> estado=demo-lista`. Uní l
 - Opcional, si el usuario lo pide: video corto de la demo con la skill `brag` o
   `product-launch-video`.
 
+**Si `tipo=nueva`:** no hay medición (no hay antes que medir). La imagen es
+`01-Comercial/hoy-propuesta.png`: `maps-mobile.png` rotulada "Hoy en Google" al lado de la home de
+la demo en celular rotulada "Propuesta", mismo método (HTML local de dos columnas + captura).
+
 ## Paso 9 — Mail y seguimientos
 
 Escribí `01-Comercial/mail.md` siguiendo `references/mail.md` (asunto, cuerpo, seguimiento 1 y 2),
@@ -286,6 +336,13 @@ Cerrá con un resumen corto: link de la demo, puntajes antes → después, dónd
 imagen, y el recordatorio: "cuando lo mandes, avisame y lo marco como enviado" (eso lo registra
 `seguimiento-prospectos-web`).
 
+**Si `canal=whatsapp`:** en lugar de `mail.md` y del borrador IMAP, escribí
+`01-Comercial/whatsapp.md` siguiendo `references/whatsapp.md`: los tres mensajes y, debajo de cada
+uno, su link de `node scripts/wa-link.mjs <telefono del pipeline> <texto.txt>`. Si el teléfono no es
+celular, `wa-link` falla: avisá al usuario (hay que conseguir el WhatsApp o descartar). Cerrá con:
+link de la demo, dónde están `whatsapp.md` y la imagen, el recordatorio del tope de 5 por día y
+"cuando lo mandes, avisame y lo marco como enviado".
+
 ## Errores comunes
 
 - **Demo indexable** → Google la toma como copia del sitio real y perjudica a la empresa. Por eso
@@ -301,3 +358,7 @@ imagen, y el recordatorio: "cuando lo mandes, avisame y lo marco como enviado" (
 - **Saltear la revisión del usuario** porque los controles dan OK → `npm run qa` y Impeccable no
   ven si la demo convence al dueño; las páginas internas, además, nunca se dibujaron. Sin el
   "está lista" del Paso 6 no se publica.
+- **Usar fotos o reseñas de Google en una demo sin web** → las condiciones de la Places API no lo
+  permiten. Fotos: las de su Instagram. Reseñas: solo nota y cantidad.
+- **Mandar el WhatsApp por el usuario o automatizarlo** → no; además de ser decisión suya, WhatsApp
+  bloquea números que mandan mensajes en frío en volumen.

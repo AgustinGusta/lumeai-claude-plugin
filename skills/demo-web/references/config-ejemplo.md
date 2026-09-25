@@ -23,8 +23,18 @@
 - Seguimiento 2: día 10 hábil después del envío
 - Demos online: 60 días desde el envío (después se borran si no hubo interés)
 
+## WhatsApp (comercios sin web)
+
+- Número de Lume desde el que se escribe: <+598 9X XXX XXX>
+- Se presenta como: <Nombre>, de Lume
+- Máximo de WhatsApp nuevos por día: 5 (WhatsApp bloquea números con mucho mensaje en frío)
+- Seguimientos: mismos días que el mail (4 y 10 hábiles), por el mismo chat
+- Línea de baja: "Si no les interesa, avísennos y no volvemos a escribirles."
+
 ## Búsqueda
 
 - Rubros prioritarios: <ej. estudios contables, clínicas dentales, inmobiliarias, talleres>
 - Zonas: <ej. Montevideo, Canelones, Maldonado>
 - Excluir: cadenas, franquicias, sitios que ya parecen hechos por agencia
+- Comercios sin web: nota ≥ 4,3, ≥ 30 reseñas, celular (WhatsApp) e Instagram con publicaciones en
+  los últimos 3 meses.
