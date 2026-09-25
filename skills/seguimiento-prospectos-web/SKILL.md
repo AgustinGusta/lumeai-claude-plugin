@@ -1,6 +1,6 @@
 ---
 name: seguimiento-prospectos-web
-description: Gestiona el pipeline de prospectos a los que Lume les mandó (o les va a mandar) una demo web. Registra envíos y respuestas, dice a quién hay que hacerle seguimiento hoy y redacta esos mails, muestra quién abrió la demo (Umami) y limpia demos vencidas de Cloudflare. Úsala cuando el usuario diga "ya mandé el mail a X", "X respondió", "¿a quién le tengo que escribir hoy?", "seguimientos", "cómo va el pipeline de webs", "quién vio la demo", "borrar demos viejas", o pida un resumen de prospectos web.
+description: Gestiona el pipeline de prospectos a los que Lume les mandó (o les va a mandar) una demo web, por mail o por WhatsApp. Registra envíos y respuestas, dice a quién hay que hacerle seguimiento hoy y redacta esos mails, muestra quién abrió la demo (Umami) y limpia demos vencidas de Cloudflare. Úsala cuando el usuario diga "ya mandé el mail a X", "ya le mandé el WhatsApp a X", "X respondió", "¿a quién le tengo que escribir hoy?", "seguimientos", "cómo va el pipeline de webs", "quién vio la demo", "borrar demos viejas", o pida un resumen de prospectos web.
 ---
 
 # Seguimiento de prospectos web
@@ -20,7 +20,9 @@ continuá y recordá que esos controles no están corriendo.
 
 - `pipeline.csv` y `_config.md` en `<Lume>/01-Comercial/Prospectos/Webs/` (ver `demo-web`).
 - Scripts: `../demo-web/scripts/pipeline.mjs` y `../demo-web/scripts/umami.mjs`.
-- Carpeta de cada prospecto: `<Prospectos/Webs>/<slug>/`, con el mail en `01-Comercial/mail.md`.
+- Carpeta de cada prospecto: `<Prospectos/Webs>/<slug>/`, con el mensaje en `01-Comercial/mail.md`
+  (`canal=mail`) o `01-Comercial/whatsapp.md` (`canal=whatsapp`). Canal vacío = mail.
+- Links de WhatsApp: `../demo-web/scripts/wa-link.mjs`.
 
 ## Estados
 
@@ -30,15 +32,17 @@ Salidas en cualquier momento: `respondio` → `reunion` → `cliente`, `descarta
 
 ## Registrar eventos
 
-- **"Le mandé el mail a X"** → `upsert <slug> estado=enviado enviado_el=<hoy>`.
+- **"Le mandé el mail / el WhatsApp a X"** → `upsert <slug> estado=enviado enviado_el=<hoy>`.
 - **"Mandé el seguimiento"** → `estado=seguimiento-1` o `seguimiento-2`, y sumá la fecha a
   `seguimientos` (ej. `2026-09-30;2026-10-08`).
 - **"Respondió"** → pedí o resumí qué dijo. Positivo → `respondio`, y ofrecé preparar la reunión.
   "No me interesa" → `perdido`. "No me escriban" → `baja`. Guardá un resumen en `notas`.
+  Por WhatsApp vale igual: "no" o "no me escriban" → `baja`.
 - **"Firmó"** → `cliente`, y recordá mover la carpeta `<slug>` de Prospectos a
   `02-Clientes/<Nombre-Cliente>` (tiene la estructura de `_Plantilla-web`) y seguir su
   `CHECKLIST.md`. La demo es el punto de partida del código real: se pasa a un repo
-  `<cliente>-web` en ADO y se quita el modo demo (noindex, aviso, formulario desactivado).
+  `<cliente>-web` en ADO y se quita el modo demo (noindex, aviso, formulario desactivado). Si era `tipo=nueva`, la web se
+  arma sobre la demo igual; además hay que registrar el dominio (lo ve `propuesta-comercial`).
 
 ## Revisión diaria ("¿qué tengo hoy?")
 
@@ -47,11 +51,14 @@ Salidas en cualquier momento: `respondio` → `reunion` → `cliente`, `descarta
    `enviado_el` con `umami.mjs visitas` (si no hay credenciales, salteá esta columna).
 3. Calculá días hábiles desde el último contacto contra el ritmo de `_config.md` (default: seg. 1
    en el día 4, seg. 2 en el día 10). Listá:
-   - **Hoy toca seguimiento**: con el texto listo, tomado de `mail.md` de su carpeta y ajustado
+   - **Hoy toca seguimiento**: con el texto listo, tomado de `mail.md` o `whatsapp.md` según el `canal`
+     (para WhatsApp, con su link `wa.me` regenerado con `wa-link.mjs` si cambiaste el texto) y ajustado
      (si abrió la demo, un "¿llegaste a verla?" directo; nunca "vi que entraste").
-   - **Demos listas sin enviar**, recordando el tope diario de envíos.
+   - **Demos listas sin enviar**, recordando el tope diario de cada canal (`_config.md`: 10 mails,
+     5 WhatsApp).
    - **Sin respuesta tras seguimiento 2** → proponer pasar a `perdido`.
-4. Resumen corto del embudo: cuántos en cada estado y tasa de respuesta sobre enviados.
+4. Resumen corto del embudo, separado por `tipo` (`rediseno` / `nueva`): cuántos en cada estado y
+   tasa de respuesta sobre enviados, para comparar los dos enfoques.
 
 ## Limpieza de demos
 

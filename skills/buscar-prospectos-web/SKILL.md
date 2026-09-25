@@ -1,6 +1,6 @@
 ---
 name: buscar-prospectos-web
-description: Busca empresas con webs desactualizadas o mal hechas para ofrecerles un rediseño de Lume, las puntúa y las carga en el pipeline de prospectos. Úsala cuando el usuario pida "buscar prospectos", "encontrar empresas con webs feas/viejas", "buscar clientes para webs", "armar una lista de <rubro> en <zona> para contactar", o quiera saber qué negocios de un rubro tienen la web floja. Combina búsqueda web, un evaluador automático de señales (celular, HTTPS, año del pie, tecnología vieja, velocidad) y una revisión visual, y devuelve una shortlist priorizada con el contacto de cada una. Para armar la demo de una empresa ya elegida, usá demo-web.
+description: Busca empresas con webs desactualizadas o mal hechas para ofrecerles un rediseño de Lume, las puntúa y las carga en el pipeline de prospectos. Úsala cuando el usuario pida "buscar prospectos", "encontrar empresas con webs feas/viejas", "buscar clientes para webs", "armar una lista de <rubro> en <zona> para contactar", o quiera saber qué negocios de un rubro tienen la web floja. Combina búsqueda web, un evaluador automático de señales (celular, HTTPS, año del pie, tecnología vieja, velocidad) y una revisión visual, y devuelve una shortlist priorizada con el contacto de cada una. Además busca comercios sin web con buena ficha de Maps e Instagram activo, para ofrecerles una web nueva. Para armar la demo de una empresa ya elegida, usá demo-web.
 ---
 
 # Buscar prospectos para demos web
@@ -42,8 +42,9 @@ node ../demo-web/scripts/buscar-places.mjs "<rubro> en <zona>" --paginas 3 --jso
   por mes y el script corta solo en 900. Si no hay key o se alcanzó el tope, seguí con WebSearch.
 - Para zonas grandes, repetí por barrio o ciudad (`papelería en Pocitos`, `… en Cordón`) en
   vez de subir `--paginas`: Maps devuelve como mucho ~60 resultados por consulta.
-- El JSON trae también los comercios **sin web** o **solo con redes**: listalos en el resumen
-  como pitch de "web nueva" (no demo de rediseño).
+- Sumá `--sin-web sin-web.json` al comando: deja aparte los comercios **sin web propia** con buena
+  ficha (nota ≥ 4,3 y ≥ 30 reseñas por defecto; `--nota-min` / `--resenas-min` según `_config.md`)
+  y celular. Son el otro enfoque: **web nueva** (ver "Rama sin web" abajo), no rediseño.
 
 **Complemento: WebSearch** con 3-4 formulaciones (`<rubro> <zona>`, `<rubro> en <barrio>`,
 `<rubro> mayorista <zona>`) y directorios locales (1122.com.uy, opina.com.uy, todo.com.uy)
@@ -53,9 +54,6 @@ Juntá los **dominios propios** en `urls.txt` (en el scratchpad). Filtrá desde 
 - Directorios, marketplaces, redes sociales, Mercado Libre, perfiles de Google (no son "su web").
 - Cadenas, franquicias, empresas grandes, organismos públicos.
 - Dominios que ya están en el pipeline: `node ../demo-web/scripts/pipeline.mjs <csv> existe <url>`.
-
-Negocios **sin web** (solo Instagram): anotalos aparte en el resumen como "sin web"; son otro
-pitch (web nueva), no demo de rediseño.
 
 ## Paso 2 — Puntuar automáticamente
 
@@ -101,8 +99,10 @@ No uses listas compradas ni mails personales que no estén publicados por el pro
 Por cada candidato elegido:
 
 ```
-node ../demo-web/scripts/pipeline.mjs <csv> upsert <slug> empresa="..." url=... rubro="..." zona="..." email=... telefono=... instagram=... oportunidad=<n> motivos="<2-3 motivos en lenguaje llano>" estado=candidato notas="diseño <n>/5: <frase>"
+node ../demo-web/scripts/pipeline.mjs <csv> upsert <slug> empresa="..." url=... rubro="..." zona="..." email=... telefono=... instagram=... oportunidad=<n> motivos="<2-3 motivos en lenguaje llano>" estado=candidato tipo=rediseno canal=mail notas="diseño <n>/5: <frase>"
 ```
+
+(Si no tiene mail pero sí celular, `canal=whatsapp`.)
 
 Mostrá una tabla ordenada por prioridad (oportunidad + diseño + tiene mail):
 
@@ -110,6 +110,34 @@ Mostrá una tabla ordenada por prioridad (oportunidad + diseño + tiene mail):
 
 Cerrá preguntando con cuáles armar la demo (skill `demo-web`). Sugerí empezar por los 2-3 con
 problemas más visibles y contacto por mail.
+
+## Rama sin web (prospectos `tipo=nueva`)
+
+Comercios sin web, activos en Instagram y con buena ficha en Maps. Pitch: "ya tienen la vitrina en
+Instagram; les falta la web que aparece en Google". Se les arma una demo con `demo-web` y se les
+escribe por WhatsApp.
+
+1. **Punto de partida:** `sin-web.json` del Paso 1 (ya filtrado por nota, reseñas y celular, y
+   ordenado por `puntajeBase`). Sacá cadenas y franquicias, y los que ya están en el pipeline:
+   `pipeline.mjs <csv> existe <mapsId>`.
+2. **Instagram:** si `instagram` vino vacío, buscalo (WebSearch `"<nombre>" <zona> instagram`).
+   Mirá solo la vista pública, **sin iniciar sesión** (seguidores, bio, publicaciones, fecha de la
+   última si se ve). Si Instagram pide login, anotalo como "Instagram a revisar por el usuario".
+   Sin Instagram o con la última publicación de hace más de 3 meses → descartado.
+3. **Puntaje:** `oportunidad = puntajeBase + 20` si el Instagram está activo (máximo 100).
+4. **Cargar** los que quedan:
+   ```
+   node ../demo-web/scripts/pipeline.mjs <csv> upsert <slug> tipo=nueva canal=whatsapp estado=candidato empresa="..." url=<mapsId> rubro="..." zona="..." telefono="<celular>" instagram=<url> oportunidad=<n> motivos="<2-3 en lenguaje llano>" notas="<seguidores, última publicación>"
+   ```
+   `url` es siempre el `mapsId` (link con place_id), nunca el `maps`: es la clave del comercio.
+   Ejemplo de motivos: "120 reseñas con 4,7 pero sin web: quien lo busca en Google termina en
+   Instagram".
+5. **Mostrar** en una tabla aparte de la de rediseños:
+
+   | # | Comercio | Nota (reseñas) | Instagram | Oportunidad | WhatsApp |
+
+   Cerrá preguntando con cuáles armar la demo. Recordá que para empezar cada una el usuario tiene
+   que bajar el material de su Instagram (ver `demo-web` Paso 0).
 
 ## Errores comunes
 
