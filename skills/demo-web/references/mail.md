@@ -16,6 +16,10 @@ explicar Lume entera.
   "comprá ya".
 - **Honesto:** decí que es una propuesta hecha sin que la pidieran, que es privada (no aparece en
   Google) y que no tiene compromiso.
+- **Es un boceto, no la web final:** dejá claro que la demo se armó para mostrar la idea, con lo
+  que había en su sitio, y que no está pulida al detalle; si avanzan, la web se hace a medida, tal
+  cual la pidan. Así un detalle flojo no se lee como la calidad del trabajo final, y la charla pasa
+  a ser sobre lo que ellos quieren. Una o dos líneas, sin disculparse ni desmerecer la demo.
 - **Salida fácil:** última línea "Si no te interesa, respondé 'no' y no te vuelvo a escribir."
   Además de ser buena práctica, la Ley 18.331 de protección de datos (Uruguay) exige identificarse
   y ofrecer la baja en comunicaciones comerciales. Si responden que no, el prospecto pasa a `baja`
@@ -43,7 +47,9 @@ explicar Lume entera.
 > En vez de contártelo, me tomé el trabajo de armar cómo podría verse, con sus mismos textos y
 > fotos: <link a la demo>
 >
-> (Es una propuesta privada, no aparece en Google y no tiene ningún compromiso.)
+> Es un boceto para que veas la idea, no la web terminada: no está pulido al detalle. Si avanzamos,
+> la hacemos a medida, tal cual la quieran. (Es privada, no aparece en Google y no tiene ningún
+> compromiso.)
 >
 > Si te gusta, lo vemos 15 minutos cuando te quede cómodo y te cuento cómo sería pasarla a su
 > dominio.
