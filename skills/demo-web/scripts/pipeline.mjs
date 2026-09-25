@@ -3,25 +3,33 @@
 // Clave: slug (kebab-case de la empresa). Un prospecto por dominio.
 //
 // Uso:
-//   node pipeline.mjs <csv> list [--estado enviado] [--json]
+//   node pipeline.mjs <csv> list [--estado enviado] [--tipo nueva] [--json]
 //   node pipeline.mjs <csv> get <slug>
 //   node pipeline.mjs <csv> upsert <slug> campo=valor [campo=valor ...]
-//   node pipeline.mjs <csv> existe <url-o-dominio>      (exit 0 si ya está, 1 si no)
+//   node pipeline.mjs <csv> existe <url-o-dominio | link de Maps con place_id>   (exit 0 si ya está, 1 si no)
+//
+// tipo: rediseno (tiene web; default si está vacío) | nueva (sin web).
+// canal: mail (default si está vacío) | whatsapp.
+// Los "nueva" guardan en url el link canónico de Maps (place_id), que es su clave.
 //
 // upsert crea el archivo si no existe. Si cambia "estado" y no se pasa
 // fecha_estado, se completa con la fecha de hoy.
 
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { placeIdDe } from "./prospectos-comun.mjs";
 
 const COLS = [
   "slug", "empresa", "url", "rubro", "zona", "email", "telefono", "instagram",
   "oportunidad", "motivos", "estado", "fecha_estado", "demo_url", "umami_id",
-  "enviado_el", "seguimientos", "notas",
+  "enviado_el", "seguimientos", "notas", "tipo", "canal",
 ];
 const ESTADOS = [
   "candidato", "descartado", "demo-lista", "enviado", "seguimiento-1", "seguimiento-2",
   "respondio", "reunion", "cliente", "perdido", "baja",
 ];
+const TIPOS = ["rediseno", "nueva"];
+const CANALES = ["mail", "whatsapp"];
+const tipoDe = (it) => it.tipo || "rediseno";
 
 const [csvPath, cmd, ...rest] = process.argv.slice(2);
 if (!csvPath || !cmd) {
@@ -77,11 +85,12 @@ const items = load();
 
 switch (cmd) {
   case "list": {
-    const i = rest.indexOf("--estado");
-    const estado = i >= 0 ? rest[i + 1] : undefined;
-    const sel = estado ? items.filter((it) => it.estado === estado) : items;
+    const val = (n) => { const i = rest.indexOf(n); return i >= 0 ? rest[i + 1] : undefined; };
+    const estado = val("--estado");
+    const tipo = val("--tipo");
+    const sel = items.filter((it) => (!estado || it.estado === estado) && (!tipo || tipoDe(it) === tipo));
     if (rest.includes("--json")) console.log(JSON.stringify(sel, null, 2));
-    else for (const it of sel) console.log([it.slug, it.estado, it.fecha_estado, it.oportunidad, it.url, it.email, it.demo_url].join(" | "));
+    else for (const it of sel) console.log([it.slug, tipoDe(it), it.estado, it.fecha_estado, it.oportunidad, it.url, it.email || it.telefono, it.demo_url].join(" | "));
     break;
   }
   case "get": {
@@ -91,8 +100,11 @@ switch (cmd) {
     break;
   }
   case "existe": {
-    const d = domain(rest[0] ?? "");
-    const it = items.find((x) => x.url && domain(x.url) === d);
+    const q = rest[0] ?? "";
+    const pid = placeIdDe(q);
+    const it = pid
+      ? items.find((x) => placeIdDe(x.url) === pid)
+      : items.find((x) => x.url && !placeIdDe(x.url) && domain(x.url) === domain(q));
     if (it) { console.log(`${it.slug} (${it.estado})`); process.exit(0); }
     process.exit(1);
   }
@@ -107,6 +119,12 @@ switch (cmd) {
     }
     if (patch.estado && !ESTADOS.includes(patch.estado)) {
       console.error(`Estado inválido: ${patch.estado}. Válidos: ${ESTADOS.join(", ")}`); process.exit(2);
+    }
+    if (patch.tipo && !TIPOS.includes(patch.tipo)) {
+      console.error(`Tipo inválido: ${patch.tipo}. Válidos: ${TIPOS.join(", ")}`); process.exit(2);
+    }
+    if (patch.canal && !CANALES.includes(patch.canal)) {
+      console.error(`Canal inválido: ${patch.canal}. Válidos: ${CANALES.join(", ")}`); process.exit(2);
     }
     let it = items.find((x) => x.slug === slug);
     if (!it) {
