@@ -10,7 +10,8 @@ una demo convincente. Busca **calidad antes que cantidad**: 5 buenos candidatos 
 mediocres, porque cada demo lleva trabajo.
 
 Entrada: rubro y zona (ej. "estudios contables en Montevideo"), y opcionalmente cuántos candidatos
-buscar (default 10). Si no los da, usá los de `_config.md`.
+buscar (default 10). **Si no da rubro ni zona, se sigue el barrido ordenado** (sección "Barrido
+ordenado"): así se recorren todos los rubros de `_config.md` sin repetir búsquedas.
 
 ## Antes de empezar: ¿dónde está abierta la sesión?
 
@@ -26,6 +27,59 @@ continuá y recordá que esos controles no están corriendo.
 - Carpeta de prospectos web, `_config.md` y `pipeline.csv`: como en la skill `demo-web`
   (`<Lume>/01-Comercial/Prospectos/Webs/`).
 - Scripts compartidos: `../demo-web/scripts/` (relativo a esta skill).
+
+## Barrido ordenado (modo por defecto)
+
+La búsqueda se organiza como una grilla de **casillas rubro × rectángulo del mapa**, que se barren
+de a una y se tachan en `cobertura.csv` (carpeta de prospectos). Los comercios que se miraron y no
+sirven quedan en `descartados.csv`, así ninguna búsqueda posterior los vuelve a evaluar. Los rubros,
+en orden y con sus consultas, y el rectángulo inicial están en `_config.md` → `## Barrido`.
+
+Maps devuelve como mucho 60 comercios por búsqueda: si una casilla llega a 60 está **saturada** y
+se parte en 4 cuadrantes, que quedan pendientes. Con menos de 60, la casilla está agotada.
+
+`<dir>` = carpeta de prospectos; `<s>` = scripts compartidos; archivos de trabajo en el scratchpad,
+el JSON crudo en `<dir>/barridos/` (ignorado por git).
+
+1. **Casilla:** `node <s>/cobertura.mjs <dir> siguiente` → `{ id, rubro, consulta, rect, nombre, archivo }`.
+   Exit 1 = primera vuelta terminada: avisale al usuario y pará.
+2. **Buscar en el rectángulo** (la consulta va sin zona):
+   ```
+   node <s>/buscar-places.mjs "<consulta>" --rect <rect> --paginas 3 --json <dir>/barridos/<archivo>.json --resumen resumen.json --sin-web sin-web.json
+   ```
+   - Exit 4 (`incompleta`): se cortó por el tope mensual. **No cierres la casilla**; avisale al
+     usuario y seguí el mes que viene.
+   - `saturada: true` → `node <s>/cobertura.mjs <dir> partir <id>`. Los resultados de esta casilla
+     se procesan igual (no se tira la consulta); los cuadrantes filtran lo ya visto.
+3. **Filtrar lo ya visto:** `node <s>/cobertura.mjs <dir> filtrar <dir>/barridos/<archivo>.json --salida nuevos.json`
+   (saca lo que está en el pipeline o en descartados). Hacé lo mismo con `sin-web.json`
+   (`--salida sin-web-nuevos.json`). De `nuevos.json`, las `web` de los que tienen `webPropia`
+   van a `urls.txt` (un dominio por línea, sin repetir).
+4. **Pasos 2 a 4 de siempre** sobre lo nuevo (evaluar, revisión visual, contacto) y la rama sin web
+   sobre `sin-web-nuevos.json`. Sitios caídos: son un descarte (`caida`).
+5. **Registrar:**
+   - Candidatos → `pipeline.mjs upsert` como en el Paso 5, con `rubro` = el de la casilla.
+   - **Todo lo que pasó por el evaluador o por tu revisión y no quedó** → `descartados`, en un lote:
+     ```
+     node <s>/cobertura.mjs <dir> descartar --lote descartes.json
+     ```
+     con `[{ "place_id": "<id>", "dominio": "<web o vacío>", "empresa": "...", "rubro": "<rubro>",
+     "casilla": "<id de la casilla>", "motivo": "cadena|web-buena|sin-contenido|caida|sin-instagram|tiene-web|otro",
+     "detalle": "<una frase>" }]`. Lo que el filtro automático ya sacó (sin web con poca nota o
+     pocas reseñas, redes sin celular) no se registra: una búsqueda repetida lo saca solo.
+6. **Cerrar la casilla** con sus números y un nombre legible con los barrios que aparecen en las
+   direcciones de los resultados:
+   ```
+   node <s>/cobertura.mjs <dir> cerrar <id> resultados=<n> con_web=<n> sin_web_buena=<n> candidatos=<n> descartados=<n> consultas=<n> nombre="Montevideo › NE (Malvín, Unión, Buceo)"
+   ```
+   Los números salen de `resumen.json` y de lo que registraste.
+7. **Repetir** desde el paso 1 hasta juntar **unos 10 candidatos** (rediseño + sin web) o terminar
+   el rubro, lo que llegue primero.
+8. **Cerrar la sesión** con las tablas del Paso 5 (y la de sin web) y el avance:
+   `node <s>/cobertura.mjs <dir> estado` ("ferreterias | 9/13 casillas | …; Próxima: …").
+
+Si el usuario pide un rubro o una zona puntual, se busca como hasta ahora (Paso 1 con texto), pero
+igual se usa `filtrar` antes de evaluar y se registran los descartes (`casilla` = "fuera de grilla").
 
 ## Paso 1 — Buscar candidatos
 
@@ -146,7 +200,10 @@ escribe por WhatsApp.
 
 - **Quedarse con lo que dice el script sin mirar la web**: un sitio en Wix moderno puede puntuar
   alto por velocidad y verse bien. La revisión visual manda.
-- **Cargar al pipeline empresas descartadas**: solo entran los candidatos; los descartes
-  quedan en el resumen de la sesión.
+- **Cargar al pipeline empresas descartadas**: solo entran los candidatos; los descartes van a
+  `descartados.csv` (`cobertura.mjs descartar`).
 - **Buscar en un solo lugar**: los primeros resultados de Google suelen ser los que ya invirtieron
   en su web. Los mejores prospectos están en la página 2-3 y en directorios.
+- **No registrar los descartes**: si un comercio que se evaluó no queda ni en el pipeline ni en
+  `descartados.csv`, el cuadrante siguiente lo vuelve a traer y se evalúa otra vez.
+- **Cerrar una casilla incompleta**: si `buscar-places` salió con exit 4, la casilla sigue pendiente.

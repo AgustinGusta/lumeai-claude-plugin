@@ -40,3 +40,13 @@
 - Excluir: cadenas, franquicias, sitios que ya parecen hechos por agencia
 - Comercios sin web: nota ≥ 4,3, ≥ 30 reseñas, celular (WhatsApp) e Instagram con publicaciones en
   los últimos 3 meses.
+
+## Barrido
+
+Lo lee `cobertura.mjs` (skill `buscar-prospectos-web`, barrido ordenado). Cada rubro con sus
+consultas separadas por `|`; se barren en este orden.
+
+- Zona inicial: mvd (Montevideo) = -34.94,-56.44,-34.70,-56.02
+- Rubros, en orden:
+  1. ferreterias: ferretería | pinturería
+  2. opticas: óptica
