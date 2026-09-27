@@ -15,8 +15,7 @@
 // upsert crea el archivo si no existe. Si cambia "estado" y no se pasa
 // fecha_estado, se completa con la fecha de hoy.
 
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
-import { esLinkMaps, placeIdDe } from "./prospectos-comun.mjs";
+import { dominio, esLinkMaps, escribirCsv, hoy, leerCsv, placeIdDe } from "./prospectos-comun.mjs";
 
 const COLS = [
   "slug", "empresa", "url", "rubro", "zona", "email", "telefono", "instagram",
@@ -37,55 +36,22 @@ if (!csvPath || !cmd) {
   process.exit(2);
 }
 
-function parse(text) {
-  const rows = [];
-  let row = [], field = "", q = false;
-  for (let i = 0; i < text.length; i++) {
-    const c = text[i];
-    if (q) {
-      if (c === '"' && text[i + 1] === '"') { field += '"'; i++; }
-      else if (c === '"') q = false;
-      else field += c;
-    } else if (c === '"') q = true;
-    else if (c === ",") { row.push(field); field = ""; }
-    else if (c === "\n" || c === "\r") {
-      if (c === "\r" && text[i + 1] === "\n") i++;
-      row.push(field); field = "";
-      if (row.some((f) => f !== "")) rows.push(row);
-      row = [];
-    } else field += c;
-  }
-  row.push(field);
-  if (row.some((f) => f !== "")) rows.push(row);
-  return rows;
-}
-
-const esc = (v) => (/[",\r\n]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v);
-
 // Columnas del archivo que este script no conoce (de una versión más nueva):
 // se conservan al guardar, para no borrar datos en silencio.
 let extras = [];
 
 function load() {
-  if (!existsSync(csvPath)) return [];
-  const [header, ...rows] = parse(readFileSync(csvPath, "utf8").replace(/^﻿/, ""));
+  const { header, filas } = leerCsv(csvPath);
   extras = header.filter((h) => h && !COLS.includes(h));
-  return rows.map((r) => Object.fromEntries(header.map((h, i) => [h, r[i] ?? ""])));
+  return filas;
 }
 
 function save(items) {
-  const cols = [...COLS, ...extras];
-  const lines = [cols.join(","), ...items.map((it) => cols.map((c) => esc(String(it[c] ?? ""))).join(","))];
-  // BOM para que Excel abra bien los acentos.
-  writeFileSync(csvPath, "﻿" + lines.join("\r\n") + "\r\n");
+  escribirCsv(csvPath, [...COLS, ...extras], items);
 }
 
-const domain = (u) => {
-  try { return new URL(/^https?:/i.test(u) ? u : `http://${u}`).hostname.replace(/^www\./, "").toLowerCase(); }
-  catch { return u.toLowerCase(); }
-};
-// Fecha local (no UTC): en Uruguay, después de las 21 h toISOString ya da mañana.
-const today = () => new Date().toLocaleDateString("sv-SE");
+const domain = dominio;
+const today = hoy;
 
 const items = load();
 

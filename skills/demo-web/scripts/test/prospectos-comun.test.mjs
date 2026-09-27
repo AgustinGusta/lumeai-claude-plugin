@@ -1,11 +1,12 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { mkdtempSync } from "node:fs";
+import { mkdtempSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import {
   contador, mapsUrl, placeIdDe, celularUy, waNumero, aFila, puntajeBase,
   filtrarSinWeb, notaTexto, aFicha, waLink, esLinkMaps,
+  leerCsv, escribirCsv, dominio,
 } from "../prospectos-comun.mjs";
 
 test("celularUy acepta formatos reales y rechaza fijos", () => {
@@ -145,4 +146,28 @@ test("esLinkMaps reconoce links de Maps con y sin place_id", () => {
   assert.equal(esLinkMaps("https://www.google.com/maps/place/?q=place_id:X"), true);
   assert.equal(esLinkMaps("https://papeleriamontevideo.com.uy/"), false);
   assert.equal(esLinkMaps("papeleriamontevideo.com.uy"), false);
+});
+
+test("escribirCsv/leerCsv: ida y vuelta con comas, comillas, saltos de línea y BOM", () => {
+  const path = join(mkdtempSync(join(tmpdir(), "lume-csv-")), "x.csv");
+  const filas = [
+    { id: "a", nombre: "Montevideo › NE (Malvín, Unión)", detalle: "dice \"en construcción\"\ny nada más" },
+    { id: "b", nombre: "", detalle: "ñandú" },
+  ];
+  escribirCsv(path, ["id", "nombre", "detalle"], filas);
+  const crudo = readFileSync(path, "utf8");
+  assert.ok(crudo.startsWith("﻿id,nombre,detalle\r\n"), JSON.stringify(crudo.slice(0, 30)));
+  const leido = leerCsv(path);
+  assert.deepEqual(leido.header, ["id", "nombre", "detalle"]);
+  assert.deepEqual(leido.filas, filas);
+});
+
+test("leerCsv de un archivo que no existe devuelve vacío", () => {
+  assert.deepEqual(leerCsv(join(tmpdir(), "no-existe-lume.csv")), { header: [], filas: [] });
+});
+
+test("dominio normaliza esquema, www, mayúsculas y ruta", () => {
+  assert.equal(dominio("https://www.Ferreteria.com.uy/contacto"), "ferreteria.com.uy");
+  assert.equal(dominio("ferreteria.com.uy"), "ferreteria.com.uy");
+  assert.equal(dominio("http://ferreteria.com.uy"), "ferreteria.com.uy");
 });

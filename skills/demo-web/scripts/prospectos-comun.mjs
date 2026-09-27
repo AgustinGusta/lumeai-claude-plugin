@@ -1,5 +1,5 @@
 // Funciones compartidas por los scripts de prospectos web (buscar-places,
-// ficha-places, wa-link, pipeline). Sin dependencias.
+// ficha-places, wa-link, pipeline, cobertura). Sin dependencias.
 
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
@@ -136,3 +136,47 @@ export function filtrarSinWeb(filas, { notaMin = 4.3, resenasMin = 30 } = {}) {
     .map((f) => ({ ...f, celular: celularUy(f.telefono), puntajeBase: puntajeBase(f) }))
     .sort((a, b) => b.puntajeBase - a.puntajeBase);
 }
+
+// ── CSV (abrible en Excel) ─────────────────────────────────────────────────
+export function parseCsv(text) {
+  const rows = [];
+  let row = [], field = "", q = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (q) {
+      if (c === '"' && text[i + 1] === '"') { field += '"'; i++; }
+      else if (c === '"') q = false;
+      else field += c;
+    } else if (c === '"') q = true;
+    else if (c === ",") { row.push(field); field = ""; }
+    else if (c === "\n" || c === "\r") {
+      if (c === "\r" && text[i + 1] === "\n") i++;
+      row.push(field); field = "";
+      if (row.some((f) => f !== "")) rows.push(row);
+      row = [];
+    } else field += c;
+  }
+  row.push(field);
+  if (row.some((f) => f !== "")) rows.push(row);
+  return rows;
+}
+
+const escCsv = (v) => (/[",\r\n]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v);
+
+// Filas como objetos por encabezado. Archivo inexistente = vacío.
+export function leerCsv(path) {
+  if (!existsSync(path)) return { header: [], filas: [] };
+  const [header = [], ...rows] = parseCsv(readFileSync(path, "utf8").replace(/^﻿/, ""));
+  return { header, filas: rows.map((r) => Object.fromEntries(header.map((h, i) => [h, r[i] ?? ""]))) };
+}
+
+// Con BOM para que Excel abra bien los acentos.
+export function escribirCsv(path, cols, filas) {
+  const lines = [cols.join(","), ...filas.map((f) => cols.map((c) => escCsv(String(f[c] ?? ""))).join(","))];
+  writeFileSync(path, "﻿" + lines.join("\r\n") + "\r\n");
+}
+
+export const dominio = (u) => aUrl(u ?? "")?.hostname.replace(/^www\./, "").toLowerCase() ?? String(u).toLowerCase();
+
+// Fecha local (no UTC): en Uruguay, después de las 21 h toISOString ya da mañana.
+export const hoy = () => new Date().toLocaleDateString("sv-SE");
