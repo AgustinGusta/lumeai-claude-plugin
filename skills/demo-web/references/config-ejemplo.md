@@ -46,7 +46,7 @@
 Lo lee `cobertura.mjs` (skill `buscar-prospectos-web`, barrido ordenado). Cada rubro con sus
 consultas separadas por `|`; se barren en este orden.
 
-- Zona inicial: mvd (Montevideo) = -34.94,-56.44,-34.70,-56.02
+- Zona inicial: mvd (Montevideo) = -34.94,-56.44,-34.70,-56.01
 - Rubros, en orden:
   1. ferreterias: ferretería | pinturería
   2. opticas: óptica
