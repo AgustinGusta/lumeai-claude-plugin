@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { mkdtempSync, writeFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -112,4 +112,74 @@ test("sin _config.md o sin sección Barrido: error claro", () => {
   const b = run(carpeta("# Config\n\n## Búsqueda\n\n- nada\n"), "siguiente");
   assert.equal(b.status, 2);
   assert.match(b.stderr, /## Barrido/);
+});
+
+const PLACES = [
+  { id: "P1", nombre: "Ferre en pipeline por dominio", web: "https://www.ferre-uno.com.uy/", webPropia: true },
+  { id: "P2", nombre: "Ferre sin web en pipeline", web: "", webPropia: false },
+  { id: "P3", nombre: "Descartada por place_id", web: "", webPropia: false },
+  { id: "P4", nombre: "Descartada por dominio", web: "http://Ferre-Cuatro.com.uy/contacto", webPropia: true },
+  { id: "P5", nombre: "Nueva", web: "https://nueva.com.uy", webPropia: true },
+  { id: "P6", nombre: "Solo Instagram", web: "https://instagram.com/ferre", webPropia: false },
+];
+
+function conDatos() {
+  const dir = carpeta();
+  writeFileSync(join(dir, "pipeline.csv"),
+    "﻿slug,url\r\nuno,ferre-uno.com.uy\r\ndos,https://www.google.com/maps/place/?q=place_id:P2\r\n");
+  writeFileSync(join(dir, "descartados.csv"),
+    "﻿place_id,dominio,empresa,rubro,casilla,motivo,detalle,fecha\r\nP3,,X,ferreterias,c,cadena,,2026-09-27\r\n,ferre-cuatro.com.uy,Y,ferreterias,c,web-buena,,2026-09-27\r\n");
+  const places = join(dir, "places.json");
+  writeFileSync(places, JSON.stringify(PLACES));
+  return { dir, places };
+}
+
+test("filtrar saca lo que ya está en el pipeline o en descartados (place_id y dominio)", () => {
+  const { dir, places } = conDatos();
+  const r = run(dir, "filtrar", places);
+  assert.equal(r.status, 0, r.stderr);
+  assert.deepEqual(JSON.parse(r.stdout).map((x) => x.id), ["P5", "P6"]);
+  assert.match(r.stderr, /6 comercios → 2 nuevos \(2 en el pipeline, 2 ya descartados\)/);
+  const salida = join(dir, "f.json");
+  assert.equal(run(dir, "filtrar", places, "--salida", salida).status, 0);
+  assert.equal(JSON.parse(readFileSync(salida, "utf8")).length, 2);
+});
+
+test("filtrar sin pipeline ni descartados deja todo", () => {
+  const dir = carpeta();
+  const places = join(dir, "places.json");
+  writeFileSync(places, JSON.stringify(PLACES));
+  assert.equal(JSON.parse(run(dir, "filtrar", places).stdout).length, 6);
+});
+
+test("descartar por dominio o place_id, normaliza el dominio y no duplica", () => {
+  const dir = carpeta();
+  const base = ["empresa=Ferre Sol", "rubro=ferreterias", "casilla=ferreterias/ferreteria/mvd", "motivo=web-buena", "detalle=diseño 4/5"];
+  assert.equal(run(dir, "descartar", "https://www.FerreSol.com.uy/inicio", ...base).status, 0);
+  assert.equal(run(dir, "descartar", "ferresol.com.uy", ...base).status, 0);
+  assert.equal(run(dir, "descartar", "ChIJabc123", ...base.slice(0, 3), "motivo=cadena").status, 0);
+  const d = leerCsv(join(dir, "descartados.csv")).filas;
+  assert.equal(d.length, 2);
+  assert.equal(d[0].dominio, "ferresol.com.uy");
+  assert.equal(d[0].place_id, "");
+  assert.equal(d[1].place_id, "ChIJabc123");
+  assert.match(d[0].fecha, /^\d{4}-\d{2}-\d{2}$/);
+  const mal = run(dir, "descartar", "x.com.uy", ...base.slice(0, 3), "motivo=feo");
+  assert.equal(mal.status, 2);
+  assert.match(mal.stderr, /Motivo inválido/);
+});
+
+test("descartar --lote agrega varios y saltea los que ya estaban", () => {
+  const dir = carpeta();
+  const lote = join(dir, "lote.json");
+  writeFileSync(lote, JSON.stringify([
+    { place_id: "A1", dominio: "https://a.com.uy", empresa: "A", rubro: "ferreterias", casilla: "c", motivo: "web-buena", detalle: "ok" },
+    { place_id: "B2", empresa: "B", rubro: "ferreterias", casilla: "c", motivo: "sin-instagram" },
+  ]));
+  const r = run(dir, "descartar", "--lote", lote);
+  assert.equal(r.status, 0, r.stderr);
+  assert.match(r.stdout, /2 agregados, 0 ya estaban/);
+  assert.match(run(dir, "descartar", "--lote", lote).stdout, /0 agregados, 2 ya estaban/);
+  const d = leerCsv(join(dir, "descartados.csv")).filas;
+  assert.deepEqual(d.map((x) => [x.place_id, x.dominio]), [["A1", "a.com.uy"], ["B2", ""]]);
 });

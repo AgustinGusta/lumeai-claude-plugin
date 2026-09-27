@@ -99,6 +99,34 @@ function proxima(filas, cfg) {
 
 const sumar = (filas, campo) => filas.reduce((s, c) => s + (Number(c[campo]) || 0), 0);
 
+// Una clave de descarte: link de Maps o id de Maps (sin puntos) → place_id;
+// cualquier otra cosa → dominio normalizado.
+function claveDe(s) {
+  const pid = placeIdDe(s);
+  if (pid) return { place_id: pid, dominio: "" };
+  return /[./]/.test(s) ? { place_id: "", dominio: dominio(s) } : { place_id: s, dominio: "" };
+}
+
+function agregarDescartes(nuevos) {
+  const { filas } = leerCsv(P.descartados);
+  let agregados = 0, yaEstaban = 0;
+  for (const n of nuevos) {
+    const d = {
+      place_id: n.place_id ?? "", dominio: n.dominio ? dominio(n.dominio) : "",
+      empresa: n.empresa ?? "", rubro: n.rubro ?? "", casilla: n.casilla ?? "",
+      motivo: n.motivo ?? "", detalle: n.detalle ?? "", fecha: hoy(),
+    };
+    if (!d.place_id && !d.dominio) fallar(`Descarte sin place_id ni dominio: ${JSON.stringify(n)}`);
+    if (!MOTIVOS.includes(d.motivo)) fallar(`Motivo inválido: ${d.motivo}. Válidos: ${MOTIVOS.join(", ")}`);
+    const existe = filas.some((f) => (d.place_id && f.place_id === d.place_id) || (d.dominio && f.dominio === d.dominio));
+    if (existe) { yaEstaban++; continue; }
+    filas.push(d);
+    agregados++;
+  }
+  escribirCsv(P.descartados, COLS_DESC, filas);
+  console.log(`${agregados} agregados, ${yaEstaban} ya estaban`);
+}
+
 switch (cmd) {
   case "siguiente": {
     const cfg = leerConfig();
@@ -158,6 +186,46 @@ switch (cmd) {
     }
     const { casilla } = proxima(filas, cfg);
     console.log(casilla ? `Próxima: ${casilla.id} (${casilla.nombre})` : `Primera vuelta de ${cfg.zonaNombre} terminada.`);
+    break;
+  }
+  case "filtrar": {
+    const archivo = rest[0];
+    if (!archivo || !existsSync(archivo)) fallar(`No encuentro ${archivo ?? "<places.json>"}.`);
+    const places = JSON.parse(readFileSync(archivo, "utf8"));
+    const pipe = leerCsv(P.pipeline).filas;
+    const desc = leerCsv(P.descartados).filas;
+    const idsPipe = new Set(pipe.map((f) => placeIdDe(f.url)).filter(Boolean));
+    const domsPipe = new Set(pipe.filter((f) => f.url && !placeIdDe(f.url)).map((f) => dominio(f.url)));
+    const idsDesc = new Set(desc.map((f) => f.place_id).filter(Boolean));
+    const domsDesc = new Set(desc.map((f) => f.dominio).filter(Boolean));
+    let enPipe = 0, enDesc = 0;
+    const nuevos = places.filter((f) => {
+      const d = f.webPropia ? dominio(f.web) : null;
+      if (idsPipe.has(f.id) || (d && domsPipe.has(d))) { enPipe++; return false; }
+      if (idsDesc.has(f.id) || (d && domsDesc.has(d))) { enDesc++; return false; }
+      return true;
+    });
+    console.error(`${places.length} comercios → ${nuevos.length} nuevos (${enPipe} en el pipeline, ${enDesc} ya descartados)`);
+    const i = rest.indexOf("--salida");
+    if (i >= 0) writeFileSync(rest[i + 1], JSON.stringify(nuevos, null, 2));
+    else console.log(JSON.stringify(nuevos, null, 2));
+    break;
+  }
+  case "descartar": {
+    if (rest[0] === "--lote") {
+      if (!rest[1] || !existsSync(rest[1])) fallar(`No encuentro ${rest[1] ?? "<descartes.json>"}.`);
+      agregarDescartes(JSON.parse(readFileSync(rest[1], "utf8")));
+      break;
+    }
+    const [clave, ...pares] = rest;
+    if (!clave) fallar("Falta la clave: place_id, link de Maps o dominio.");
+    const campos = {};
+    for (const p of pares) {
+      const k = p.slice(0, p.indexOf("="));
+      if (!["empresa", "rubro", "casilla", "motivo", "detalle"].includes(k)) fallar(`Campo desconocido: ${k}. Válidos: empresa, rubro, casilla, motivo, detalle`);
+      campos[k] = p.slice(p.indexOf("=") + 1);
+    }
+    agregarDescartes([{ ...campos, ...claveDe(clave) }]);
     break;
   }
   default:
