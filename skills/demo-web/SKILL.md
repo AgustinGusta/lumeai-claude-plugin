@@ -1,6 +1,6 @@
 ---
 name: demo-web
-description: Arma una demo de rediseño de la web de una empresa (prospecto) a partir de su sitio actual, la publica en un link privado de Cloudflare Pages y deja listo el mail de contacto con el antes/después. Úsala cuando el usuario pase la URL de una empresa y pida "armar la demo", "rehacer/renovar/mejorar su web para mandársela", "prepararle una propuesta de web", "hacer la demo-web de X", o cuando un prospecto de 01-Comercial/Prospectos/Webs pase a la etapa de demo. Captura y audita el sitio actual, rediseña sobre el boilerplate webb-institucional conservando su marca y contenido, verifica que la demo sea no indexable y esté marcada como propuesta de Lume, la publica, mide el antes/después y redacta el mail y los seguimientos. También arma la demo de una web nueva para un comercio sin web (prospecto tipo=nueva) con su ficha de Google Maps y su Instagram, y deja listo el WhatsApp de contacto.
+description: Arma una demo de rediseño de la web de una empresa (prospecto) a partir de su sitio actual, la publica en un link privado de Cloudflare Pages y deja listo el mail de contacto y sus seguimientos. Úsala cuando el usuario pase la URL de una empresa y pida "armar la demo", "rehacer/renovar/mejorar su web para mandársela", "prepararle una propuesta de web", "hacer la demo-web de X", o cuando un prospecto de 01-Comercial/Prospectos/Webs pase a la etapa de demo. Captura y audita el sitio actual, rediseña sobre el boilerplate webb-institucional conservando su marca y contenido, verifica que la demo sea no indexable y esté marcada como propuesta de Lume, la publica, mide el antes/después y redacta el mail y los seguimientos. También arma la demo de una web nueva para un comercio sin web (prospecto tipo=nueva) con su ficha de Google Maps y su Instagram, y deja listo el WhatsApp de contacto.
 ---
 
 # Demo de rediseño web para un prospecto
@@ -306,16 +306,15 @@ Guardá en el pipeline: `demo_url=<url> umami_id=<id> estado=demo-lista`. Uní l
 
 - Corré la misma medición sobre la demo publicada (PSI; sin PSI, `lighthouse_audit` + `performance_start_trace`, porque `lighthouse_audit` no incluye velocidad) →
   `06-Entrega/despues.json`.
-- **Imagen antes/después** → `01-Comercial/antes-despues.png`: una sola imagen horizontal con la
-  home mobile de antes y la de después lado a lado, con los rótulos "Hoy" y "Propuesta". Armala con
-  un HTML local de dos columnas y sacale captura con Playwright. Va adjunta o pegada en el mail:
-  muchos no hacen clic en links de desconocidos, pero sí miran una imagen.
+- El mail **no lleva imagen** (un mail en frío con imagen cae más en spam y se lee como
+  publicidad): de la medición salen los datos para los seguimientos.
 - Opcional, si el usuario lo pide: video corto de la demo con la skill `brag` o
   `product-launch-video`.
 
-**Si `tipo=nueva`:** no hay medición (no hay antes que medir). La imagen es
-`01-Comercial/hoy-propuesta.png`: `maps-mobile.png` rotulada "Hoy en Google" al lado de la home de
-la demo en celular rotulada "Propuesta", mismo método (HTML local de dos columnas + captura).
+**Si `tipo=nueva`:** no hay medición (no hay antes que medir). Para el WhatsApp (ahí la imagen
+sí va: se ve sin abrir nada) armá `01-Comercial/hoy-propuesta.png`: `maps-mobile.png` rotulada
+"Hoy en Google" al lado de la home de la demo en celular rotulada "Propuesta", con un HTML local de
+dos columnas y captura con Playwright.
 
 ## Paso 9 — Mail y seguimientos
 
@@ -328,16 +327,16 @@ borrador, listo para que el usuario lo revise y lo envíe. Pasá el cuerpo del p
 `> ` de las citas) a un `.txt` en el scratchpad y corré:
 ```
 node scripts/crear-borrador.mjs --para <mail del prospecto> --asunto "<asunto elegido>" \
-  --cuerpo <cuerpo.txt> --imagen <slug>/01-Comercial/antes-despues.jpg \
+  --cuerpo <cuerpo.txt> \
   --desde <casilla de _config.md> --nombre "<nombre de _config.md>" \
   [--cc <copia de _config.md>] [--firma <firma.html de _config.md>]
 ```
-La imagen queda pegada debajo del link de la demo y la firma al final (sus imágenes van dentro del
-mail, así se ven en Gmail/Outlook). Antes, revisalo con `--eml <archivo>` (no se conecta). Los seguimientos no se cargan como borrador: van en el mismo hilo, cuando toque.
+Sin `--imagen`: el mail va sin imagen. La firma queda al final (sus imágenes van dentro del mail,
+así se ven en Gmail/Outlook). Antes, revisalo con `--eml <archivo>` (no se conecta). Los seguimientos no se cargan como borrador: van en el mismo hilo, cuando toque.
 Sin `LUME_IMAP_PASS`, el mail queda en `mail.md` para copiar y pegar.
 
-Cerrá con un resumen corto: link de la demo, puntajes antes → después, dónde está el mail y la
-imagen, y el recordatorio: "cuando lo mandes, avisame y lo marco como enviado" (eso lo registra
+Cerrá con un resumen corto: link de la demo, puntajes antes → después, dónde está el mail, el mejor
+momento para mandarlo (martes a jueves, 9 a 11) y el recordatorio: "cuando lo mandes, avisame y lo marco como enviado" (eso lo registra
 `seguimiento-prospectos-web`).
 
 **Si `canal=whatsapp`:** en lugar de `mail.md` y del borrador IMAP, escribí
