@@ -30,7 +30,7 @@ envía nada**.
 >
 > Les armamos un boceto de cómo podría ser, con sus fotos y sus datos: <link a la demo>
 >
-> Es privado, no aparece en Google y no tiene compromiso. ¿Les parece si lo vemos 15 minutos?
+> El link es solo para ustedes (no aparece en Google) y no tiene compromiso. ¿Les parece si lo vemos 15 minutos?
 >
 > Si no les interesa, avísennos y no volvemos a escribirles.
 

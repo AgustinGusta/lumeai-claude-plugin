@@ -23,7 +23,7 @@ adaptados a comercios de Uruguay.
   **sin imágenes ni adjuntos**: un mail en frío con imagen o varios links cae más en spam y se lee
   como publicidad.
 - **Honesto, en una línea:** es un boceto para mostrar la idea (si avanzan, la web se hace a
-  medida), es privado y no aparece en Google. Sin disculparse ni desmerecer la demo.
+  medida), el link es solo para ellos (no aparece en Google). Sin disculparse ni desmerecer la demo.
 - **Un solo pedido, que se conteste con "sí":** "¿Les interesa que lo veamos 15 minutos esta
   semana?". Nada de "cuando les quede cómodo" (los obliga a proponer) ni de pedidos largos.
 - **Salida fácil:** última línea "Si no, respondan 'no' y no volvemos a escribirles." La Ley 18.331
@@ -53,8 +53,8 @@ un vendedor. Sin "gratis", sin números, sin signos, sin el nombre de la persona
 > En Lume hacemos webs para comercios y armamos cómo podría verse la suya, con su logo y sus
 > textos: <link a la demo>
 >
-> Es un boceto para mostrar la idea: si avanzan, la web se hace a medida. Es privado y no aparece
-> en Google.
+> Es un boceto para mostrar la idea, y el link es solo para ustedes: no aparece en Google. Si
+> avanzan, la web se hace a medida.
 >
 > ¿Les interesa que lo veamos 15 minutos esta semana?
 >
