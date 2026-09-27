@@ -10,7 +10,7 @@ adaptados a comercios de Uruguay.
   otras cosas. Si una frase no acerca a que respondan, se corta.
 - **Siempre como empresa:** habla Lume, en plural ("armamos", "no volvemos a escribirles"). Nunca
   en primera persona del singular ni como si quien firma hiciera las webs: firma alguien del
-  equipo comercial. No arranques presentándote ("Somos Lume…"): la presentación va en media frase
+  equipo de Lume (el rol de la firma sale de `_config.md`; nada de títulos corporativos). No arranques presentándote ("Somos Lume…"): la presentación va en media frase
   justo antes del link ("En Lume hacemos webs para comercios y armamos…"), que es cuando el lector
   se pregunta quién escribe. La firma completa la identificación (Ley 18.331).
 - **La primera línea es sobre ellos y lleva al problema:** un dato real de su negocio (años,
