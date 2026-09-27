@@ -8,9 +8,11 @@ adaptados a comercios de Uruguay.
 
 - **Muy corto:** 70-110 palabras el primero; 40-70 los seguimientos. Se lee en el celular, entre
   otras cosas. Si una frase no acerca a que respondan, se corta.
-- **De una persona, no de una empresa:** escribe el remitente de `_config.md` en primera persona
-  ("armé", "no vuelvo a escribirles"). Lume aparece en la firma, no en el texto. No arranques
-  presentándote ("Soy X, de Lume…"): la firma ya identifica (Ley 18.331).
+- **Siempre como empresa:** habla Lume, en plural ("armamos", "no volvemos a escribirles"). Nunca
+  en primera persona del singular ni como si quien firma hiciera las webs: firma alguien del
+  equipo comercial. No arranques presentándote ("Somos Lume…"): la presentación va en media frase
+  justo antes del link ("En Lume hacemos webs para comercios y armamos…"), que es cuando el lector
+  se pregunta quién escribe. La firma completa la identificación (Ley 18.331).
 - **La primera línea es sobre ellos y lleva al problema:** un dato real de su negocio (años,
   locales, reseñas, a quién venden) que conecte con por qué la web les importa. Si sacás esa línea
   y el mail sigue teniendo sentido, no está funcionando.
@@ -24,7 +26,7 @@ adaptados a comercios de Uruguay.
   medida), es privado y no aparece en Google. Sin disculparse ni desmerecer la demo.
 - **Un solo pedido, que se conteste con "sí":** "¿Les interesa que lo veamos 15 minutos esta
   semana?". Nada de "cuando les quede cómodo" (los obliga a proponer) ni de pedidos largos.
-- **Salida fácil:** última línea "Si no, respondan 'no' y no vuelvo a escribirles." La Ley 18.331
+- **Salida fácil:** última línea "Si no, respondan 'no' y no volvemos a escribirles." La Ley 18.331
   de protección de datos (Uruguay) exige identificarse y ofrecer la baja en comunicaciones
   comerciales. Si responden que no, el prospecto pasa a `baja` y no se lo contacta más.
 - **Registro:** tratamiento de `_config.md` (default: ustedes).
@@ -48,14 +50,15 @@ un vendedor. Sin "gratis", sin números, sin signos, sin el nombre de la persona
 > <Dato real de su negocio que conecte con la web>, y quien entra a su web desde el celular
 > <problema 1>. Además, <problema 2>.
 >
-> Armé cómo podría verse, con su logo y sus textos: <link a la demo>
+> En Lume hacemos webs para comercios y armamos cómo podría verse la suya, con su logo y sus
+> textos: <link a la demo>
 >
 > Es un boceto para mostrar la idea: si avanzan, la web se hace a medida. Es privado y no aparece
 > en Google.
 >
 > ¿Les interesa que lo veamos 15 minutos esta semana?
 >
-> Si no, respondan "no" y no vuelvo a escribirles.
+> Si no, respondan "no" y no volvemos a escribirles.
 
 Enviarlo de martes a jueves, entre las 9 y las 11 (es cuando más responden). Lunes temprano y
 viernes de tarde, evitarlo.
@@ -80,7 +83,7 @@ pareció?" en lugar de "¿La llegaron a ver?".
 **Seguimiento 2** (día 10 hábil, cierre): avisa que es el último, deja un último dato útil y la
 puerta abierta. Después de este no se escribe más.
 
-> Buenos días, para no llenarles la casilla, este es mi último mensaje. Me quedó una cosa:
+> Buenos días, para no llenarles la casilla, este es nuestro último mensaje. Nos quedó una cosa:
 > <dato útil en una línea>. La demo queda online hasta el <fecha de vencimiento>; si más adelante
 > quieren renovar la web, respondan este mail y seguimos desde ahí.
 >
@@ -90,7 +93,7 @@ Después del seguimiento 2, sin respuesta → `perdido`. No hay seguimiento 3.
 
 ## Chequeo antes de guardar
 
-- ¿Lo mandaría una persona, leído en voz alta?
+- ¿Suena a una persona del equipo de Lume, leído en voz alta? ¿Todo en plural, sin "armé" ni "vi"?
 - ¿La primera línea es de ellos y lleva al problema?
 - ¿Hay un solo link, sin imagen, y un solo pedido?
 - ¿Cuántas palabras tiene? (primero ≤ 110, seguimientos ≤ 70)
