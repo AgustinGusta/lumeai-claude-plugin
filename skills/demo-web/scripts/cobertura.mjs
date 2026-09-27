@@ -19,7 +19,7 @@
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import {
-  dominio, escribirCsv, hoy, leerCsv, parseRect, partirRect, placeIdDe, rectTexto,
+  dominio, escribirCsv, hoy, leerCsv, parseRect, partirRect, placeIdDe, rectTexto, webPropia,
 } from "./prospectos-comun.mjs";
 
 const COLS = [
@@ -100,11 +100,12 @@ function proxima(filas, cfg) {
 const sumar = (filas, campo) => filas.reduce((s, c) => s + (Number(c[campo]) || 0), 0);
 
 // Una clave de descarte: link de Maps o id de Maps (sin puntos) → place_id;
-// cualquier otra cosa → dominio normalizado.
+// cualquier otra cosa → dominio (solo si es web propia: instagram.com no
+// identifica a nadie, se descarta por place_id).
 function claveDe(s) {
   const pid = placeIdDe(s);
   if (pid) return { place_id: pid, dominio: "" };
-  return /[./]/.test(s) ? { place_id: "", dominio: dominio(s) } : { place_id: s, dominio: "" };
+  return /[./]/.test(s) ? { place_id: "", dominio: s } : { place_id: s, dominio: "" };
 }
 
 function agregarDescartes(nuevos) {
@@ -112,11 +113,11 @@ function agregarDescartes(nuevos) {
   let agregados = 0, yaEstaban = 0;
   for (const n of nuevos) {
     const d = {
-      place_id: n.place_id ?? "", dominio: n.dominio ? dominio(n.dominio) : "",
+      place_id: n.place_id ?? "", dominio: n.dominio && webPropia(n.dominio) ? dominio(n.dominio) : "",
       empresa: n.empresa ?? "", rubro: n.rubro ?? "", casilla: n.casilla ?? "",
       motivo: n.motivo ?? "", detalle: n.detalle ?? "", fecha: hoy(),
     };
-    if (!d.place_id && !d.dominio) fallar(`Descarte sin place_id ni dominio: ${JSON.stringify(n)}`);
+    if (!d.place_id && !d.dominio) fallar(`Descarte sin place_id ni web propia (una red social no sirve de clave): ${JSON.stringify(n)}`);
     if (!MOTIVOS.includes(d.motivo)) fallar(`Motivo inválido: ${d.motivo}. Válidos: ${MOTIVOS.join(", ")}`);
     const existe = filas.some((f) => (d.place_id && f.place_id === d.place_id) || (d.dominio && f.dominio === d.dominio));
     if (existe) { yaEstaban++; continue; }
@@ -166,6 +167,9 @@ switch (cmd) {
       if (k !== "nombre" && !NUMEROS.includes(k)) fallar(`Campo desconocido: ${k}. Válidos: nombre, ${NUMEROS.join(", ")}`);
       if (NUMEROS.includes(k) && !/^\d+$/.test(v)) fallar(`${k} tiene que ser un número entero: ${v}`);
       patch[k] = v;
+    }
+    if (c.estado === "pendiente" && Number(patch.resultados ?? c.resultados) >= 60) {
+      fallar(`${c.id} llegó a 60 (el máximo de Maps): puede haber más adentro. Primero partir ${c.id}.`);
     }
     Object.assign(c, patch);
     if (c.estado === "pendiente") c.estado = "barrida";

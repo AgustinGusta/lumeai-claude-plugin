@@ -45,10 +45,11 @@ el JSON crudo en `<dir>/barridos/` (ignorado por git).
    Exit 1 = primera vuelta terminada: avisale al usuario y pará.
 2. **Buscar en el rectángulo** (la consulta va sin zona):
    ```
-   node <s>/buscar-places.mjs "<consulta>" --rect <rect> --paginas 3 --json <dir>/barridos/<archivo>.json --resumen resumen.json --sin-web sin-web.json
+   node <s>/buscar-places.mjs "<consulta>" --rect <rect> --paginas 3 --json <dir>/barridos/<archivo>.json --resumen resumen-<archivo>.json --sin-web sin-web.json
    ```
-   - Exit 4 (`incompleta`): se cortó por el tope mensual. **No cierres la casilla**; avisale al
-     usuario y seguí el mes que viene.
+   - **Cualquier exit distinto de 0: no cierres la casilla ni la partas.** Exit 4 (`incompleta`) =
+     se cortó por el tope mensual (aunque diga `saturada`, manda el 4): seguí el mes que viene.
+     Exit 1 = error de Places (tope diario, clave): seguí mañana. Avisale al usuario en los dos casos.
    - `saturada: true` → `node <s>/cobertura.mjs <dir> partir <id>`. Los resultados de esta casilla
      se procesan igual (no se tira la consulta); los cuadrantes filtran lo ya visto.
 3. **Filtrar lo ya visto:** `node <s>/cobertura.mjs <dir> filtrar <dir>/barridos/<archivo>.json --salida nuevos.json`
@@ -72,7 +73,7 @@ el JSON crudo en `<dir>/barridos/` (ignorado por git).
    ```
    node <s>/cobertura.mjs <dir> cerrar <id> resultados=<n> con_web=<n> sin_web_buena=<n> candidatos=<n> descartados=<n> consultas=<n> nombre="Montevideo › NE (Malvín, Unión, Buceo)"
    ```
-   Los números salen de `resumen.json` y de lo que registraste.
+   Los números salen de `resumen-<archivo>.json` y de lo que registraste.
 7. **Repetir** desde el paso 1 hasta juntar **unos 10 candidatos** (rediseño + sin web) o terminar
    el rubro, lo que llegue primero.
 8. **Cerrar la sesión** con las tablas del Paso 5 (y la de sin web) y el avance:

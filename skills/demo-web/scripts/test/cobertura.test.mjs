@@ -169,6 +169,36 @@ test("descartar por dominio o place_id, normaliza el dominio y no duplica", () =
   assert.match(mal.stderr, /Motivo inválido/);
 });
 
+test("descartes de comercios con solo Instagram: se guardan por place_id y no chocan entre sí", () => {
+  const dir = carpeta();
+  const lote = join(dir, "lote.json");
+  writeFileSync(lote, JSON.stringify([
+    { place_id: "IG1", dominio: "https://instagram.com/aaa", empresa: "A", rubro: "ferreterias", casilla: "c", motivo: "sin-instagram" },
+    { place_id: "IG2", dominio: "https://www.instagram.com/bbb", empresa: "B", rubro: "ferreterias", casilla: "c", motivo: "sin-instagram" },
+  ]));
+  assert.match(run(dir, "descartar", "--lote", lote).stdout, /2 agregados, 0 ya estaban/);
+  const d = leerCsv(join(dir, "descartados.csv")).filas;
+  assert.deepEqual(d.map((x) => [x.place_id, x.dominio]), [["IG1", ""], ["IG2", ""]]);
+  const places = join(dir, "places.json");
+  writeFileSync(places, JSON.stringify([
+    { id: "IG1", web: "https://instagram.com/aaa", webPropia: false },
+    { id: "IG2", web: "https://www.instagram.com/bbb", webPropia: false },
+  ]));
+  assert.deepEqual(JSON.parse(run(dir, "filtrar", places).stdout), []);
+  const soloRed = run(dir, "descartar", "https://instagram.com/ccc", "empresa=C", "rubro=ferreterias", "casilla=c", "motivo=otro");
+  assert.equal(soloRed.status, 2);
+  assert.match(soloRed.stderr, /place_id/);
+});
+
+test("cerrar no deja tachar una casilla pendiente con 60 resultados: hay que partirla", () => {
+  const dir = carpeta();
+  sig(dir);
+  const r = run(dir, "cerrar", "ferreterias/ferreteria/mvd", "resultados=60");
+  assert.equal(r.status, 2);
+  assert.match(r.stderr, /partir/);
+  assert.equal(cob(dir).find((x) => x.id === "ferreterias/ferreteria/mvd").estado, "pendiente");
+});
+
 test("descartar --lote agrega varios y saltea los que ya estaban", () => {
   const dir = carpeta();
   const lote = join(dir, "lote.json");
