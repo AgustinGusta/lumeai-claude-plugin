@@ -5,6 +5,7 @@
 // Uso:
 //   node buscar-places.mjs "papelería en Montevideo" [--paginas 3] [--json salida.json] [--urls urls.txt]
 //                          [--sin-web sin-web.json] [--nota-min 4.3] [--resenas-min 30]
+//                          [--rect sur,oeste,norte,este] [--resumen resumen.json]
 //
 // Requiere GOOGLE_PLACES_API_KEY (variable de entorno de usuario).
 //
@@ -21,9 +22,16 @@
 // pasan los umbrales de nota y reseñas y tienen celular (WhatsApp), con su
 // puntajeBase y su link canónico de Maps (mapsId). Sale de la misma búsqueda:
 // no gasta consultas extra.
+//
+// --rect restringe la búsqueda al rectángulo (barrido ordenado, ver
+// cobertura.mjs); la consulta va sin zona ("ferretería"). --resumen escribe
+// { consulta, rect, resultados, conWeb, sinWebBuena, saturada, incompleta,
+// consultas }. saturada = llegó a 60 (el máximo de Maps): hay que partir el
+// rectángulo. incompleta = se cortó por el tope mensual (exit 4): la casilla
+// no se puede dar por barrida.
 
 import { writeFileSync } from "node:fs";
-import { aFila, contador, filtrarSinWeb } from "./prospectos-comun.mjs";
+import { aFila, contador, cuerpoBusqueda, filtrarSinWeb, parseRect, rectTexto, saturada } from "./prospectos-comun.mjs";
 
 const args = process.argv.slice(2);
 const opt = (n) => { const i = args.indexOf(n); return i >= 0 ? args[i + 1] : undefined; };
@@ -33,6 +41,9 @@ const key = process.env.GOOGLE_PLACES_API_KEY;
 
 if (!consulta) { console.error('Uso: node buscar-places.mjs "<rubro> en <zona>" [--paginas 3] [--json f] [--urls f] [--sin-web f]'); process.exit(2); }
 if (!key) { console.error("Falta GOOGLE_PLACES_API_KEY en el entorno."); process.exit(3); }
+let rect;
+try { rect = opt("--rect") ? parseRect(opt("--rect")) : undefined; }
+catch (e) { console.error(e.message); process.exit(2); }
 
 // ── Contador mensual (compartido, ver prospectos-comun.mjs) ────────────────
 const uso = contador();
@@ -46,17 +57,20 @@ const FIELDS = [
 
 const places = [];
 let pageToken;
+let usadas = 0, incompleta = false;
 for (let p = 0; p < paginas; p++) {
   if (uso.agotado()) {
     console.error(`Tope mensual propio alcanzado (${uso.consultas}/${uso.limite} consultas en ${uso.mes}). Corto para no salir del cupo gratis.`);
+    incompleta = true;
     break;
   }
   const res = await fetch("https://places.googleapis.com/v1/places:searchText", {
     method: "POST",
     headers: { "content-type": "application/json", "X-Goog-Api-Key": key, "X-Goog-FieldMask": FIELDS },
-    body: JSON.stringify({ textQuery: consulta, languageCode: "es", regionCode: "UY", pageSize: 20, ...(pageToken ? { pageToken } : {}) }),
+    body: JSON.stringify(cuerpoBusqueda(consulta, { rect, pageToken })),
   });
   uso.registrar();
+  usadas++;
   const j = await res.json();
   if (!res.ok) {
     const msg = j.error?.message ?? JSON.stringify(j).slice(0, 300);
@@ -68,6 +82,7 @@ for (let p = 0; p < paginas; p++) {
   pageToken = j.nextPageToken;
   if (!pageToken) break;
 }
+const sat = saturada(places.length, pageToken);
 
 const rows = places
   .filter((p) => p.businessStatus !== "CLOSED_PERMANENTLY")
@@ -92,12 +107,22 @@ if (urlsOut) {
   console.error(`${urls.length} URLs únicas → ${urlsOut}`);
 }
 
+const sinWeb = filtrarSinWeb(rows, {
+  notaMin: Number(opt("--nota-min") ?? 4.3),
+  resenasMin: Number(opt("--resenas-min") ?? 30),
+});
 const sinWebOut = opt("--sin-web");
 if (sinWebOut) {
-  const sinWeb = filtrarSinWeb(rows, {
-    notaMin: Number(opt("--nota-min") ?? 4.3),
-    resenasMin: Number(opt("--resenas-min") ?? 30),
-  });
   writeFileSync(sinWebOut, JSON.stringify(sinWeb, null, 2));
   console.error(`${sinWeb.length} sin web con buena ficha y celular → ${sinWebOut}`);
 }
+
+if (sat) console.error("SATURADA: llegó al máximo de Maps (60). Partí el rectángulo en 4 (cobertura.mjs partir).");
+const resumenOut = opt("--resumen");
+if (resumenOut) {
+  writeFileSync(resumenOut, JSON.stringify({
+    consulta, rect: rect ? rectTexto(rect) : null, resultados: rows.length, conWeb: conWeb.length,
+    sinWebBuena: sinWeb.length, saturada: sat, incompleta, consultas: usadas,
+  }, null, 2));
+}
+if (incompleta) process.exit(4);

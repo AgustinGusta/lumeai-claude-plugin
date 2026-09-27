@@ -6,7 +6,7 @@ import { join } from "node:path";
 import {
   contador, mapsUrl, placeIdDe, celularUy, waNumero, aFila, puntajeBase,
   filtrarSinWeb, notaTexto, aFicha, waLink, esLinkMaps,
-  leerCsv, escribirCsv, dominio,
+  leerCsv, escribirCsv, dominio, parseRect, rectTexto, partirRect, cuerpoBusqueda, saturada,
 } from "../prospectos-comun.mjs";
 
 test("celularUy acepta formatos reales y rechaza fijos", () => {
@@ -170,4 +170,37 @@ test("dominio normaliza esquema, www, mayúsculas y ruta", () => {
   assert.equal(dominio("https://www.Ferreteria.com.uy/contacto"), "ferreteria.com.uy");
   assert.equal(dominio("ferreteria.com.uy"), "ferreteria.com.uy");
   assert.equal(dominio("http://ferreteria.com.uy"), "ferreteria.com.uy");
+});
+
+test("parseRect valida orden y cantidad", () => {
+  assert.deepEqual(parseRect("-34.94,-56.44,-34.70,-56.02"), { sur: -34.94, oeste: -56.44, norte: -34.7, este: -56.02 });
+  assert.throws(() => parseRect("-34.94,-56.44,-34.70"), /Rectángulo inválido/);
+  assert.throws(() => parseRect("-34.70,-56.44,-34.94,-56.02"), /sur < norte/);
+  assert.throws(() => parseRect("a,b,c,d"), /Rectángulo inválido/);
+});
+
+test("partirRect da 4 cuadrantes que cubren el original", () => {
+  const q = partirRect(parseRect("-34.94,-56.44,-34.70,-56.02"));
+  assert.equal(rectTexto(q.no), "-34.82,-56.44,-34.7,-56.23");
+  assert.equal(rectTexto(q.ne), "-34.82,-56.23,-34.7,-56.02");
+  assert.equal(rectTexto(q.so), "-34.94,-56.44,-34.82,-56.23");
+  assert.equal(rectTexto(q.se), "-34.94,-56.23,-34.82,-56.02");
+});
+
+test("cuerpoBusqueda agrega locationRestriction solo con rect", () => {
+  const sin = cuerpoBusqueda("ferretería");
+  assert.equal(sin.textQuery, "ferretería");
+  assert.equal(sin.locationRestriction, undefined);
+  const con = cuerpoBusqueda("ferretería", { rect: parseRect("-34.94,-56.44,-34.70,-56.02"), pageToken: "T" });
+  assert.deepEqual(con.locationRestriction, {
+    rectangle: { low: { latitude: -34.94, longitude: -56.44 }, high: { latitude: -34.7, longitude: -56.02 } },
+  });
+  assert.equal(con.pageToken, "T");
+  assert.equal(con.regionCode, "UY");
+});
+
+test("saturada: 60 resultados o página sin pedir", () => {
+  assert.equal(saturada(60, undefined), true);
+  assert.equal(saturada(40, "token"), true);
+  assert.equal(saturada(59, undefined), false);
 });

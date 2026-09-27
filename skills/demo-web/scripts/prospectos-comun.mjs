@@ -180,3 +180,41 @@ export const dominio = (u) => aUrl(u ?? "")?.hostname.replace(/^www\./, "").toLo
 
 // Fecha local (no UTC): en Uruguay, después de las 21 h toISOString ya da mañana.
 export const hoy = () => new Date().toLocaleDateString("sv-SE");
+
+// ── Barrido por rectángulos ────────────────────────────────────────────────
+// Un rectángulo es "sur,oeste,norte,este" en grados decimales.
+export function parseRect(s) {
+  const n = String(s ?? "").split(",").map((x) => (x.trim() === "" ? NaN : Number(x)));
+  if (n.length !== 4 || n.some((x) => !Number.isFinite(x))) throw new Error(`Rectángulo inválido: "${s}" (sur,oeste,norte,este)`);
+  const [sur, oeste, norte, este] = n;
+  if (sur >= norte || oeste >= este) throw new Error(`Rectángulo inválido: "${s}" (tiene que ser sur < norte y oeste < este)`);
+  return { sur, oeste, norte, este };
+}
+
+export const rectTexto = ({ sur, oeste, norte, este }) =>
+  [sur, oeste, norte, este].map((x) => +x.toFixed(5)).join(",");
+
+export function partirRect({ sur, oeste, norte, este }) {
+  const lat = (sur + norte) / 2, lng = (oeste + este) / 2;
+  return {
+    no: { sur: lat, oeste, norte, este: lng },
+    ne: { sur: lat, oeste: lng, norte, este },
+    so: { sur, oeste, norte: lat, este: lng },
+    se: { sur, oeste: lng, norte: lat, este },
+  };
+}
+
+export function cuerpoBusqueda(consulta, { rect, pageToken } = {}) {
+  return {
+    textQuery: consulta, languageCode: "es", regionCode: "UY", pageSize: 20,
+    ...(rect ? { locationRestriction: { rectangle: {
+      low: { latitude: rect.sur, longitude: rect.oeste },
+      high: { latitude: rect.norte, longitude: rect.este },
+    } } } : {}),
+    ...(pageToken ? { pageToken } : {}),
+  };
+}
+
+// Maps devuelve como mucho 60 por consulta: con 60, o con otra página sin
+// pedir, puede haber más comercios adentro del rectángulo.
+export const saturada = (resultados, quedaPagina) => resultados >= 60 || !!quedaPagina;
