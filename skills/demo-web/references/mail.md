@@ -54,8 +54,6 @@ explicar Lume entera.
 > Si te gusta, lo vemos 15 minutos cuando te quede cómodo y te cuento cómo sería pasarla a su
 > dominio.
 >
-> <Firma de _config.md>
->
 > Si no te interesa, respondé "no" y no te vuelvo a escribir.
 
 ## Seguimientos (solo si no respondieron)

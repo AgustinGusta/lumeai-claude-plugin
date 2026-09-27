@@ -324,14 +324,16 @@ con la firma y casilla de `_config.md`. El mail sale desde la casilla @lumeai.uy
 **esta skill no envía nada**.
 
 **Borrador en la casilla** (si `LUME_IMAP_PASS` está en el entorno): guardá el primer mail como
-borrador, listo para que el usuario le agregue su firma y lo envíe. Pasá el cuerpo del primer
-mail (sin el `> ` de las citas) a un `.txt` en el scratchpad y corré:
+borrador, listo para que el usuario lo revise y lo envíe. Pasá el cuerpo del primer mail (sin el
+`> ` de las citas) a un `.txt` en el scratchpad y corré:
 ```
 node scripts/crear-borrador.mjs --para <mail del prospecto> --asunto "<asunto elegido>" \
-  --cuerpo <cuerpo.txt> --imagen <slug>/01-Comercial/antes-despues.jpg --desde <casilla de _config.md>
+  --cuerpo <cuerpo.txt> --imagen <slug>/01-Comercial/antes-despues.jpg \
+  --desde <casilla de _config.md> --nombre "<nombre de _config.md>" \
+  [--cc <copia de _config.md>] [--firma <firma.html de _config.md>]
 ```
-La imagen queda pegada debajo del link de la demo. Antes, revisalo con `--eml <archivo>` (no se
-conecta). Los seguimientos no se cargan como borrador: van en el mismo hilo, cuando toque.
+La imagen queda pegada debajo del link de la demo y la firma al final (sus imágenes van dentro del
+mail, así se ven en Gmail/Outlook). Antes, revisalo con `--eml <archivo>` (no se conecta). Los seguimientos no se cargan como borrador: van en el mismo hilo, cuando toque.
 Sin `LUME_IMAP_PASS`, el mail queda en `mail.md` para copiar y pegar.
 
 Cerrá con un resumen corto: link de la demo, puntajes antes → después, dónde está el mail y la

@@ -8,6 +8,8 @@
 - Nombre: <Nombre Apellido>
 - Rol: <ej. Fundador · Lume>
 - Casilla desde la que se envía: <nombre>@lumeai.uy
+- Copia (CC), opcional: <casilla compartida>@lumeai.uy
+- Firma: <ruta a firma.html> (+ firma.txt e imágenes al lado; va en el borrador con `--firma`, no en mail.md)
 - Teléfono / WhatsApp para la firma: <+598 …>
 - Web: https://lumeai.uy
 
