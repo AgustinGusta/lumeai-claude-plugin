@@ -176,7 +176,13 @@ Usá `frontend-design` y `ui-ux-pro-max` para generar las direcciones. Reglas qu
   trayectoria, premios, clientes o precios que no estén en su sitio.
 - **Lo que un negocio chico valora:** celular, WhatsApp/teléfono a un toque, horarios y ubicación
   claros, velocidad.
-- Fotos: las suyas; stock (Unsplash/Pexels) solo como ambientación, anotado en `04-Diseño/notas.md`.
+- Fotos: las suyas; stock (Pexels; Unsplash bajado a mano) solo como ambientación, anotado en
+  `04-Diseño/notas.md`. Imágenes con IA solo como texturas o fondos, nunca como productos, local o
+  personas del cliente.
+- **Recursos visuales** (íconos, fuentes, texturas, fotos, video; todo gratis y sin atribución
+  visible): `docs/RECURSOS-VISUALES.md` de la demo. Relevamiento completo con licencias:
+  `docs/diseno/caja-de-herramientas.md` del repo de prospectos. Nada fuera de esa lista sin revisar
+  que sea gratis para uso comercial y sin crédito visible.
 
 No se construye nada sin la dirección elegida y, si hay README, sin el spec aprobado.
 
@@ -198,7 +204,11 @@ citar reseñas ni usar fotos de Google.
    (la versión de Next tiene cambios que no están en tu entrenamiento).
 3. Contenido e identidad en `src/content/site.ts` (única fuente de verdad), tokens de marca en
    `src/app/globals.css`, fuentes en `src/app/layout.tsx`, logo e imágenes optimizadas (WebP,
-   ~1200 px, < 200 KB) en `public/images/`. `site.url` = la URL de la demo en Cloudflare (la
+   ~1200 px, < 200 KB) en `public/images/`. La foto del hero, con
+   `node scripts/imagen-principal.mjs <foto-original> hero` y `<ImagenPrincipal>` (AVIF + WebP,
+   precargada); los íconos, Phosphor desde `src/components/iconos.tsx` (en componentes cliente,
+   directo de `@phosphor-icons/react/ssr`). Si la demo es de una copia anterior del boilerplate
+   (con `lucide-react`), copiá esas piezas de `webb-institucional`. `site.url` = la URL de la demo en Cloudflare (la
    sabés recién al crear el proyecto en el Paso 7; mientras, usá `https://lume-<slug>.pages.dev`).
 4. Páginas: adaptá las del boilerplate (inicio, servicios, nosotros, contacto) a lo que tenga la
    empresa. Borrá las que no apliquen y agregá las que su sitio tenga y valgan la pena.
@@ -254,6 +264,11 @@ terminación cuidada. Guía del boilerplate: `docs/MOVIMIENTO.md` de la demo (le
    - mapa estático con la marca en vez de un mapa embebido (el embebido carga ~300 KB de JS):
      captura del mapa de OpenStreetMap (sin controles), tonos neutros, marcador con los colores del
      cliente, link a Google Maps y la atribución "© Colaboradores de OpenStreetMap"
+   - íconos Phosphor en `bold` (duotone en tarjetas grandes, `WhatsappLogo` en los botones de
+     WhatsApp)
+   - hero en AVIF con `<ImagenPrincipal>`
+   - grano de impresión (`.grano`) en fondos lisos grandes y, en secciones oscuras, degradé de malla
+     con los colores de marca (`docs/RECURSOS-VISUALES.md`); nunca más fuerte que papel impreso
 
 ## Paso 5 — Verificar
 

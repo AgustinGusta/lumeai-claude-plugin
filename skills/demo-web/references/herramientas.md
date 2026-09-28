@@ -21,6 +21,24 @@
 | Umami de Lume (analytics.lumeai.uy) | Saber si el prospecto abrió la demo | Variables de entorno `LUME_UMAMI_USER` y `LUME_UMAMI_PASSWORD` (idealmente un usuario de Umami solo para demos). |
 | Context7 MCP | Docs actualizadas de Next.js/Tailwind mientras se programa la demo | `claude mcp add --scope user context7 -- npx -y @upstash/context7-mcp` |
 
+## Recursos visuales (gratis, sin atribución visible)
+
+Guía de uso en `docs/RECURSOS-VISUALES.md` del boilerplate; relevamiento con licencias en
+`docs/diseno/caja-de-herramientas.md` del repo de prospectos.
+
+| Herramienta | Para qué | Setup |
+|---|---|---|
+| Phosphor (`@phosphor-icons/react`, MIT) | Íconos (bold, duotone) | ya en el boilerplate |
+| `scripts/imagen-principal.mjs` + `<ImagenPrincipal>` | Hero en AVIF + WebP precargado | ya en el boilerplate |
+| Fontshare (ITF FFL) | Titulares pesados fuera de Google Fonts (Tanker, Cabinet Grotesk, Clash Display) | `pip install fonttools brotli` para recortar con `pyftsubset` |
+| Upscayl (modelo "General Photo") | Agrandar fotos chicas del cliente | app local gratis; los otros modelos no permiten uso comercial |
+| Cloudflare Workers AI (FLUX.1 schnell) | Texturas o fondos generados (nunca productos, local o personas) | la misma cuenta de Cloudflare de las demos; plan gratis diario |
+| Pexels Videos / Coverr + ffmpeg | Video de fondo del hero, solo en escritorio | `PEXELS_API_KEY`; receta de compresión en `RECURSOS-VISUALES.md` |
+
+Descartados (cobran, piden crédito visible o se ven hechos con IA): Unicorn Studio, Rive,
+Aceternity, versiones Pro de Magic UI/Motion, Pangram Pangram, Freepik, Streamline, Gemini para
+imágenes, ilustraciones tipo unDraw.
+
 ## Opcionales
 
 | Herramienta | Para qué |
