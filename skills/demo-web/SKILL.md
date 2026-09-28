@@ -331,10 +331,10 @@ fallan en el build. Si pasa: `git checkout` de esos archivos, borrar lo creado y
    `X-Robots-Tag: noindex` en los headers y la franja `data-lume-demo`.
 6. **Rendimiento:** medí la demo publicada con
    `node scripts/evaluar-sitio.mjs <url> --psi --json 06-Entrega/despues.json`. El rendimiento en
-   celular tiene que dar **≥ 90**. Justo después del deploy el caché de Cloudflare está frío y
-   PSI da valores bajos (se vio 69 → 94 en la misma demo): hacé 2-3 pedidos a la URL antes y, si
-   da menos de 90, repetí la medición con `?m=2` al final de la URL (PSI guarda en caché su
-   resultado por URL) antes de concluir que hay un problema. Si sigue abajo, corregí (lo más común: algo del hero animado o una imagen
+   celular tiene que dar **≥ 90 de mediana en 3 corridas**. PSI varía mucho entre corridas de la
+   misma página (se vio de 69 a 97): antes de cada corrida hacé 2 pedidos a la URL (el caché de
+   Cloudflare arranca frío después del deploy) y agregá `?m=<n>` distinto a la URL de cada corrida
+   (PSI guarda su resultado por URL). Si la mediana da menos de 90, corregí (lo más común: algo del hero animado o una imagen
    grande sin `srcSet` para celular), republicá y volvé a medir antes de seguir.
 
 Guardá en el pipeline: `demo_url=<url> umami_id=<id> estado=demo-lista`. Uní la rama
