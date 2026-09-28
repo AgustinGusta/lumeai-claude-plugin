@@ -32,7 +32,8 @@ const rgb = (hex) => {
 export async function tratarFoto(entrada, salida, { modo, oscuro, claro = "#ffffff", ancho = 1200 }) {
   if (!["duotono", "tinte", "grano"].includes(modo)) throw new Error(`modo inválido: ${modo} (duotono, tinte o grano)`);
   const sharp = await cargarSharp();
-  let img = sharp(entrada).resize({ width: ancho });
+  // rotate(): aplica la orientación EXIF (fotos de celular). Nunca agranda una foto chica.
+  let img = sharp(entrada).rotate().resize({ width: ancho, withoutEnlargement: true });
   if (modo === "duotono") {
     const [o, c] = [rgb(oscuro), rgb(claro)];
     const { data, info } = await img.clone().grayscale().raw().toBuffer({ resolveWithObject: true });
@@ -43,8 +44,10 @@ export async function tratarFoto(entrada, salida, { modo, oscuro, claro = "#ffff
     }
     img = sharp(out, { raw: { width: info.width, height: info.height, channels: 3 } });
   } else if (modo === "tinte") {
+    // Gris en un paso aparte: en sharp, grayscale() se aplica después de tint() y lo anula.
     const [r, g, b] = rgb(oscuro);
-    img = img.grayscale().tint({ r, g, b });
+    const gris = await img.clone().grayscale().toColourspace("srgb").png().toBuffer();
+    img = sharp(gris).tint({ r, g, b });
   } else {
     const { data, info } = await img.clone().png().toBuffer({ resolveWithObject: true });
     const ruido = Buffer.alloc(info.width * info.height * 4);

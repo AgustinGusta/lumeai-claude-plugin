@@ -34,3 +34,26 @@ test("modo desconocido falla con mensaje claro", async () => {
   const dir = await mkdtemp(join(tmpdir(), "foto-"));
   await assert.rejects(() => tratarFoto(join(dir, "x.png"), join(dir, "y.webp"), { modo: "sepia", oscuro: "#000" }), /modo/);
 });
+
+test("tinte: la foto queda teñida con el color (no gris)", async () => {
+  const dir = await mkdtemp(join(tmpdir(), "foto-"));
+  const r = await tratarFoto(await foto(dir), join(dir, "t.webp"), { modo: "tinte", oscuro: "#1c1850", ancho: 100 });
+  assert.equal(r.ancho, 100);
+  const { data, info } = await sharp(join(dir, "t.webp")).raw().toBuffer({ resolveWithObject: true });
+  assert.equal(info.channels >= 3, true, `canales=${info.channels}`);
+  assert.ok(data[2] > data[0] + 10, `el azul del tinte no aparece: R=${data[0]} B=${data[2]}`);
+});
+
+test("respeta la orientación EXIF de las fotos de celular", async () => {
+  const dir = await mkdtemp(join(tmpdir(), "foto-"));
+  const f = join(dir, "vertical.jpg");
+  await sharp({ create: { width: 300, height: 150, channels: 3, background: { r: 128, g: 128, b: 128 } } }).jpeg().withMetadata({ orientation: 6 }).toFile(f);
+  const r = await tratarFoto(f, join(dir, "v.webp"), { modo: "duotono", oscuro: "#000080", claro: "#ffff00", ancho: 150 });
+  assert.deepEqual(r, { ancho: 150, alto: 300 });
+});
+
+test("no agranda fotos más chicas que el ancho pedido", async () => {
+  const dir = await mkdtemp(join(tmpdir(), "foto-"));
+  const r = await tratarFoto(await foto(dir), join(dir, "g.webp"), { modo: "grano", oscuro: "#1c1850", ancho: 1200 });
+  assert.equal(r.ancho, 200);
+});
