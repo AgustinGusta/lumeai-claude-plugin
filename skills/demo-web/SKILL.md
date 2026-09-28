@@ -251,6 +251,9 @@ terminación cuidada. Guía del boilerplate: `docs/MOVIMIENTO.md` de la demo (le
    - 404 con el diseño del sitio
    - imagen para compartir con la marca
    - nada que salte al cargar
+   - mapa estático con la marca en vez de un mapa embebido (el embebido carga ~300 KB de JS):
+     captura del mapa de OpenStreetMap (sin controles), tonos neutros, marcador con los colores del
+     cliente, link a Google Maps y la atribución "© Colaboradores de OpenStreetMap"
 
 ## Paso 5 — Verificar
 
