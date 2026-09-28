@@ -167,6 +167,7 @@ nunca personas presentadas como su equipo ni productos que no venden, y anotalas
 | `frontend-design`, `ui-ux-pro-max` | Generar direcciones (paleta, tipografía, layout) | Paso 3 |
 | Impeccable | Revisar las direcciones contra sus anti-patrones antes de mostrarlas; criticar (`critique`) y pulir (`polish`) lo construido | Pasos 3 y 5 |
 | `improve-ui` | Planes de mejora sobre interfaces grandes | Proyectos de clientes, no demos |
+| `find-animation-opportunities`, `animate`, `emil-design-eng` | Momento distintivo y movimiento | Paso 4b |
 
 Usá `frontend-design` y `ui-ux-pro-max` para generar las direcciones. Reglas que valen siempre:
 
@@ -222,10 +223,40 @@ citar reseñas ni usar fotos de Google.
      dominio definitivo (ver ahí).
 6. `npm run check` (lint + typecheck + build) hasta que pase limpio.
 
+## Paso 4b — Premium (sin participación del usuario)
+
+La demo tiene que entrar por los ojos: movimiento con criterio, fotos tratadas con la marca y
+terminación cuidada. Guía del boilerplate: `docs/MOVIMIENTO.md` de la demo (leela antes).
+
+1. **Base:** `data-reveal` en las secciones después del hero, `data-reveal-stagger` en grillas
+   (tarjetas, afiches) e ícono de pestaña, desde la demo:
+   `node scripts/generar-icono.mjs public/images/<logo> --fondo "<color de marca>"`.
+2. **Momento distintivo:** corré la skill `find-animation-opportunities` sobre la demo construida
+   y elegí **uno** que salga del rubro o del material del cliente (el abanico de fichas de una
+   pinturería, los afiches que se clavan de una ferretería). Construilo con los criterios de
+   `animate` y `emil-design-eng`, colgado de `html[data-motion]` (así respeta el movimiento
+   reducido). Nunca en el `<h1>` ni en la imagen principal del hero: lo frena `npm run qa`.
+   Anotalo en `<clave>-spec.md`, sección "Momento distintivo": qué, dónde, duración y qué se ve con
+   movimiento reducido.
+3. **Fotos con la marca:** si las fotos del cliente son chicas (< ~1000 px) o viejas, tratalas con
+   `node scripts/tratar-foto.mjs <foto> <salida.webp> --modo duotono|tinte|grano --oscuro <#> [--claro <#>]`
+   (script de esta skill; correlo desde la demo para que encuentre sharp). Nunca cambia lo que
+   muestra la foto; la original se sigue usando donde se ve bien. Anotalo en `04-Diseño/notas.md`.
+4. **Detalles:**
+   - ícono de pestaña
+   - foco visible con el color de marca
+   - cifras con `tabular-nums`
+   - espaciado de títulos grandes
+   - menú del celular animado
+   - 404 con el diseño del sitio
+   - imagen para compartir con la marca
+   - nada que salte al cargar
+
 ## Paso 5 — Verificar
 
 1. **Impeccable** sobre lo construido: `critique` y después `polish`; guardá la crítica en
-   `04-Diseño/critica.md` (qué se corrigió y qué no, y por qué).
+   `04-Diseño/critica.md` (qué se corrigió y qué no, y por qué). La crítica revisa también el
+   movimiento: que no sobre, que no tape contenido y que el momento distintivo se entienda.
 2. Desde `<slug>/05-Código/demo` (después de `npm run build`):
    `npm run qa -- --diseno ../../04-Diseño/pantallas/<clave> --informe ../../06-Entrega/qa`
    (`--diseno` espera `home-desktop.png` y `home-celular.png` exportados a escala 1; una vez por
@@ -298,6 +329,10 @@ fallan en el build. Si pasa: `git checkout` de esos archivos, borrar lo creado y
 5. Revisá que todas las páginas respondan 200 (`curl`). Un **522** en los primeros minutos es
    propagación de Cloudflare: reintentá a los 20-30 s antes de tocar nada. Chequeá también
    `X-Robots-Tag: noindex` en los headers y la franja `data-lume-demo`.
+6. **Rendimiento:** medí la demo publicada con
+   `node scripts/evaluar-sitio.mjs <url> --psi --json 06-Entrega/despues.json`. El rendimiento en
+   celular tiene que dar **≥ 90**; si no, corregí (lo más común: algo del hero animado o una imagen
+   grande sin `srcSet` para celular), republicá y volvé a medir antes de seguir.
 
 Guardá en el pipeline: `demo_url=<url> umami_id=<id> estado=demo-lista`. Uní la rama
 `demo/<clave>` a `main` y marcá la clave como `publicada` en el índice del README de diseño.
