@@ -11,7 +11,8 @@ adaptados a comercios de Uruguay.
 - **Siempre como empresa:** habla Lume, en plural ("armamos", "no volvemos a escribirles"). Nunca
   en primera persona del singular ni como si quien firma hiciera las webs: firma alguien del
   equipo de Lume (el rol de la firma sale de `_config.md`; nada de títulos corporativos). No arranques presentándote ("Somos Lume…"): la presentación va en media frase
-  justo antes del link ("En Lume hacemos webs para comercios y armamos…"), que es cuando el lector
+  justo antes del link ("En Lume somos una empresa de software y armamos…"; Lume se presenta
+  como empresa de software, nunca como "hacemos webs para comercios"), que es cuando el lector
   se pregunta quién escribe. La firma completa la identificación (Ley 18.331).
 - **La primera línea es sobre ellos y lleva al problema:** un dato real de su negocio (años,
   locales, reseñas, a quién venden) que conecte con por qué la web les importa. Si sacás esa línea
@@ -50,7 +51,7 @@ un vendedor. Sin "gratis", sin números, sin signos, sin el nombre de la persona
 > <Dato real de su negocio que conecte con la web>, y quien entra a su web desde el celular
 > <problema 1>. Además, <problema 2>.
 >
-> En Lume hacemos webs para comercios y armamos cómo podría verse la suya, con su logo y sus
+> En Lume somos una empresa de software y armamos cómo podría verse la suya, con su logo y sus
 > textos: <link a la demo>
 >
 > Es un boceto para mostrar la idea, y el link es solo para ustedes: no aparece en Google. Si
