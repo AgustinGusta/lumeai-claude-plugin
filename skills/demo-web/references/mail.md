@@ -6,7 +6,7 @@ adaptados a comercios de Uruguay.
 
 ## Principios
 
-- **Corto:** hasta 140 palabras el primero; 40-70 los seguimientos. Se lee en el celular, entre
+- **Corto:** hasta 155 palabras el primero; 40-70 los seguimientos. Se lee en el celular, entre
   otras cosas. Si una frase no acerca a que respondan, se corta.
 - **Siempre como empresa:** habla Lume, en plural ("armamos", "no volvemos a escribirles"). Nunca
   en primera persona del singular ni como si quien firma hiciera las webs: firma alguien del
@@ -116,4 +116,4 @@ Después del seguimiento 2, sin respuesta → `perdido`. No hay seguimiento 3.
 - ¿La primera línea es de ellos y es positiva? ¿El primer mail no enumera problemas?
 - ¿Las ideas de "la web es el comienzo" son de su negocio y no genéricas?
 - ¿Hay un solo link, sin imagen, y un solo pedido?
-- ¿Cuántas palabras tiene? (primero ≤ 140, seguimientos ≤ 70)
+- ¿Cuántas palabras tiene? (primero ≤ 155, seguimientos ≤ 70)
