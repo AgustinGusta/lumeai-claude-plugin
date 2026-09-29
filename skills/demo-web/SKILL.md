@@ -182,7 +182,9 @@ Usá `frontend-design` y `ui-ux-pro-max` para generar las direcciones. Reglas qu
 - **Recursos visuales** (íconos, fuentes, texturas, fotos, video; todo gratis y sin atribución
   visible): `docs/RECURSOS-VISUALES.md` de la demo. Relevamiento completo con licencias:
   `docs/diseno/caja-de-herramientas.md` del repo de prospectos. Nada fuera de esa lista sin revisar
-  que sea gratis para uso comercial y sin crédito visible.
+  que sea gratis para uso comercial y sin crédito visible. Esa caja tiene además la **tabla de
+  selección de piezas** (efectos y detalles ya aprobados por el usuario); se recorre en el Paso 4b,
+  pero tenela en cuenta al dibujar si alguna pieza cambia la estructura de una sección.
 
 No se construye nada sin la dirección elegida y, si hay README, sin el spec aprobado.
 
@@ -248,6 +250,27 @@ terminación cuidada. Guía del boilerplate: `docs/MOVIMIENTO.md` de la demo (le
    reducido). Nunca en el `<h1>` ni en la imagen principal del hero: lo frena `npm run qa`.
    Anotalo en `<clave>-spec.md`, sección "Momento distintivo": qué, dónde, duración y qué se ve con
    movimiento reducido.
+2b. **Piezas de la caja de herramientas (obligatorio recorrerla):** en el repo de prospectos,
+   `docs/diseno/caja-de-herramientas.md` → «Elegir piezas para una demo (tabla de selección)».
+   Recorré **todas** las filas y dejá en `<clave>-spec.md` la sección «Piezas»: cada pieza
+   **aplica / no aplica** con el motivo en una línea (ejemplo:
+   `papeleria-jarque/04-Diseño/2026-09-29-papeleria-jarque-spec.md`). Cómo decidir:
+   - Manda la columna **«Necesita»**: si el comercio no tiene ese material o contenido real (en su
+     web, Maps, Instagram o tienda), no aplica. Nunca se inventa material para que una pieza entre.
+   - Los **ejemplos de rubro son sugerencias, no un límite**: analizá el comercio concreto (qué vende,
+     qué historia tiene, qué busca su cliente) y decidí vos. Si la pieza cuenta algo de **este**
+     comercio mejor que lo que ya hay, aplica aunque su rubro no figure.
+   - No dos piezas para la misma función; lo normal son **4-8 por demo**, repartidas, con un solo
+     momento distintivo (el ítem 2). Más de 8, justificado en el spec.
+   - Cada pieza se verifica en el navegador con movimiento, a 1440 y 390. Las **atadas al scroll**,
+     midiendo el estilo calculado en varias posiciones de scroll: si no cambia, está rota. Trampa
+     conocida: un ancestro con `overflow: hidden` ata `view()` a ese ancestro (queda quieta, sin
+     error): usar `overflow: clip`. Y nada de `data-reveal` encima de un efecto de entrada (el fundido
+     lo tapa).
+   - Primera vez que se usa una pieza: A/B de PSI (3 corridas con y sin, mediana) y anotarlo en su
+     sección de la caja; si pasa, su «Estado» en la tabla pasa a «probada (demo)».
+   Al cerrar la demo, decile al usuario en el resumen qué piezas entraron y cuáles no, en una línea
+   cada grupo.
 3. **Fotos con la marca:** si las fotos del cliente son chicas (< ~1000 px) o viejas, tratalas con
    `node scripts/tratar-foto.mjs <foto> <salida.webp> --modo duotono|tinte|grano --oscuro <#> [--claro <#>]`
    (script de esta skill; correlo desde la demo para que encuentre sharp). Nunca cambia lo que
