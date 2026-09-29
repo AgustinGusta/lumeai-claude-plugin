@@ -32,6 +32,19 @@ ese repo (Impeccable, la skill `redesign-existing-projects` y las reglas de hook
 si Claude Code se abre en esa carpeta; recomendale cerrar y abrir ahí. Si decide seguir igual,
 continuá y recordá que esos controles no están corriendo.
 
+## Antes de empezar: ¿con pencil o sin pencil?
+
+Al arrancar la demo, **antes del relevamiento**, preguntale al usuario una sola cosa con
+`AskUserQuestion`: "¿La demo va con pencil o sin pencil?".
+
+- **Sin pencil (recomendada, primera opción):** no se dibujan direcciones; se construye directo en
+  el **estilo preferido** (ver Paso 3, «Sin pencil»). El usuario suele elegir siempre esa dirección
+  y no pedir cambios, así que su participación queda en revisar la demo publicada y mandar el mail.
+- **Con pencil:** el procedimiento completo del Paso 3 (direcciones dibujadas, el usuario elige).
+
+Anotá la respuesta en `FICHA.md` (fila "Diseño": con pencil / sin pencil). Si el usuario ya lo dijo
+en el pedido ("sin pencil", "con pencil"), no preguntes.
+
 ## Rutas
 
 - **Carpeta de prospectos web:** `<Lume>/01-Comercial/Prospectos/Webs/` (en la máquina de Agustín,
@@ -136,6 +149,27 @@ Auditoría del antes → `02-Sitio-actual/auditoria/`:
   de URLs y el diagnóstico con `redesign-existing-projects`.
 
 ## Paso 3 — Diseño dibujado (el usuario elige mirando)
+
+**Sin pencil** (lo que eligió el usuario al empezar): se saltean las direcciones, el `.pen` y la
+elección, y se va directo al **estilo preferido**, adaptado a la marca del cliente:
+
+- foto del rubro a pantalla completa con degradé oscuro de la marca (texto legible);
+- titular display muy grande y pesado, tracking negativo, abajo a la izquierda;
+- botones pill: el principal en el color de marca, el secundario translúcido con blur y filo de vidrio;
+- tarjeta translúcida **casi opaca (~85 %)** con datos reales (nota de Google, horario con estado,
+  dirección, teléfonos); en celular, la versión corta;
+- franja de color de marca con rubros o marcas al pie del hero, en loop.
+
+Referencias construidas de este estilo: `papeleria-jarque/` (2026-09-29), `titotools/`,
+`tornilleria-victory/`. El resto de la home (secciones, orden, tipografía, paleta) se decide igual
+que con pencil pero sin dibujo: moodboard, `frontend-design` / `ui-ux-pro-max`, y se escribe el
+spec completo (`<clave>-spec.md`: tokens, secciones, contenido por página, piezas, momento
+distintivo, modo demo) **antes** de construir. Como no hay PNG del diseño, después de construir
+guardá capturas de la home a 1440 y 390 en `04-Diseño/pantallas/<clave>/` (`home-desktop.png`,
+`home-celular.png`) como memoria del diseño, y corré `npm run qa` **sin** `--diseno`. Todo lo demás
+(reglas de contenido, moodboard en `referencias/<clave>/`, fotos, spec, Paso 4 en adelante) sigue igual.
+
+**Con pencil:**
 
 **Nunca describas la dirección visual solo en texto ni con dibujos ASCII**: se decide mirando.
 Una decisión tomada sobre algo descrito es provisional hasta verlo dibujado.
@@ -304,7 +338,8 @@ terminación cuidada. Guía del boilerplate: `docs/MOVIMIENTO.md` de la demo (le
    máquina: `npx playwright install chromium`). Los **errores** (accesibilidad grave, links
    internos rotos, vista previa al compartir incompleta) no se negocian; la comparación con el diseño
    solo informa: mirá `diff-*.png` y explicá las diferencias grandes. Si el boilerplate de la demo no
-   tiene `npm run qa`, avisá al usuario y seguí solo con `verificar-demo.mjs`.
+   tiene `npm run qa`, avisá al usuario y seguí solo con `verificar-demo.mjs`. **Sin pencil:** sin
+   `--diseno` (no hay dibujo contra qué comparar).
 3. `node scripts/verificar-demo.mjs out "<Empresa>" <dominio-actual>` → tiene que dar OK.
    Los ERROR no se negocian; los AVISO se revisan.
 4. Levantá `out/` local (`npx serve out`) y recorrela con Playwright en 390 px y 1440 px: sin
@@ -313,7 +348,8 @@ terminación cuidada. Guía del boilerplate: `docs/MOVIMIENTO.md` de la demo (le
    reconoce como la misma empresa? Si la respuesta a cualquiera es "más o menos", iterá.
 6. Compará capturas de lo construido a 1440 y 390 contra `04-Diseño/pantallas/<clave>/` (o las
    capturas de la dirección elegida) y corregí las diferencias antes de pasar a la revisión del
-   usuario.
+   usuario. **Sin pencil:** compará contra el spec y contra el estilo preferido (Paso 3) y las demos
+   de referencia; después guardá las capturas en `pantallas/<clave>/`.
 
 ## Paso 6 — Revisión del usuario (devoluciones, análisis y corrección)
 
