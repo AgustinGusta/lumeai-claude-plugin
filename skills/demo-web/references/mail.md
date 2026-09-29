@@ -73,7 +73,7 @@ un vendedor. Sin "gratis", sin números, sin signos, sin el nombre de la persona
 > Y la web puede ser solo el comienzo: si avanzan, vemos juntos qué más les serviría, como <1 o 2
 > ideas concretas para su negocio>.
 >
-> ¿Les interesa que lo veamos 15 minutos esta semana?
+> ¿Les interesa que lo veamos 15 minutos en los próximos días?
 >
 > Si por ahora no es para ustedes, no hay problema: respondan "no" y no volvemos a escribirles.
 >
