@@ -422,7 +422,8 @@ Guardá en el pipeline: `demo_url=<url> umami_id=<id> estado=demo-lista`. Uní l
 - Corré la misma medición sobre la demo publicada (PSI; sin PSI, `lighthouse_audit` + `performance_start_trace`, porque `lighthouse_audit` no incluye velocidad) →
   `06-Entrega/despues.json`.
 - El mail **no lleva imagen** (un mail en frío con imagen cae más en spam y se lee como
-  publicidad): de la medición salen los datos para los seguimientos.
+  publicidad). La medición es registro interno y sirve para elegir qué contar: **no se cita en el
+  mail ni en los seguimientos** (nada técnico en lo que lee el cliente, ver `references/mail.md`).
 - Opcional, si el usuario lo pide: video corto de la demo con la skill `brag` o
   `product-launch-video`.
 

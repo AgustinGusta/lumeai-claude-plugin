@@ -19,8 +19,16 @@ adaptados a comercios de Uruguay.
   celular ni de nada): suena a crítica y pone a la defensiva. La primera línea es un dato real y
   positivo de su negocio (años, locales, reseñas, a quién venden), y la segunda dice, en general,
   que revisando su web encontramos oportunidades para que acompañe mejor ese recorrido. Los
-  problemas concretos van en los seguimientos, en lenguaje de dueño y sin "SEO", "LCP",
-  "responsive" ni "UX".
+  problemas concretos van en los seguimientos, en lenguaje de dueño.
+- **Nada técnico, en ningún mensaje (terminantemente prohibido):** ni en el primer mail ni en los
+  seguimientos van notas ni mediciones ("Google le da 67 sobre 100", "tarda 7,4 segundos", "pesa
+  2 MB"), avisos del navegador ("No segura", el candado), carteles o códigos de error
+  ("Forbidden", 404), nombres de tecnología o de cómo está hecha la web (plantilla, WordPress,
+  dominio, hosting, "dirección gratuita") ni jerga ("SEO", "LCP", "responsive", "UX"). Sí va lo
+  que ve y le pasa a una persona al usar su web, en palabras comunes: "en el celular tarda en
+  abrir", "la página no abre", "el botón no lleva a ningún lado", "el horario no coincide con el
+  de Google Maps". Las mediciones se hacen igual y quedan en la carpeta del prospecto y en las
+  notas internas de `mail.md`, fuera del texto citado.
 - **La demo es la prueba:** ya está hecha, y eso es lo que nos diferencia. Se nombra como "una
   propuesta de cómo podría verse su web renovada" (así se entiende qué es antes de abrirla). Un
   solo link (la demo), **sin imágenes ni adjuntos**: un mail en frío con imagen o varios links cae
@@ -87,12 +95,14 @@ viernes de tarde, evitarlo.
 Van en el mismo hilo. **Cada uno trae un dato nuevo** (nunca "les reenvío por si…") y se entiende
 solo, aunque no hayan leído el anterior: repite el link.
 
-**Seguimiento 1** (día 4 hábil): un problema concreto de su web o una medición, dicho como
-consecuencia para el negocio, más el link y una pregunta corta.
+**Seguimiento 1** (día 4 hábil): un problema concreto y visible de su web (nunca una medición ni
+un dato técnico), dicho como consecuencia para el negocio, más el link y una pregunta corta. No
+arranca con "un dato más": el primer mail no dio ninguno.
 
-> Buenos días, un dato más sobre su web: <medición o problema nuevo, con su consecuencia
-> ("en el celular tarda 7,4 segundos en mostrar algo, y más de la mitad de la gente se va antes de
-> los 3")>. La versión nueva <cómo lo resuelve>: <link>
+> Buenos días, les dejamos un dato sobre su web: <problema visible, con su consecuencia ("el
+> botón de WhatsApp lleva a un número que no existe, así que la consulta se pierde"; "en el
+> celular tarda en abrir, y el que busca algo apurado se va antes")>. La versión nueva <cómo lo
+> resuelve>: <link>
 >
 > ¿La llegaron a ver?
 
@@ -116,4 +126,6 @@ Después del seguimiento 2, sin respuesta → `perdido`. No hay seguimiento 3.
 - ¿La primera línea es de ellos y es positiva? ¿El primer mail no enumera problemas?
 - ¿Las ideas de "la web es el comienzo" son de su negocio y no genéricas?
 - ¿Hay un solo link, sin imagen, y un solo pedido?
+- ¿Quedó algo técnico en el primer mail o en los seguimientos (un número medido, una nota, un
+  aviso del navegador, un cartel de error, el nombre de una tecnología)? Si sí, se reescribe.
 - ¿Cuántas palabras tiene? (primero ≤ 155, seguimientos ≤ 70)

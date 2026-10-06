@@ -16,6 +16,8 @@
 ## Tono
 
 - Tratamiento: tuteo (default) / voseo / usted
+- Nada técnico en ningún texto que lea el cliente (mail, seguimientos, WhatsApp): sin mediciones,
+  notas, avisos del navegador, códigos de error ni nombres de tecnología
 - País del mercado objetivo: Uruguay
 
 ## Ritmo

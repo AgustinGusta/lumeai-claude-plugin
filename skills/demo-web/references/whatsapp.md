@@ -15,6 +15,8 @@ envía nada**.
 - **Lo que les falta, no lo que tienen mal:** "quien los busca en Google llega a la ficha, no a
   una web". Nunca criticar su Instagram.
 - **Nota de Google solo como dato** ("4,7 con 120 reseñas"), nunca citar reseñas.
+- **Nada técnico** (terminantemente prohibido, igual que en el mail: ver `mail.md`): sin
+  mediciones, notas de velocidad, avisos del navegador, códigos de error ni nombres de tecnología.
 - **Tope:** 5 mensajes nuevos por día desde el número de Lume (con más, WhatsApp bloquea el
   número). Nunca automatizar el envío.
 - Trato usted/ustedes según `_config.md`.
